@@ -1,5 +1,14 @@
 # @graphql-mesh/container
 
+## 0.0.42
+
+### Patch Changes
+
+- Updated dependencies [b9a8b348]
+- Updated dependencies [9f204b0c]
+  - @graphql-mesh/grpc@0.12.2
+  - @graphql-mesh/transform-cache@0.8.40
+
 ## 0.0.41
 
 ### Patch Changes
