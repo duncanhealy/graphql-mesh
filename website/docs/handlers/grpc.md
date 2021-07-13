@@ -1,7 +1,7 @@
 ---
 id: grpc
-title: gRPC & Protobuf
-sidebar_label: gRPC
+title: gRPC / Protobuf
+sidebar_label: gRPC / Protobuf
 ---
 ![image](https://user-images.githubusercontent.com/20847995/79218793-b27dcf00-7e59-11ea-8f0f-df97503f5494.png)
 
@@ -20,8 +20,6 @@ sources:
       grpc:
         endpoint: localhost:50051
         protoFilePath: grpc/proto/Example.proto
-        serviceName: Example
-        packageName: io.xtech.example # This field is required
 ```
 
 > You can check out our example that uses gRPC Handler.

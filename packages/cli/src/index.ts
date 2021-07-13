@@ -1,43 +1,54 @@
 import { findAndParseConfig } from '@graphql-mesh/config';
-import { getMesh } from '@graphql-mesh/runtime';
-import * as yargs from 'yargs';
-import { generateTsTypes } from './commands/typescript';
-import { generateSdk } from './commands/generate-sdk';
+import { getMesh, GetMeshOptions } from '@graphql-mesh/runtime';
+import { generateTsArtifacts } from './commands/ts-artifacts';
 import { serveMesh } from './commands/serve/serve';
-import { isAbsolute, resolve } from 'path';
-import { logger } from './logger';
-import { introspectionFromSchema } from 'graphql';
+import { isAbsolute, resolve, join } from 'path';
+import { existsSync } from 'fs';
+import { FsStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
-import { jsonFlatStringify, writeFile, writeJSON } from '@graphql-mesh/utils';
+import { writeFile, pathExists, rmdirs, DefaultLogger } from '@graphql-mesh/utils';
+import { handleFatalError } from './handleFatalError';
+import { cwd, env } from 'process';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+import { createRequire } from 'module';
+import { parse } from 'graphql';
 
-export { generateSdk, serveMesh };
+export { generateTsArtifacts, serveMesh };
 
 export async function graphqlMesh() {
-  let baseDir = process.cwd();
-
-  return yargs
+  let baseDir = cwd();
+  let logger = new DefaultLogger('Mesh');
+  return yargs(hideBin(process.argv))
     .help()
     .option('r', {
       alias: 'require',
       describe: 'Loads specific require.extensions before running the codegen and reading the configuration',
       type: 'array' as const,
       default: [],
-      coerce: (externalModules: string[]) => Promise.all(externalModules.map(mod => import(mod))),
+      coerce: (externalModules: string[]) =>
+        Promise.all(
+          externalModules.map(module => {
+            const localModulePath = resolve(baseDir, module);
+            const islocalModule = existsSync(localModulePath);
+            return import(islocalModule ? localModulePath : module);
+          })
+        ),
     })
     .option('dir', {
       describe: 'Modified the base directory to use for looking for meshrc config file',
       type: 'string',
-      default: process.cwd(),
+      default: baseDir,
       coerce: dir => {
         if (isAbsolute(dir)) {
           baseDir = dir;
         } else {
-          baseDir = resolve(process.cwd(), dir);
+          baseDir = resolve(cwd(), dir);
         }
       },
     })
-    .command<{ port: number }>(
-      'serve',
+    .command<{ port: number; prod: boolean; validate: boolean }>(
+      'dev',
       'Serves a GraphQL server with GraphQL interface to test your Mesh API',
       builder => {
         builder.option('port', {
@@ -46,118 +57,177 @@ export async function graphqlMesh() {
       },
       async args => {
         try {
-          await serveMesh(baseDir, args.port);
-        } catch (e) {
-          logger.error('Unable to serve mesh: ', e);
-        }
-      }
-    )
-    .command<{ operations: string[]; output: string; depth: number; 'flatten-types': boolean }>(
-      'generate-sdk',
-      'Generates fully type-safe SDK based on unifid GraphQL schema and GraphQL operations',
-      builder => {
-        builder
-          .option('operations', {
-            type: 'array',
-          })
-          .option('depth', {
-            type: 'number',
-          })
-          .option('output', {
-            required: true,
-            type: 'string',
-          })
-          .option('flatten-types', {
-            type: 'boolean',
+          env.NODE_ENV = 'development';
+          const meshConfig = await findAndParseConfig({
+            dir: baseDir,
           });
-      },
-      async args => {
-        const meshConfig = await findAndParseConfig({
-          dir: baseDir,
-          ignoreAdditionalResolvers: true,
-        });
-        const { schema, destroy } = await getMesh(meshConfig);
-        const result = await generateSdk(schema, args);
-        const outFile = isAbsolute(args.output) ? args.output : resolve(process.cwd(), args.output);
-        await writeFile(outFile, result);
-        destroy();
-      }
-    )
-    .command<{ output: string }>(
-      'dump-schema',
-      'Generates a JSON introspection / GraphQL SDL schema file from your mesh.',
-      builder => {
-        builder.option('output', {
-          required: true,
-          type: 'string',
-        });
-      },
-      async args => {
-        const meshConfig = await findAndParseConfig({
-          dir: baseDir,
-          ignoreAdditionalResolvers: true,
-        });
-        const { schema, destroy } = await getMesh(meshConfig);
-        let fileContent: string;
-        const fileName = args.output;
-        if (fileName.endsWith('.json')) {
-          const introspection = introspectionFromSchema(schema);
-          fileContent = jsonFlatStringify(introspection, null, 2);
-        } else if (
-          fileName.endsWith('.graphql') ||
-          fileName.endsWith('.graphqls') ||
-          fileName.endsWith('.gql') ||
-          fileName.endsWith('.gqls')
-        ) {
-          const printedSchema = printSchemaWithDirectives(schema);
-          fileContent = printedSchema;
-        } else {
-          logger.error(`Invalid file extension ${fileName}`);
-          destroy();
-          return;
+          const result = await serveMesh({
+            baseDir,
+            argsPort: args.port,
+            getMeshOptions: meshConfig,
+            rawConfig: meshConfig.config,
+            documents: meshConfig.documents,
+          });
+          logger = result.logger;
+        } catch (e) {
+          handleFatalError(e, logger);
         }
-        const outFile = isAbsolute(fileName) ? fileName : resolve(process.cwd(), fileName);
-        await writeFile(outFile, fileContent);
-        destroy();
       }
     )
-    .command<{ output: string }>(
-      'typescript',
-      'Generates TypeScript typings for the generated mesh',
+    .command<{ port: number; prod: boolean; validate: boolean }>(
+      'start',
+      'Serves a GraphQL server with GraphQL interface to test your Mesh API',
       builder => {
-        builder.option('output', {
-          required: true,
-          type: 'string',
+        builder.option('port', {
+          type: 'number',
         });
       },
       async args => {
-        const meshConfig = await findAndParseConfig({
-          dir: baseDir,
-          ignoreAdditionalResolvers: true,
-        });
-        const { schema, rawSources, destroy } = await getMesh(meshConfig);
-        const result = await generateTsTypes(schema, rawSources, meshConfig.mergerType);
-        const outFile = isAbsolute(args.output) ? args.output : resolve(process.cwd(), args.output);
-        await writeFile(outFile, result);
-        destroy();
+        try {
+          const builtMeshArtifactsPath = join(baseDir, '.mesh');
+          if (!(await pathExists(builtMeshArtifactsPath))) {
+            throw new Error(
+              `Seems like you haven't build Mesh artifacts yet to start production server! You need to build artifacts first with "mesh build" command!`
+            );
+          }
+          env.NODE_ENV = 'production';
+          const mainModule = join(builtMeshArtifactsPath, 'index.js');
+          const builtMeshArtifacts = await import(mainModule).then(m => m.default || m);
+          const getMeshOptions: GetMeshOptions = builtMeshArtifacts.getMeshOptions();
+          logger = getMeshOptions.logger;
+          await serveMesh({
+            baseDir,
+            argsPort: args.port,
+            getMeshOptions,
+            rawConfig: builtMeshArtifacts.rawConfig,
+            documents: builtMeshArtifacts.documentsInSDL.map((documentSdl: string, i: number) => ({
+              rawSDL: documentSdl,
+              document: parse(documentSdl),
+              location: `document_${i}.graphql`,
+            })),
+          });
+        } catch (e) {
+          handleFatalError(e, logger);
+        }
       }
     )
     .command(
-      'write-introspection-cache',
-      'Writes introspection cache and creates it from scratch',
+      'validate',
+      'Validates artifacts',
       builder => {},
-      async () => {
-        const meshConfig = await findAndParseConfig({
-          dir: baseDir,
-          ignoreIntrospectionCache: true,
-          ignoreAdditionalResolvers: true,
-        });
-        const { destroy } = await getMesh(meshConfig);
-        const outFile = isAbsolute(meshConfig.config.introspectionCache)
-          ? meshConfig.config.introspectionCache
-          : resolve(baseDir, meshConfig.config.introspectionCache);
-        await writeJSON(outFile, meshConfig.introspectionCache);
-        destroy();
+      async args => {
+        let destroy: VoidFunction;
+        try {
+          if (!(await pathExists(join(baseDir, '.mesh')))) {
+            throw new Error(
+              `You cannot validate artifacts now because you don't have built artifacts yet! You need to build artifacts first with "mesh build" command!`
+            );
+          }
+
+          const importFn = (moduleId: string) => import(moduleId).then(m => m.default || m);
+
+          const store = new MeshStore(
+            '.mesh',
+            new FsStoreStorageAdapter({
+              cwd: baseDir,
+              importFn,
+            }),
+            {
+              readonly: false,
+              validate: true,
+            }
+          );
+
+          logger.info(`Reading Mesh configuration`);
+          const meshConfig = await findAndParseConfig({
+            dir: baseDir,
+            ignoreAdditionalResolvers: true,
+            store,
+            importFn,
+          });
+          logger = meshConfig.logger;
+
+          logger.info(`Generating Mesh schema`);
+          const mesh = await getMesh(meshConfig);
+          destroy = mesh?.destroy;
+        } catch (e) {
+          handleFatalError(e, logger);
+        }
+        if (destroy) {
+          destroy();
+        }
+      }
+    )
+    .command(
+      'build',
+      'Builds artifacts',
+      builder => {},
+      async args => {
+        try {
+          const rootArtifactsName = '.mesh';
+          const outputDir = join(baseDir, rootArtifactsName);
+
+          logger.info('Cleaning existing artifacts');
+          await rmdirs(outputDir);
+
+          const importedModulesSet = new Set<string>();
+          const importFn = (moduleId: string) =>
+            import(moduleId).then(m => {
+              importedModulesSet.add(moduleId);
+              return m.default || m;
+            });
+
+          const baseDirRequire = createRequire(join(baseDir, 'mesh.config.js'));
+          const syncImportFn = (moduleId: string) => {
+            const m = baseDirRequire(moduleId);
+            importedModulesSet.add(moduleId);
+            return m;
+          };
+
+          const store = new MeshStore(
+            rootArtifactsName,
+            new FsStoreStorageAdapter({
+              cwd: baseDir,
+              importFn,
+            }),
+            {
+              readonly: false,
+              validate: false,
+            }
+          );
+
+          logger.info(`Reading Mesh configuration`);
+          const meshConfig = await findAndParseConfig({
+            dir: baseDir,
+            ignoreAdditionalResolvers: true,
+            store,
+            importFn,
+            syncImportFn,
+          });
+          logger = meshConfig.logger;
+
+          logger.info(`Generating Mesh schema`);
+          const { schema, destroy, rawSources } = await getMesh(meshConfig);
+          await writeFile(join(outputDir, 'schema.graphql'), printSchemaWithDirectives(schema));
+
+          logger.info(`Generating artifacts`);
+          await generateTsArtifacts({
+            unifiedSchema: schema,
+            rawSources,
+            mergerType: meshConfig.merger.name,
+            documents: meshConfig.documents,
+            flattenTypes: false,
+            importedModulesSet,
+            baseDir,
+            meshConfigCode: meshConfig.code,
+          });
+
+          logger.info(`Cleanup`);
+          destroy();
+          logger.info('Done! => ' + outputDir);
+        } catch (e) {
+          handleFatalError(e, logger);
+        }
       }
     ).argv;
 }

@@ -1,7 +1,7 @@
 ---
 id: json-schema
-title: JSON Schema
-sidebar_label: JSON Schema
+title: JSON Schema or Samples
+sidebar_label: JSON Schema or Samples
 ---
 ![image](https://user-images.githubusercontent.com/20847995/79218994-11434880-7e5a-11ea-8594-08185526080f.png)
 
@@ -46,7 +46,7 @@ sources:
         baseUrl: https://some-service-url/endpoint-path/
         operationHeaders:
           # Please do not use capital letters while getting the headers
-          Authorization: Bearer {context.headers['x-my-api-token']} 
+          Authorization: Bearer {context.headers['x-my-api-token']}
 ```
 
 And for `mesh serve`, you can pass the value using `x-my-graphql-api-token` HTTP header.
@@ -62,7 +62,7 @@ sources:
       jsonSchema:
         baseUrl: https://some-service-url/endpoint-path/
         operationHeaders:
-          Authorization: Bearer ${MY_API_TOKEN}
+          Authorization: Bearer {env.MY_API_TOKEN}
           # You can also access to the cookies like below;
           # Authorization: Bearer {context.cookies.myApiToken}
 ```

@@ -1,19 +1,27 @@
 import { parse } from 'graphql';
-import { MeshHandlerLibrary, KeyValueCache, YamlConfig, MergerFn, ImportFn, MeshPubSub } from '@graphql-mesh/types';
-import { resolve, isAbsolute, join } from 'path';
-import { IResolvers, printSchemaWithDirectives } from '@graphql-tools/utils';
+import { KeyValueCache, YamlConfig, ImportFn, MeshPubSub, Logger } from '@graphql-mesh/types';
+import { resolve } from 'path';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { paramCase } from 'param-case';
-import { loadTypedefs } from '@graphql-tools/load';
+import { loadDocuments, loadTypedefs } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { get, set, kebabCase } from 'lodash';
-import { stringInterpolator, pathExists, readJSON } from '@graphql-mesh/utils';
-import { mergeResolvers } from '@graphql-tools/merge';
-import { PubSub, withFilter } from 'graphql-subscriptions';
+import { PubSub } from 'graphql-subscriptions';
 import { EventEmitter } from 'events';
 import { CodeFileLoader } from '@graphql-tools/code-file-loader';
-import StitchingMerger from '@graphql-mesh/merger-stitching';
+import { MeshStore } from '@graphql-mesh/store';
+import { DefaultLogger } from '@graphql-mesh/utils';
 
-export async function getPackage<T>(name: string, type: string, importFn: ImportFn): Promise<T> {
+type ResolvedPackage<T> = {
+  moduleName: string;
+  resolved: T;
+};
+
+export async function getPackage<T>(
+  name: string,
+  type: string,
+  importFn: ImportFn,
+  cwd: string
+): Promise<ResolvedPackage<T>> {
   const casedName = paramCase(name);
   const casedType = paramCase(type);
   const possibleNames = [
@@ -28,16 +36,20 @@ export async function getPackage<T>(name: string, type: string, importFn: Import
   if (name.includes('-')) {
     possibleNames.push(name);
   }
-  const possibleModules = possibleNames.concat(resolve(process.cwd(), name));
+  const possibleModules = possibleNames.concat(resolve(cwd, name));
 
   for (const moduleName of possibleModules) {
     try {
       const exported = await importFn(moduleName);
-
-      return (exported.default || exported.parser || exported) as T;
+      const resolved = exported.default || (exported as T);
+      return {
+        moduleName,
+        resolved,
+      };
     } catch (err) {
       if (
         !err.message.includes(`Cannot find module '${moduleName}'`) &&
+        !err.message.includes(`Cannot find package '${moduleName}'`) &&
         !err.message.includes(`Could not locate module`)
       ) {
         throw new Error(`Unable to load ${type} matching ${name}: ${err.message}`);
@@ -46,12 +58,6 @@ export async function getPackage<T>(name: string, type: string, importFn: Import
   }
 
   throw new Error(`Unable to find ${type} matching ${name}`);
-}
-
-export async function getHandler(name: keyof YamlConfig.Handler, importFn: ImportFn): Promise<MeshHandlerLibrary> {
-  const handlerFn = await getPackage<MeshHandlerLibrary>(name.toString(), 'handler', importFn);
-
-  return handlerFn;
 }
 
 export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeDefs: string) {
@@ -65,120 +71,48 @@ export async function resolveAdditionalTypeDefs(baseDir: string, additionalTypeD
   return undefined;
 }
 
-export async function resolveAdditionalResolvers(
-  baseDir: string,
-  additionalResolvers: (
-    | string
-    | YamlConfig.AdditionalStitchingResolverObject
-    | YamlConfig.AdditionalSubscriptionObject
-  )[],
-  importFn: ImportFn,
-  pubsub: MeshPubSub
-): Promise<IResolvers> {
-  const loadedResolvers = await Promise.all(
-    (additionalResolvers || []).map(async additionalResolver => {
-      if (typeof additionalResolver === 'string') {
-        const filePath = additionalResolver;
-
-        const exported = await importFn(resolve(baseDir, filePath));
-        let resolvers = null;
-
-        if (exported.default) {
-          if (exported.default.resolvers) {
-            resolvers = exported.default.resolvers;
-          } else if (typeof exported.default === 'object') {
-            resolvers = exported.default;
-          }
-        } else if (exported.resolvers) {
-          resolvers = exported.resolvers;
-        }
-
-        if (!resolvers) {
-          console.warn(`Unable to load resolvers from file: ${filePath}`);
-
-          return {};
-        }
-
-        return resolvers;
-      } else {
-        if ('pubsubTopic' in additionalResolver) {
-          return {
-            [additionalResolver.type]: {
-              [additionalResolver.field]: {
-                subscribe: withFilter(
-                  (root, args, context, info) => {
-                    const resolverData = { root, args, context, info };
-                    const topic = stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
-                    return pubsub.asyncIterator(topic);
-                  },
-                  (root, args, context, info) => {
-                    return additionalResolver.filterBy ? eval(additionalResolver.filterBy) : true;
-                  }
-                ),
-                resolve: (payload: any) => {
-                  if (additionalResolver.returnData) {
-                    return get(payload, additionalResolver.returnData);
-                  }
-                  return payload;
-                },
-              },
-            },
-          };
-        } else {
-          return {
-            [additionalResolver.type]: {
-              [additionalResolver.field]: {
-                selectionSet: additionalResolver.requiredSelectionSet,
-                resolve: async (root: any, args: any, context: any, info: any) => {
-                  const resolverData = { root, args, context, info };
-                  const methodArgs: any = {};
-                  for (const argPath in additionalResolver.args) {
-                    set(methodArgs, argPath, stringInterpolator.parse(additionalResolver.args[argPath], resolverData));
-                  }
-                  const result = await context[additionalResolver.targetSource].api[additionalResolver.targetMethod](
-                    methodArgs,
-                    {
-                      selectedFields: additionalResolver.resultSelectedFields,
-                      selectionSet: additionalResolver.resultSelectionSet,
-                      depth: additionalResolver.resultDepth,
-                    }
-                  );
-                  return additionalResolver.returnData ? get(result, additionalResolver.returnData) : result;
-                },
-              },
-            },
-          };
-        }
-      }
-    })
-  );
-
-  return mergeResolvers(loadedResolvers);
-}
-
 export async function resolveCache(
-  cacheConfig: YamlConfig.Config['cache'],
-  importFn: ImportFn
-): Promise<KeyValueCache | undefined> {
-  if (cacheConfig) {
-    const cacheName = Object.keys(cacheConfig)[0];
-    const config = cacheConfig[cacheName];
+  cacheConfig: YamlConfig.Config['cache'] = { inmemoryLru: {} },
+  importFn: ImportFn,
+  rootStore: MeshStore,
+  cwd: string
+): Promise<{
+  cache: KeyValueCache;
+  importCode: string;
+  code: string;
+}> {
+  const cacheName = Object.keys(cacheConfig)[0].toString();
+  const config = cacheConfig[cacheName];
 
-    const moduleName = kebabCase(cacheName.toString());
-    const pkg = await getPackage<any>(moduleName, 'cache', importFn);
-    const Cache = pkg.default || pkg;
+  const { moduleName, resolved: Cache } = await getPackage<any>(cacheName, 'cache', importFn, cwd);
 
-    return new Cache(config);
-  }
-  const InMemoryLRUCache = await import('@graphql-mesh/cache-inmemory-lru').then(m => m.default);
-  const cache = new InMemoryLRUCache();
-  return cache;
+  const cache = new Cache({
+    ...config,
+    store: rootStore.child('cache'),
+  });
+
+  const code = `const cache = new MeshCache({
+      ...(rawConfig.cache || {}),
+      store: rootStore.child('cache'),
+    } as any)`;
+  const importCode = `import MeshCache from '${moduleName}';`;
+
+  return {
+    cache,
+    importCode,
+    code,
+  };
 }
 
 export async function resolvePubSub(
   pubsubYamlConfig: YamlConfig.Config['pubsub'],
-  importFn: ImportFn
-): Promise<MeshPubSub> {
+  importFn: ImportFn,
+  cwd: string
+): Promise<{
+  importCode: string;
+  code: string;
+  pubsub: MeshPubSub;
+}> {
   if (pubsubYamlConfig) {
     let pubsubName: string;
     let pubsubConfig: any;
@@ -189,39 +123,69 @@ export async function resolvePubSub(
       pubsubConfig = pubsubYamlConfig.config;
     }
 
-    const moduleName = kebabCase(pubsubName.toString());
-    const pkg = await getPackage<any>(moduleName, 'pubsub', importFn);
-    const PubSub = pkg.default || pkg;
+    const { moduleName, resolved: PubSub } = await getPackage<any>(pubsubName, 'pubsub', importFn, cwd);
 
-    return new PubSub(pubsubConfig);
+    const pubsub = new PubSub(pubsubConfig);
+
+    const importCode = `import PubSub from '${moduleName}'`;
+    const code = `const pubsub = new PubSub(rawConfig.pubsub);`;
+
+    return {
+      importCode,
+      code,
+      pubsub,
+    };
   } else {
     const eventEmitter = new EventEmitter({ captureRejections: true });
     eventEmitter.setMaxListeners(Infinity);
     const pubsub = new PubSub({ eventEmitter }) as MeshPubSub;
 
-    return pubsub;
+    const importCode = `import { PubSub } from 'graphql-subscriptions';
+import { EventEmitter } from 'events';`;
+    const code = `const eventEmitter = new EventEmitter({ captureRejections: true });
+eventEmitter.setMaxListeners(Infinity);
+const pubsub = new PubSub({ eventEmitter });`;
+
+    return {
+      importCode,
+      code,
+      pubsub,
+    };
   }
 }
 
-export async function resolveMerger(mergerConfig: YamlConfig.Config['merger'], importFn: ImportFn): Promise<MergerFn> {
-  if (mergerConfig) {
-    const pkg = await getPackage<any>(mergerConfig, 'merger', importFn);
-    return pkg.default || pkg;
+export async function resolveDocuments(documentsConfig: YamlConfig.Config['documents'], cwd: string) {
+  if (!documentsConfig) {
+    return [];
   }
-  return StitchingMerger;
+  return loadDocuments(documentsConfig, {
+    loaders: [new CodeFileLoader(), new GraphQLFileLoader()],
+    skipGraphQLImport: true,
+    cwd,
+  });
 }
 
-export async function resolveIntrospectionCache(
-  introspectionCacheConfig: YamlConfig.Config['introspectionCache'],
-  dir: string
-): Promise<any> {
-  if (introspectionCacheConfig) {
-    const absolutePath = isAbsolute(introspectionCacheConfig)
-      ? introspectionCacheConfig
-      : join(dir, introspectionCacheConfig);
-    if (await pathExists(absolutePath)) {
-      return readJSON(absolutePath);
-    }
+export async function resolveLogger(
+  loggerConfig: YamlConfig.Config['logger'],
+  importFn: ImportFn,
+  cwd: string
+): Promise<{
+  importCode: string;
+  code: string;
+  logger: Logger;
+}> {
+  if (typeof loggerConfig === 'string') {
+    const { moduleName, resolved: logger } = await getPackage<Logger>(loggerConfig, 'logger', importFn, cwd);
+    return {
+      logger,
+      importCode: `import logger from '${moduleName}';`,
+      code: '',
+    };
   }
-  return {};
+  const logger = new DefaultLogger('Mesh');
+  return {
+    logger,
+    importCode: `import { DefaultLogger } from '@graphql-mesh/utils';`,
+    code: `const logger = new DefaultLogger('Mesh');`,
+  };
 }

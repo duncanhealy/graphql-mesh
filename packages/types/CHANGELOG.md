@@ -1,5 +1,29 @@
 # @graphql-mesh/types
 
+## 0.42.0
+
+### Minor Changes
+
+- cfb517b3d: feat(types): make baseDir optional
+
+## 0.41.1
+
+### Patch Changes
+
+- e6acdbd7d: enhance(runtime): do not compose unnecessary resolvers
+
+## 0.41.0
+
+### Minor Changes
+
+- 214b7a23c: feat(runtime): Type Merging support
+
+## 0.40.0
+
+### Minor Changes
+
+- 0d2f7bfcd: Added the config option `useWebSocketLegacyProtocol` for the graphql handler that enables the use of the `graphql-ws` protocol for subscriptions to the handlers source.
+
 ## 0.39.0
 
 ### Minor Changes

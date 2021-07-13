@@ -1,5 +1,110 @@
 # mongoose-example
 
+## 0.5.103
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.30.2
+
+## 0.5.102
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.30.1
+- @graphql-mesh/mongoose@0.7.15
+
+## 0.5.101
+
+### Patch Changes
+
+- Updated dependencies [d27f36029]
+  - @graphql-mesh/cli@0.30.0
+
+## 0.5.100
+
+### Patch Changes
+
+- Updated dependencies [b9036c51b]
+- Updated dependencies [4d96aa9b5]
+  - @graphql-mesh/cli@0.29.14
+
+## 0.5.99
+
+### Patch Changes
+
+- Updated dependencies [ee86d8fa7]
+  - @graphql-mesh/cli@0.29.13
+
+## 0.5.98
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.12
+- @graphql-mesh/mongoose@0.7.14
+
+## 0.5.97
+
+### Patch Changes
+
+- @graphql-mesh/mongoose@0.7.13
+- @graphql-mesh/cli@0.29.11
+
+## 0.5.96
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.10
+- @graphql-mesh/mongoose@0.7.12
+
+## 0.5.95
+
+### Patch Changes
+
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/cli@0.29.9
+  - @graphql-mesh/mongoose@0.7.11
+
+## 0.5.94
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.8
+- @graphql-mesh/mongoose@0.7.10
+
+## 0.5.93
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.7
+- @graphql-mesh/mongoose@0.7.9
+
+## 0.5.92
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.6
+
+## 0.5.91
+
+### Patch Changes
+
+- @graphql-mesh/mongoose@0.7.8
+- @graphql-mesh/cli@0.29.5
+
+## 0.5.90
+
+### Patch Changes
+
+- Updated dependencies [28f80c0a7]
+  - @graphql-mesh/cli@0.29.4
+
+## 0.5.89
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.3
+- @graphql-mesh/mongoose@0.7.7
+
 ## 0.5.88
 
 ### Patch Changes

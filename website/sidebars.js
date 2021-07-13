@@ -4,11 +4,19 @@ module.exports = {
       'getting-started/introduction',
       'getting-started/installation',
       'getting-started/basic-example',
-      'getting-started/mesh-transforms',
-      'getting-started/multiple-apis',
     ],
-    'Input Handlers': [
-      'handlers/available-handlers',
+    Recipes: [
+      'recipes/multiple-apis',
+      'recipes/build-mesh-artifacts',
+      'recipes/typescript',
+      'recipes/as-sdk',
+      'recipes/as-gateway',
+      'recipes/federation',
+      'recipes/subscriptions-webhooks',
+      'recipes/live-queries',
+    ],
+    'Source Handlers': [
+      'handlers/handlers-introduction',
       'handlers/graphql',
       'handlers/openapi',
       'handlers/grpc',
@@ -23,6 +31,7 @@ module.exports = {
       'handlers/neo4j',
     ],
     Transforms: [
+      'transforms/transforms-introduction',
       'transforms/rename',
       'transforms/prefix',
       'transforms/encapsulate',
@@ -30,21 +39,14 @@ module.exports = {
       'transforms/snapshot',
       'transforms/mock',
       'transforms/resolvers-composition',
-      'transforms/federation',
       'transforms/filter-schema',
       'transforms/naming-convention',
+      'transforms/type-merging',
+      'transforms/federation',
       'transforms/extend',
     ],
-    Recipes: [
-      'recipes/typescript',
-      'recipes/as-sdk',
-      'recipes/as-gateway',
-      'recipes/federation',
-      'recipes/introspection-cache',
-      'recipes/subscriptions-webhooks',
-      'recipes/live-queries'
-    ],
-    "API Reference": require('./api-sidebar.json')
+    Cache: ['cache/inmemory-lru', 'cache/cache-file', 'cache/localforage', 'cache/cache-redis'],
+    'API Reference': require('./api-sidebar.json'),
     // 'Extend Your Mesh': ['extend/custom-handler', 'extend/custom-transform']
   },
 };

@@ -1,5 +1,59 @@
 # @graphql-mesh/merger-federation
 
+## 0.9.0
+
+### Minor Changes
+
+- bdb58dfec: chore(deps): bump object-hash
+
+### Patch Changes
+
+- Updated dependencies [bdb58dfec]
+  - @graphql-mesh/utils@0.12.0
+
+## 0.8.39
+
+### Patch Changes
+
+- Updated dependencies [7d0e33660]
+  - @graphql-mesh/utils@0.11.4
+
+## 0.8.38
+
+### Patch Changes
+
+- Updated dependencies [cfb517b3d]
+  - @graphql-mesh/types@0.42.0
+
+## 0.8.37
+
+### Patch Changes
+
+- 3c4c51100: enhance(runtime): skip validation on schema delegation
+- Updated dependencies [3c4c51100]
+  - @graphql-mesh/utils@0.11.3
+
+## 0.8.36
+
+### Patch Changes
+
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/types@0.41.1
+
+## 0.8.35
+
+### Patch Changes
+
+- Updated dependencies [214b7a23c]
+  - @graphql-mesh/types@0.41.0
+
+## 0.8.34
+
+### Patch Changes
+
+- Updated dependencies [0d2f7bfcd]
+  - @graphql-mesh/types@0.40.0
+
 ## 0.8.33
 
 ### Patch Changes

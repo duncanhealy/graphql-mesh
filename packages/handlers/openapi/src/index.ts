@@ -7,6 +7,9 @@ import {
   ResolverDataBasedFactory,
   loadFromModuleExportExpression,
   getCachedFetch,
+  jsonFlatStringify,
+  asArray,
+  stringInterpolator,
 } from '@graphql-mesh/utils';
 import { createGraphQLSchema, GraphQLOperationType } from './openapi-to-graphql';
 import { Oas3 } from './openapi-to-graphql/types/oas3';
@@ -18,48 +21,91 @@ import {
   MeshSource,
   KeyValueCache,
   MeshPubSub,
+  ImportFn,
+  Logger,
 } from '@graphql-mesh/types';
 import { OasTitlePathMethodObject } from './openapi-to-graphql/types/options';
-
-interface OpenAPIIntrospectionCache {
-  spec?: Oas3;
-}
+import { GraphQLID, GraphQLInputType } from 'graphql';
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import openapiDiff from 'openapi-diff';
+import { getValidOAS3 } from './openapi-to-graphql/oas_3_tools';
+import { Oas2 } from './openapi-to-graphql/types/oas2';
+import { join } from 'path';
+import { env } from 'process';
 
 export default class OpenAPIHandler implements MeshHandler {
   private config: YamlConfig.OpenapiHandler;
   private baseDir: string;
   private cache: KeyValueCache;
   private pubsub: MeshPubSub;
-  private introspectionCache: OpenAPIIntrospectionCache;
+  private oasSchema: StoreProxy<Oas3[]>;
+  private importFn: ImportFn;
+  private logger: Logger;
 
   constructor({
+    name,
     config,
     baseDir,
     cache,
     pubsub,
-    introspectionCache = {},
-  }: GetMeshSourceOptions<YamlConfig.OpenapiHandler, OpenAPIIntrospectionCache>) {
+    store,
+    importFn,
+    logger,
+  }: GetMeshSourceOptions<YamlConfig.OpenapiHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
     this.pubsub = pubsub;
-    this.introspectionCache = introspectionCache;
+    this.logger = logger;
+    // TODO: This validation here should be more flexible, probably specific to OAS
+    // Because we can handle json/swagger files, and also we might want to use this:
+    // https://github.com/Azure/openapi-diff
+    this.oasSchema = store.proxy<Oas3[]>('oas-schema', {
+      ...PredefinedProxyOptions.JsonWithoutValidation,
+      validate: async (oldOass, newOass) => {
+        for (const index in oldOass) {
+          const oldOas = oldOass[index];
+          const newOas = newOass[index];
+          const result = await openapiDiff.diffSpecs({
+            sourceSpec: {
+              content: jsonFlatStringify(oldOas),
+              location: join(this.baseDir, `.mesh/sources/${name}/oas-schema.js`),
+              format: 'openapi3',
+            },
+            destinationSpec: {
+              content: jsonFlatStringify(newOas),
+              location: config.source,
+              format: 'openapi3',
+            },
+          });
+          if (result.breakingDifferencesFound) {
+            throw new Error('Breaking changes found!');
+          }
+        }
+      },
+    });
+    this.importFn = importFn;
   }
 
-  private async getCachedSpec(fetch: WindowOrWorkerGlobalScope['fetch']): Promise<Oas3> {
-    const { source } = this.config;
-    if (!this.introspectionCache.spec) {
-      this.introspectionCache.spec =
-        typeof source !== 'string'
-          ? source
-          : await readFileOrUrlWithCache<Oas3>(source, this.cache, {
-              cwd: this.baseDir,
-              fallbackFormat: this.config.sourceFormat,
-              headers: this.config.schemaHeaders,
-              fetch,
-            });
-    }
-    return this.introspectionCache.spec;
+  private getCachedSpec(fetch: WindowOrWorkerGlobalScope['fetch']): Promise<Oas3[]> {
+    const { source: nonInterpolatedSource } = this.config;
+    const source = stringInterpolator.parse(nonInterpolatedSource, {
+      env,
+    });
+    return this.oasSchema.getWithSet(async () => {
+      let rawSpec: Oas3 | Oas2 | (Oas3 | Oas2)[];
+      if (typeof source !== 'string') {
+        rawSpec = source;
+      } else {
+        rawSpec = await readFileOrUrlWithCache(source, this.cache, {
+          cwd: this.baseDir,
+          fallbackFormat: this.config.sourceFormat,
+          headers: this.config.schemaHeaders,
+          fetch,
+        });
+      }
+      return Promise.all(asArray(rawSpec).map(singleSpec => getValidOAS3(singleSpec)));
+    });
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -75,7 +121,11 @@ export default class OpenAPIHandler implements MeshHandler {
 
     let fetch: WindowOrWorkerGlobalScope['fetch'];
     if (customFetch) {
-      fetch = await loadFromModuleExportExpression(customFetch, { defaultExportName: 'default', cwd: this.baseDir });
+      fetch = await loadFromModuleExportExpression(customFetch, {
+        defaultExportName: 'default',
+        cwd: this.baseDir,
+        importFn: this.importFn,
+      });
     } else {
       fetch = getCachedFetch(this.cache);
     }
@@ -132,8 +182,9 @@ export default class OpenAPIHandler implements MeshHandler {
       viewer: false,
       equivalentToMessages: true,
       pubsub: this.pubsub,
+      logger: this.logger,
       resolverMiddleware: (getResolverParams, originalFactory) => (root, args, context, info: any) => {
-        const resolverData: ResolverData = { root, args, context, info };
+        const resolverData: ResolverData = { root, args, context, info, env };
         const resolverParams = getResolverParams();
         resolverParams.requestOptions = {
           headers: getHeadersObject(headersFactory(resolverData)),
@@ -153,11 +204,11 @@ export default class OpenAPIHandler implements MeshHandler {
         if (resolverParams.baseUrl) {
           const urlObj = new URL(resolverParams.baseUrl);
           searchParamsFactory(resolverData, urlObj.searchParams);
-        } /* else {
-          console.warn(
-            `There is no 'baseUrl' defined for this OpenAPI definition. We recommend you to define one manually!`
+        } else {
+          this.logger.debug(
+            `Warning: There is no 'baseUrl' defined for this OpenAPI definition. We recommend you to define one manually!`
           );
-        } */
+        }
 
         if (context?.fetch) {
           resolverParams.fetch = context.fetch;
@@ -167,7 +218,7 @@ export default class OpenAPIHandler implements MeshHandler {
           resolverParams.qs = context.qs;
         }
 
-        return originalFactory(() => resolverParams)(root, args, context, info);
+        return originalFactory(() => resolverParams, this.logger)(root, args, context, info);
       },
     });
 
@@ -179,20 +230,23 @@ export default class OpenAPIHandler implements MeshHandler {
       ...Object.values(schema.getSubscriptionType()?.getFields() || {}),
     ];
 
-    for (const rootField of rootFields) {
-      for (const argName in args) {
-        const argConfig = args[argName];
-        rootField.args.push({
-          name: argName,
-          description: undefined,
-          defaultValue: undefined,
-          extensions: undefined,
-          astNode: undefined,
-          deprecationReason: undefined,
-          ...argConfig,
-        });
-      }
-    }
+    await Promise.all(
+      rootFields.map(rootField =>
+        Promise.all(
+          Object.entries(args).map(async ([argName, { type }]) =>
+            rootField?.args.push({
+              name: argName,
+              description: undefined,
+              defaultValue: undefined,
+              extensions: undefined,
+              astNode: undefined,
+              deprecationReason: undefined,
+              type: (schema.getType(type) as GraphQLInputType) || GraphQLID,
+            })
+          )
+        )
+      )
+    );
 
     contextVariables.push('fetch' /*, 'baseUrl' */);
 

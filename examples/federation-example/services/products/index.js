@@ -17,7 +17,10 @@ const typeDefs = gql`
 const resolvers = {
   Product: {
     __resolveReference(object) {
-      return products.find(product => product.upc === object.upc);
+      return {
+        ...object,
+        ...products.find(product => product.upc === object.upc),
+      };
     }
   },
   Query: {
@@ -37,7 +40,9 @@ const server = new ApolloServer({
 });
 
 module.exports = server.listen({ port: 9873 }).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
+  if (!process.env.CI) {
+    console.log(`🚀 Server ready at ${url}`);
+  }
   return server;
 });
 

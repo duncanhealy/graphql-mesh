@@ -1,5 +1,70 @@
 # @graphql-mesh/transform-prefix
 
+## 0.6.48
+
+### Patch Changes
+
+- Updated dependencies [bdb58dfec]
+  - @graphql-mesh/utils@0.12.0
+
+## 0.6.47
+
+### Patch Changes
+
+- Updated dependencies [7d0e33660]
+  - @graphql-mesh/utils@0.11.4
+
+## 0.6.46
+
+### Patch Changes
+
+- Updated dependencies [cfb517b3d]
+  - @graphql-mesh/types@0.42.0
+
+## 0.6.45
+
+### Patch Changes
+
+- Updated dependencies [3c4c51100]
+  - @graphql-mesh/utils@0.11.3
+
+## 0.6.44
+
+### Patch Changes
+
+- e6acdbd7d: enhance(runtime): do not compose unnecessary resolvers
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/types@0.41.1
+  - @graphql-mesh/utils@0.11.2
+
+## 0.6.43
+
+### Patch Changes
+
+- Updated dependencies [69c89666d]
+  - @graphql-mesh/utils@0.11.1
+
+## 0.6.42
+
+### Patch Changes
+
+- Updated dependencies [214b7a23c]
+  - @graphql-mesh/types@0.41.0
+
+## 0.6.41
+
+### Patch Changes
+
+- Updated dependencies [0d2f7bfcd]
+  - @graphql-mesh/types@0.40.0
+
+## 0.6.40
+
+### Patch Changes
+
+- Updated dependencies [1caa8ffd3]
+  - @graphql-mesh/utils@0.11.0
+
 ## 0.6.39
 
 ### Patch Changes

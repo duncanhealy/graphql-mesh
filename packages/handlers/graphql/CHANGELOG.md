@@ -1,5 +1,91 @@
 # @graphql-mesh/graphql
 
+## 0.17.10
+
+### Patch Changes
+
+- Updated dependencies [bdb58dfec]
+  - @graphql-mesh/utils@0.12.0
+
+## 0.17.9
+
+### Patch Changes
+
+- a04e3f090: fix(graphql): handle SDL files correctly
+
+## 0.17.8
+
+### Patch Changes
+
+- 674bbadc9: fix(graphql): respect introspection cache for federation
+
+## 0.17.7
+
+### Patch Changes
+
+- Updated dependencies [7d0e33660]
+  - @graphql-mesh/utils@0.11.4
+
+## 0.17.6
+
+### Patch Changes
+
+- Updated dependencies [cfb517b3d]
+  - @graphql-mesh/types@0.42.0
+
+## 0.17.5
+
+### Patch Changes
+
+- Updated dependencies [3c4c51100]
+  - @graphql-mesh/utils@0.11.3
+
+## 0.17.4
+
+### Patch Changes
+
+- a48368992: enhance(graphql): bump url-loader to run legacy subscriptions client lazily
+
+## 0.17.3
+
+### Patch Changes
+
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/types@0.41.1
+  - @graphql-mesh/utils@0.11.2
+
+## 0.17.2
+
+### Patch Changes
+
+- Updated dependencies [69c89666d]
+  - @graphql-mesh/utils@0.11.1
+
+## 0.17.1
+
+### Patch Changes
+
+- Updated dependencies [214b7a23c]
+  - @graphql-mesh/types@0.41.0
+
+## 0.17.0
+
+### Minor Changes
+
+- 0d2f7bfcd: Added the config option `useWebSocketLegacyProtocol` for the graphql handler that enables the use of the `graphql-ws` protocol for subscriptions to the handlers source.
+
+### Patch Changes
+
+- Updated dependencies [0d2f7bfcd]
+  - @graphql-mesh/types@0.40.0
+
+## 0.16.2
+
+### Patch Changes
+
+- Updated dependencies [1caa8ffd3]
+  - @graphql-mesh/utils@0.11.0
+
 ## 0.16.1
 
 ### Patch Changes

@@ -33,7 +33,6 @@
 // Type imports:
 import { Options, InternalOptions, Report, ConnectOptions, RequestOptions } from './types/options';
 import { Oas3 } from './types/oas3';
-import { Oas2 } from './types/oas2';
 import { Args, GraphQLOperationType, SubscriptionContext } from './types/graphql';
 import { Operation } from './types/operation';
 import { PreprocessingData } from './types/preprocessing_data';
@@ -47,21 +46,21 @@ import { preprocessOas } from './preprocessor';
 import * as Oas3Tools from './oas_3_tools';
 import { createAndLoadViewer } from './auth_builder';
 import { GraphQLSchemaConfig } from 'graphql/type/schema';
-import { sortObject, handleWarning, mockDebug as debug, MitigationTypes } from './utils';
-import { MeshPubSub } from '@graphql-mesh/types';
+import { sortObject, handleWarning, MitigationTypes } from './utils';
+import { Logger, MeshPubSub } from '@graphql-mesh/types';
+import { asArray, DefaultLogger } from '@graphql-mesh/utils';
+import { inspect } from 'util';
 
 type Result = {
   schema: GraphQLSchema;
   report: Report;
 };
 
-const translationLog = debug('translation');
-
 /**
  * Creates a GraphQL interface from the given OpenAPI Specification (2 or 3).
  */
 export async function createGraphQLSchema<TSource, TContext, TArgs>(
-  spec: Oas3 | Oas2 | (Oas3 | Oas2)[],
+  oasOrOass: Oas3 | Oas3[],
   options: Options<TSource, TContext, TArgs> = {}
 ): Promise<Result> {
   // Setting default options
@@ -88,10 +87,12 @@ export async function createGraphQLSchema<TSource, TContext, TArgs>(
   options.equivalentToMessages =
     typeof options.equivalentToMessages === 'boolean' ? options.equivalentToMessages : true;
 
+  options.logger = options.logger || new DefaultLogger('openapi-to-graphql');
+
   options.resolverMiddleware =
     typeof options.resolverMiddleware === 'function'
       ? options.resolverMiddleware
-      : (resolverFactoryParams, factory) => factory(resolverFactoryParams);
+      : (resolverFactoryParams, factory) => factory(resolverFactoryParams, options.logger);
 
   options.report = {
     warnings: [],
@@ -106,28 +107,8 @@ export async function createGraphQLSchema<TSource, TContext, TArgs>(
 
   options.includeHttpDetails = typeof options.includeHttpDetails === 'boolean' ? options.includeHttpDetails : false;
 
-  let oass: Oas3[];
-
-  if (Array.isArray(spec)) {
-    /**
-     * Convert all non-OAS 3.0.x into OAS 3.0.x
-     */
-    oass = await Promise.all(
-      spec.map(ele => {
-        return Oas3Tools.getValidOAS3(ele);
-      })
-    );
-  } else {
-    /**
-     * Check if the spec is a valid OAS 3.0.x
-     * If the spec is OAS 2.0, attempt to translate it into 3.0.x, then try to
-     * translate the spec into a GraphQL schema
-     */
-    oass = [await Oas3Tools.getValidOAS3(spec)];
-  }
-
   const { schema, report } = await translateOpenAPIToGraphQL(
-    oass,
+    asArray(oasOrOass),
     options as InternalOptions<TSource, TContext, TArgs>
   );
   return {
@@ -175,6 +156,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
     // Logging options
     provideErrorExtensions,
     equivalentToMessages,
+    logger,
   }: InternalOptions<TSource, TContext, TArgs>
 ): Promise<{ schema: GraphQLSchema; report: Report }> {
   const options = {
@@ -211,8 +193,12 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
     // Logging options
     provideErrorExtensions,
     equivalentToMessages,
+
+    logger,
   };
-  translationLog(`Options: ${JSON.stringify(options)}`);
+
+  const translationLogger = options.logger.child('translation');
+  translationLogger.debug(`Options: ${inspect(options)}`);
 
   /**
    * Extract information from the OASs and put it inside a data structure that
@@ -220,7 +206,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
    */
   const data: PreprocessingData<TSource, TContext, TArgs> = preprocessOas(oass, options);
 
-  preliminaryChecks(options, data);
+  preliminaryChecks(options, data, translationLogger);
 
   // Query, Mutation, and Subscription fields
   let queryFields: { [fieldName: string]: GraphQLFieldConfig<any, any> } = {};
@@ -248,7 +234,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
 
   // Add Query and Mutation fields
   Object.entries(data.operations).forEach(([operationId, operation]) => {
-    translationLog(`Process operation '${operation.operationString}'...`);
+    translationLogger.debug(`Process operation '${operation.operationString}'...`);
 
     const field = getFieldForOperation(
       operation,
@@ -257,7 +243,8 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
       requestOptions,
       connectOptions,
       includeHttpDetails,
-      pubsub
+      pubsub,
+      logger
     );
 
     const saneOperationId = Oas3Tools.sanitize(operationId, Oas3Tools.CaseStyle.camelCase);
@@ -282,7 +269,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
              */
             operationIdFieldNames
           ) {
-            fieldName = Oas3Tools.storeSaneName(saneOperationId, operationId, data.saneMap);
+            fieldName = Oas3Tools.storeSaneName(saneOperationId, operationId, data.saneMap, options.logger);
           }
 
           if (fieldName in authQueryFields[securityRequirement]) {
@@ -295,7 +282,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
                 `unique so only one can be added to the authentication ` +
                 `viewer. Operation '${operation.operationString}' will be ignored.`,
               data,
-              log: translationLog,
+              logger: translationLogger,
             });
           } else {
             authQueryFields[securityRequirement][fieldName] = field;
@@ -311,7 +298,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
            */
           operationIdFieldNames
         ) {
-          fieldName = Oas3Tools.storeSaneName(saneOperationId, operationId, data.saneMap);
+          fieldName = Oas3Tools.storeSaneName(saneOperationId, operationId, data.saneMap, options.logger);
         }
 
         if (fieldName in queryFields) {
@@ -323,7 +310,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
               `unique so only one can be added to the Query object. ` +
               `Operation '${operation.operationString}' will be ignored.`,
             data,
-            log: translationLog,
+            logger: translationLogger,
           });
         } else {
           queryFields[fieldName] = field;
@@ -337,14 +324,15 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
          * Use operationId to avoid problems differentiating operations with the
          * same path but differnet methods
          */
-        saneFieldName = Oas3Tools.storeSaneName(saneOperationId, operationId, data.saneMap);
+        saneFieldName = Oas3Tools.storeSaneName(saneOperationId, operationId, data.saneMap, options.logger);
       } else {
         const fieldName = `${operation.method}${Oas3Tools.inferResourceNameFromPath(operation.path)}`;
 
         saneFieldName = Oas3Tools.storeSaneName(
           Oas3Tools.sanitize(fieldName, Oas3Tools.CaseStyle.camelCase),
           fieldName,
-          data.saneMap
+          data.saneMap,
+          options.logger
         );
       }
 
@@ -364,7 +352,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
                 `unique so only one can be added to the authentication ` +
                 `viewer. Operation '${operation.operationString}' will be ignored.`,
               data,
-              log: translationLog,
+              logger: translationLogger,
             });
           } else {
             authMutationFields[securityRequirement][saneFieldName] = field;
@@ -380,7 +368,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
               `unique so only one can be added to the Mutation object. ` +
               `Operation '${operation.operationString}' will be ignored.`,
             data,
-            log: translationLog,
+            logger: translationLogger,
           });
         } else {
           mutationFields[saneFieldName] = field;
@@ -391,7 +379,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
 
   // Add Subscription fields
   Object.entries(data.callbackOperations).forEach(([operationId, operation]) => {
-    translationLog(`Process operation '${operationId}'...`);
+    translationLogger.debug(`Process operation '${operationId}'...`);
 
     const field = getFieldForOperation(
       operation,
@@ -400,12 +388,13 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
       requestOptions,
       connectOptions,
       includeHttpDetails,
-      pubsub
+      pubsub,
+      logger
     );
 
     const saneOperationId = Oas3Tools.sanitize(operationId, Oas3Tools.CaseStyle.camelCase);
 
-    const saneFieldName = Oas3Tools.storeSaneName(saneOperationId, operationId, data.saneMap);
+    const saneFieldName = Oas3Tools.storeSaneName(saneOperationId, operationId, data.saneMap, options.logger);
     if (operation.inViewer) {
       for (const securityRequirement of operation.securityRequirements) {
         if (typeof authSubscriptionFields[securityRequirement] !== 'object') {
@@ -422,7 +411,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
               `unique so only one can be added to the authentication ` +
               `viewer. Operation '${operation.operationString}' will be ignored.`,
             data,
-            log: translationLog,
+            logger: translationLogger,
           });
         } else {
           authSubscriptionFields[securityRequirement][saneFieldName] = field;
@@ -438,7 +427,7 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
             `unique so only one can be added to the Mutation object. ` +
             `Operation '${operation.operationString}' will be ignored.`,
           data,
-          log: translationLog,
+          logger: translationLogger,
         });
       } else {
         subscriptionFields[saneFieldName] = field;
@@ -489,21 +478,27 @@ async function translateOpenAPIToGraphQL<TSource, TContext, TArgs>(
   if (Object.keys(authQueryFields).length > 0) {
     Object.assign(
       queryFields,
-      createAndLoadViewer(authQueryFields, GraphQLOperationType.Query, data, includeHttpDetails)
+      createAndLoadViewer(authQueryFields, GraphQLOperationType.Query, data, includeHttpDetails, options.logger)
     );
   }
 
   if (Object.keys(authMutationFields).length > 0) {
     Object.assign(
       mutationFields,
-      createAndLoadViewer(authMutationFields, GraphQLOperationType.Mutation, data, includeHttpDetails)
+      createAndLoadViewer(authMutationFields, GraphQLOperationType.Mutation, data, includeHttpDetails, options.logger)
     );
   }
 
   if (Object.keys(authSubscriptionFields).length > 0) {
     Object.assign(
       subscriptionFields,
-      createAndLoadViewer(authSubscriptionFields, GraphQLOperationType.Subscription, data, includeHttpDetails)
+      createAndLoadViewer(
+        authSubscriptionFields,
+        GraphQLOperationType.Subscription,
+        data,
+        includeHttpDetails,
+        options.logger
+      )
     );
   }
 
@@ -561,7 +556,8 @@ function getFieldForOperation<TSource, TContext, TArgs>(
   requestOptions: RequestOptions<TSource, TContext, TArgs>,
   connectOptions: ConnectOptions,
   includeHttpDetails: boolean,
-  pubsub: MeshPubSub
+  pubsub: MeshPubSub,
+  logger: Logger
 ): GraphQLFieldConfig<TSource, TContext | SubscriptionContext, TArgs> {
   // Create GraphQL Type for response:
   const type = getGraphQLType({
@@ -569,6 +565,7 @@ function getFieldForOperation<TSource, TContext, TArgs>(
     data,
     operation,
     includeHttpDetails,
+    logger,
   }) as GraphQLOutputType;
 
   const payloadSchemaName = operation.payloadDefinition ? operation.payloadDefinition.graphQLInputObjectTypeName : null;
@@ -585,6 +582,7 @@ function getFieldForOperation<TSource, TContext, TArgs>(
     operation,
     data,
     includeHttpDetails,
+    logger,
   });
 
   // Get resolver and subscribe function for Subscription fields
@@ -595,6 +593,7 @@ function getFieldForOperation<TSource, TContext, TArgs>(
       operation,
       responseName: responseSchemaName,
       data,
+      logger,
     });
 
     const subscribe = getSubscribe({
@@ -604,6 +603,7 @@ function getFieldForOperation<TSource, TContext, TArgs>(
       baseUrl,
       connectOptions,
       pubsub,
+      logger,
     });
 
     return {
@@ -623,6 +623,7 @@ function getFieldForOperation<TSource, TContext, TArgs>(
         data,
         baseUrl,
         requestOptions,
+        logger,
       }),
       getResolver
     );
@@ -643,7 +644,8 @@ function getFieldForOperation<TSource, TContext, TArgs>(
  */
 function checkCustomResolversStructure<TSource, TContext, TArgs>(
   customResolvers: any,
-  data: PreprocessingData<TSource, TContext, TArgs>
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  translationLogger: Logger
 ) {
   if (typeof customResolvers === 'object') {
     // Check that all OASs that are referenced in the customResolvers are provided
@@ -659,7 +661,7 @@ function checkCustomResolversStructure<TSource, TContext, TArgs>(
           mitigationType: MitigationTypes.CUSTOM_RESOLVER_UNKNOWN_OAS,
           message: `Custom resolvers reference OAS '${title.toString()}' but no such ` + `OAS was provided`,
           data,
-          log: translationLog,
+          logger: translationLogger,
         });
       });
 
@@ -684,7 +686,7 @@ function checkCustomResolversStructure<TSource, TContext, TArgs>(
                 `path '${path.toString()}' and method '${method.toString()}' but no such operation ` +
                 `exists in OAS '${title.toString()}'`,
               data,
-              log: translationLog,
+              logger: translationLogger,
             });
           }
         });
@@ -698,7 +700,8 @@ function checkCustomResolversStructure<TSource, TContext, TArgs>(
  */
 function preliminaryChecks<TSource, TContext, TArgs>(
   options: InternalOptions<TSource, TContext, TArgs>,
-  data: PreprocessingData<TSource, TContext, TArgs>
+  data: PreprocessingData<TSource, TContext, TArgs>,
+  translationLogger: Logger
 ): void {
   // Check if OASs have unique titles
   const titles = data.oass.map(oas => {
@@ -715,15 +718,15 @@ function preliminaryChecks<TSource, TContext, TArgs>(
       mitigationType: MitigationTypes.MULTIPLE_OAS_SAME_TITLE,
       message: `Multiple OAS share the same title '${title}'`,
       data,
-      log: translationLog,
+      logger: translationLogger,
     });
   });
 
   // Check customResolvers
-  checkCustomResolversStructure(options.customResolvers, data);
+  checkCustomResolversStructure(options.customResolvers, data, translationLogger);
 
   // Check customSubscriptionResolvers
-  checkCustomResolversStructure(options.customSubscriptionResolvers, data);
+  checkCustomResolversStructure(options.customSubscriptionResolvers, data, translationLogger);
 }
 
 export { sanitize, CaseStyle } from './oas_3_tools';

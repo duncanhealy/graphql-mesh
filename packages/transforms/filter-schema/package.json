@@ -1,27 +1,37 @@
 {
   "name": "@graphql-mesh/transform-filter-schema",
-  "version": "0.10.8",
+  "version": "0.10.17",
   "sideEffects": false,
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
   },
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/micromatch": "4.0.1"
+    "@types/micromatch": "4.0.2"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.39.0",
-    "@graphql-mesh/utils": "0.10.0",
+    "@graphql-mesh/types": "0.42.0",
+    "@graphql-mesh/utils": "0.12.0",
     "micromatch": "4.0.4",
-    "@graphql-tools/wrap": "7.0.5",
-    "@graphql-tools/delegate": "7.1.2",
-    "@graphql-tools/utils": "7.7.3"
+    "@graphql-tools/wrap": "8.0.0-alpha-c42e811d.0",
+    "@graphql-tools/delegate": "8.0.0-alpha-c42e811d.0",
+    "@graphql-tools/utils": "8.0.0-alpha-c42e811d.0"
   },
   "publishConfig": {
     "access": "public",

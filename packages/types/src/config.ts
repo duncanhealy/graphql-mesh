@@ -21,9 +21,14 @@ export interface Config {
    */
   additionalTypeDefs?: any;
   /**
-   * Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalSubscriptionObject)
+   * Additional resolvers, or resolvers overrides you wish to add to the schema mesh (Any of: String, AdditionalStitchingResolverObject, AdditionalStitchingBatchResolverObject, AdditionalSubscriptionObject)
    */
-  additionalResolvers?: (string | AdditionalStitchingResolverObject | AdditionalSubscriptionObject)[];
+  additionalResolvers?: (
+    | string
+    | AdditionalStitchingResolverObject
+    | AdditionalStitchingBatchResolverObject
+    | AdditionalSubscriptionObject
+  )[];
   cache?: Cache;
   /**
    * Merge method
@@ -38,12 +43,19 @@ export interface Config {
    */
   liveQueryInvalidations?: LiveQueryInvalidation[];
   /**
-   * Path to the file containing the introspection cache
+   * Provide a query or queries for GraphQL Playground, validation and SDK Generation
+   * The value can be the file path, glob expression for the file paths or the SDL.
+   * (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
+   * But TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)
    */
-  introspectionCache?: string;
+  documents?: string[];
+  /**
+   * Logger instance that matches `Console` interface of NodeJS
+   */
+  logger?: any;
 }
 /**
- * Configuration for `mesh serve` command.
+ * Configuration for `mesh start` or `mesh dev` command.
  * Those commands won't be available in programmatic usage.
  */
 export interface ServeConfig {
@@ -59,13 +71,6 @@ export interface ServeConfig {
    * The binding hostname (default: `localhost`)
    */
   hostname?: string;
-  /**
-   * Provide an example query or queries for GraphQL Playground
-   * The value can be the file path, glob expression for the file paths or the SDL.
-   * (.js, .jsx, .graphql, .gql, .ts and .tsx files are supported.
-   * But TypeScript support is only available if `ts-node` is installed and `ts-node/register` is added under `require` parameter)
-   */
-  exampleQuery?: string;
   cors?: CorsConfig;
   /**
    * Express/Connect compatible handlers and middlewares extend GraphQL Mesh HTTP Server (Any of: WebhookHandler, ExpressHandler)
@@ -112,6 +117,10 @@ export interface WebhookHandler {
    * Path that remote API will ping
    */
   path: string;
+  /**
+   * HTTP Method that the handler will control (Allowed values: GET, POST, DELETE, PATCH)
+   */
+  method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
   /**
    * Name of the topic you want to pass incoming payload
    */
@@ -171,10 +180,9 @@ export interface Source {
  * Point to the handler you wish to use, it can either be a predefined handler, or a custom
  */
 export interface Handler {
-  fhir?: FhirHandler;
   graphql?: GraphQLHandler;
   grpc?: GrpcHandler;
-  jsonSchema?: JsonSchemaHandler;
+  JsonSchema?: JsonSchemaHandler;
   mongoose?: MongooseHandler;
   mysql?: MySQLHandler;
   neo4j?: Neo4JHandler;
@@ -185,9 +193,6 @@ export interface Handler {
   thrift?: ThriftHandler;
   tuql?: TuqlHandler;
   [k: string]: any;
-}
-export interface FhirHandler {
-  endpoint?: string;
 }
 /**
  * Handler for remote/local/third-party GraphQL schema
@@ -231,6 +236,10 @@ export interface GraphQLHandler {
    */
   webSocketImpl?: string;
   /**
+   * Use legacy web socket protocol `graphql-ws` instead of the more current standard `graphql-transport-ws`
+   */
+  useWebSocketLegacyProtocol?: boolean;
+  /**
    * Path to the introspection
    * You can seperately give schema introspection
    */
@@ -260,16 +269,6 @@ export interface GrpcHandler {
    * Use a binary-encoded or JSON file descriptor set file (Any of: ProtoFilePath, String)
    */
   descriptorSetFilePath?: ProtoFilePath | string;
-  /**
-   * Your base service name
-   * Used for naming only
-   */
-  serviceName?: string;
-  /**
-   * Your base package name
-   * Used for naming only
-   */
-  packageName?: string;
   /**
    * Request timeout in milliseconds
    * Default: 200000
@@ -320,11 +319,10 @@ export interface JsonSchemaHandler {
   };
   operations: JsonSchemaOperation[];
   disableTimestampScalar?: boolean;
-  baseSchema?: any;
   /**
    * Field name of your custom error object (default: 'message')
    */
-  errorMessageField?: string;
+  errorMessage?: string;
 }
 export interface JsonSchemaOperation {
   field: string;
@@ -336,14 +334,14 @@ export interface JsonSchemaOperation {
    */
   type: 'Query' | 'Mutation' | 'Subscription';
   /**
-   * Allowed values: GET, DELETE, POST, PUT, PATCH
+   * Allowed values: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH
    */
-  method?: 'GET' | 'DELETE' | 'POST' | 'PUT' | 'PATCH';
+  method?: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE' | 'PATCH';
   requestSchema?: any;
   requestSample?: any;
   requestTypeName?: string;
-  responseSample?: any;
   responseSchema?: any;
+  responseSample?: any;
   responseTypeName?: string;
   argTypeMap?: {
     [k: string]: any;
@@ -356,6 +354,7 @@ export interface MongooseHandler {
   connectionString?: string;
   models?: MongooseModel[];
   discriminators?: MongooseModel[];
+  autoTypeMerging?: boolean;
 }
 export interface MongooseModel {
   name: string;
@@ -895,6 +894,7 @@ export interface Transform {
    */
   resolversComposition?: ResolversCompositionTransform | any;
   snapshot?: SnapshotTransformConfig;
+  typeMerging?: TypeMergingConfig;
   [k: string]: any;
 }
 export interface CacheTransformConfig {
@@ -988,20 +988,18 @@ export interface FederationField {
 export interface FederationFieldConfig {
   external?: boolean;
   provides?: string;
-  required?: string;
+  requires?: string;
 }
 export interface ResolveReferenceObject {
-  targetSource: string;
-  targetMethod: string;
-  args: {
-    [k: string]: any;
-  };
-  returnData?: string;
-  resultSelectedFields?: {
-    [k: string]: any;
-  };
-  resultSelectionSet?: string;
-  resultDepth?: number;
+  /**
+   * Name of root field name that resolves the reference
+   */
+  queryFieldName: string;
+  /**
+   * If the root field name has multiple args,
+   * you need to define which argument should receive the key
+   */
+  keyArg?: string;
 }
 export interface FilterSchemaTransform {
   /**
@@ -1031,6 +1029,10 @@ export interface MockingConfig {
    * Mock configurations
    */
   mocks?: MockingFieldConfig[];
+  /**
+   * The path to the code runs before the store is attached to the schema
+   */
+  initializeStore?: any;
 }
 export interface MockingFieldConfig {
   /**
@@ -1057,6 +1059,31 @@ export interface MockingFieldConfig {
    * Both "moduleName#exportName" or only "moduleName" would work
    */
   custom?: string;
+  /**
+   * Length of the mock list
+   * For the list types `[ObjectType]`, how many `ObjectType` you want to return?
+   * default: 2
+   */
+  length?: number;
+  store?: GetFromMockStoreConfig;
+  /**
+   * Update the data on the mock store
+   */
+  updateStore?: UpdateMockStoreConfig[];
+}
+/**
+ * Get the data from the mock store
+ */
+export interface GetFromMockStoreConfig {
+  type?: string;
+  key?: string;
+  fieldName?: string;
+}
+export interface UpdateMockStoreConfig {
+  type?: string;
+  key?: string;
+  fieldName?: string;
+  value?: string;
 }
 /**
  * Transformer to apply naming convention to GraphQL Types
@@ -1210,27 +1237,121 @@ export interface SnapshotTransformConfig {
    */
   respectSelectionSet?: boolean;
 }
+/**
+ * [Type Merging](https://www.graphql-tools.com/docs/stitch-type-merging) Configuration
+ */
+export interface TypeMergingConfig {
+  types?: MergedTypeConfig[];
+  /**
+   * Denotes a root field used to query a merged type across services.
+   * The marked field's name is analogous
+   * to the fieldName setting in
+   * [merged type configuration](https://www.graphql-tools.com/docs/stitch-type-merging#basic-example),
+   * while the field's arguments and return type are used to infer merge configuration.
+   * Directive arguments tune the merge behavior
+   */
+  queryFields?: MergedRootFieldConfig[];
+}
+export interface MergedTypeConfig {
+  /**
+   * Name of the type (Query by default)
+   */
+  typeName?: string;
+  key?: KeyAnnotation;
+  /**
+   * Specifies types and fields
+   * that provide a [canonical definition](https://www.graphql-tools.com/docs/stitch-type-merging#canonical-definitions) to be built into the gateway schema. Useful for selecting preferred characteristics among types and fields that overlap across subschemas. Root fields marked as canonical specify which subschema the field proxies for new queries entering the graph.
+   */
+  canonical?: boolean;
+  fields?: MergedTypeField[];
+}
+/**
+ * Specifies a base selection set needed to merge the annotated type across subschemas.
+ * Analogous to the `selectionSet` setting specified in [merged type configuration](https://www.graphql-tools.com/docs/stitch-type-merging#basic-example).
+ */
+export interface KeyAnnotation {
+  selectionSet: string;
+}
+export interface MergedTypeField {
+  fieldName: string;
+  computed?: ComputedAnnotation;
+}
+/**
+ * specifies a selection of fields required from other services to compute the value of this field.
+ * These additional fields are only selected when the computed field is requested.
+ * Analogous to [computed field](https://www.graphql-tools.com/docs/stitch-type-merging#computed-fields) in merged type configuration.
+ * Computed field dependencies must be sent into the subservice using an [object key](https://www.graphql-tools.com/docs/stitch-directives-sdl#object-keys).
+ */
+export interface ComputedAnnotation {
+  selectionSet: string;
+}
+export interface MergedRootFieldConfig {
+  queryFieldName: string;
+  /**
+   * Specifies the name of a field to pick off origin objects as the key value. When omitted, a `@key` directive must be included on the return type's definition to be built into an object key.
+   * https://www.graphql-tools.com/docs/stitch-directives-sdl#object-keys
+   */
+  keyField?: string;
+  /**
+   * Specifies which field argument receives the merge key. This may be omitted for fields with only one argument where the recipient can be inferred.
+   */
+  keyArg?: string;
+  /**
+   * Specifies a string of additional keys and values to apply to other arguments,
+   * formatted as `\"\"\" arg1: "value", arg2: "value" \"\"\"`.
+   */
+  additionalArgs?: string;
+  /**
+   * Advanced use only; Allows building a custom key just for the argument from the selectionSet included by the `@key` directive.
+   */
+  key?: string[];
+  /**
+   * Advanced use only; This argument specifies a string expression that allows more customization of the input arguments. Rules for evaluation of this argument are as follows:
+   *   - basic object parsing of the input key: `"arg1: $key.arg1, arg2: $key.arg2"`
+   *   - any expression enclosed by double brackets will be evaluated once for each of the requested keys, and then sent as a list: `"input: { keys: [[$key]] }"`
+   *   - selections from the key can be referenced by using the $ sign and dot notation: `"upcs: [[$key.upc]]"`, so that `$key.upc` refers to the `upc` field of the key.
+   */
+  argsExpr?: string;
+}
 export interface AdditionalStitchingResolverObject {
-  type: string;
-  field: string;
+  sourceName: string;
+  sourceTypeName: string;
+  sourceFieldName: string;
+  sourceSelectionSet?: string;
   requiredSelectionSet?: string;
-  targetSource: string;
-  targetMethod: string;
-  args?: {
+  sourceArgs?: {
     [k: string]: any;
   };
-  returnData?: string;
-  resultSelectedFields?: {
+  targetTypeName: string;
+  targetFieldName: string;
+  /**
+   * Extract specific property from the result
+   */
+  result?: string;
+  /**
+   * If return types don't match,
+   * you can specify a result type to apply inline fragment
+   */
+  resultType?: string;
+}
+export interface AdditionalStitchingBatchResolverObject {
+  sourceName: string;
+  sourceTypeName: string;
+  sourceFieldName: string;
+  keyField: string;
+  keysArg: string;
+  additionalArgs?: {
     [k: string]: any;
   };
-  resultSelectionSet?: string;
-  resultDepth?: number;
+  requiredSelectionSet?: string;
+  targetTypeName: string;
+  targetFieldName: string;
 }
 export interface AdditionalSubscriptionObject {
-  type: string;
-  field: string;
+  targetTypeName: string;
+  targetFieldName: string;
   pubsubTopic: string;
-  returnData?: string;
+  result?: string;
   filterBy?: string;
 }
 /**

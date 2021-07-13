@@ -9,13 +9,18 @@ sidebar_label: Mesh as Gateway
   <br/>
 </p>
 
-You can use GraphQL Mesh as a gateway for your data sources. CLI's `serve` command creates a GraphQL Endpoint with GraphQL Playground.
+You can use GraphQL Mesh as a gateway for your data sources. CLI's `dev` command creates a GraphQL Endpoint with GraphQL Playground.
 
 ```bash
 mesh serve
 ```
+You can also point to a specific directory which contains the source files (`.meshrc.yaml`, etc.)
 
-You can configure `serve` command like below in `.meshrc.yml`;
+```bash
+mesh dev --dir some/path/to-configuration/
+```
+
+You can configure `dev` command like below in `.meshrc.yml`;
 
 ```yaml
 serve: 

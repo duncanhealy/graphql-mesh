@@ -1,5 +1,87 @@
 # @graphql-mesh/transform-mock
 
+## 0.10.0
+
+### Minor Changes
+
+- 05025d42a: feat(mock): apply mocks for graphql-scalars automatically
+
+## 0.9.7
+
+### Patch Changes
+
+- Updated dependencies [bdb58dfec]
+  - @graphql-mesh/utils@0.12.0
+
+## 0.9.6
+
+### Patch Changes
+
+- bcfe7a676: fix(mock): respect cwd while importing initializeStore script
+
+## 0.9.5
+
+### Patch Changes
+
+- Updated dependencies [7d0e33660]
+  - @graphql-mesh/utils@0.11.4
+
+## 0.9.4
+
+### Patch Changes
+
+- Updated dependencies [cfb517b3d]
+  - @graphql-mesh/types@0.42.0
+
+## 0.9.3
+
+### Patch Changes
+
+- Updated dependencies [3c4c51100]
+  - @graphql-mesh/utils@0.11.3
+
+## 0.9.2
+
+### Patch Changes
+
+- e6acdbd7d: enhance(runtime): do not compose unnecessary resolvers
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/types@0.41.1
+  - @graphql-mesh/utils@0.11.2
+
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies [69c89666d]
+  - @graphql-mesh/utils@0.11.1
+
+## 0.9.0
+
+### Minor Changes
+
+- acb45130b: feat(mock): initial impl of stateful mocking
+
+### Patch Changes
+
+- acb45130b: fix(mock): fix field mockings
+- Updated dependencies [214b7a23c]
+  - @graphql-mesh/types@0.41.0
+
+## 0.8.8
+
+### Patch Changes
+
+- Updated dependencies [0d2f7bfcd]
+  - @graphql-mesh/types@0.40.0
+
+## 0.8.7
+
+### Patch Changes
+
+- Updated dependencies [1caa8ffd3]
+  - @graphql-mesh/utils@0.11.0
+
 ## 0.8.6
 
 ### Patch Changes

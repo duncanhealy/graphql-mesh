@@ -63,7 +63,7 @@ sources:
         source: ./my-schema.json
         operationHeaders:
           # Please do not use capital letters while getting the headers
-          Authorization: Bearer {context.headers['x-my-api-token']} 
+          Authorization: Bearer {context.headers['x-my-api-token']}
           # You can also access to the cookies like below;
           # Authorization: Bearer {context.cookies.myApiToken}
 ```
@@ -81,7 +81,7 @@ sources:
       openapi:
         source: ./my-schema.json
         operationHeaders:
-          Authorization: Bearer ${MY_API_TOKEN}
+          Authorization: Bearer {env.MY_API_TOKEN}
 ```
 
 ## Advanced cookies handling
@@ -100,7 +100,7 @@ sources:
     handler:
       openapi:
         source: ./openapi.yaml
-        baseUrl: ${REST_API_URL}/api/
+        baseUrl: "{env.REST_URL}/api/"
         operationHeaders:
           Authorization-Header: "{context.headers['authorization']}"
           Authorization-Cookie: Bearer {context.cookies.accessToken}
@@ -151,9 +151,16 @@ const oneYear = 365 * 24 * 3600
 
 const resolvers = {
   Mutation: {
-    login: async (_root, args, { Rest, res }) => {
+    login: async (root, args, context, info) => {
       // Call the Rest API's login operation
-      const result = await Rest.api.accountLogin(args.credentials)
+      const result = await context.Rest.Mutation.accountLogin({
+        root,
+        args: {
+          credentials: args.credentials
+        },
+        context,
+        info
+      })
       // if `result` contains a JWT token, you could instead decode it and set `Expires`
       // to the JWT token's expiration date
       res.set('Set-Cookie', `accessToken=${result}; Path=/; Secure; HttpOnly; Max-Age=${oneYear};`)
@@ -172,10 +179,9 @@ const resolvers = {
 module.exports = { resolvers }
 ```
 
-There's a caveat: the Rest API's login operation cannot have the same name as the additional login mutation. In this example we assumed that the login operation of the Rest API was named `accountLogin`, thus avoiding the name conflict.
+## Examples
 
-
-> We have a lot of examples for OpenAPI Handler;
+We have a lot of examples for OpenAPI Handler;
 - [JavaScript Wiki](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-javascript-wiki)
 - [Location Weather](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-location-weather)
 - [StackExchange](https://codesandbox.io/s/github/Urigo/graphql-mesh/tree/master/examples/openapi-stackexchange)

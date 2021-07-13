@@ -1,5 +1,166 @@
 # typescript-location-weather-example
 
+## 0.5.110
+
+### Patch Changes
+
+- Updated dependencies [624deb612]
+- Updated dependencies [97d44f990]
+  - @graphql-mesh/openapi@0.16.11
+  - @graphql-mesh/transform-cache@0.9.1
+
+## 0.5.109
+
+### Patch Changes
+
+- Updated dependencies [01cf89298]
+  - @graphql-mesh/config@0.17.0
+  - @graphql-mesh/runtime@0.17.0
+  - @graphql-mesh/cli@0.30.2
+
+## 0.5.108
+
+### Patch Changes
+
+- Updated dependencies [bdb58dfec]
+  - @graphql-mesh/transform-cache@0.9.0
+  - @graphql-mesh/cli@0.30.1
+  - @graphql-mesh/config@0.16.6
+  - @graphql-mesh/openapi@0.16.10
+  - @graphql-mesh/runtime@0.16.6
+  - @graphql-mesh/transform-rename@0.8.19
+
+## 0.5.107
+
+### Patch Changes
+
+- Updated dependencies [d27f36029]
+  - @graphql-mesh/cli@0.30.0
+
+## 0.5.106
+
+### Patch Changes
+
+- Updated dependencies [b9036c51b]
+- Updated dependencies [4d96aa9b5]
+  - @graphql-mesh/cli@0.29.14
+
+## 0.5.105
+
+### Patch Changes
+
+- Updated dependencies [ee86d8fa7]
+  - @graphql-mesh/cli@0.29.13
+
+## 0.5.104
+
+### Patch Changes
+
+- Updated dependencies [7d0e33660]
+  - @graphql-mesh/openapi@0.16.9
+  - @graphql-mesh/cli@0.29.12
+  - @graphql-mesh/config@0.16.5
+  - @graphql-mesh/runtime@0.16.5
+  - @graphql-mesh/transform-cache@0.8.48
+  - @graphql-mesh/transform-rename@0.8.18
+
+## 0.5.103
+
+### Patch Changes
+
+- @graphql-mesh/config@0.16.4
+- @graphql-mesh/openapi@0.16.8
+- @graphql-mesh/runtime@0.16.4
+- @graphql-mesh/transform-cache@0.8.47
+- @graphql-mesh/transform-rename@0.8.17
+- @graphql-mesh/cli@0.29.11
+
+## 0.5.102
+
+### Patch Changes
+
+- Updated dependencies [3c4c51100]
+  - @graphql-mesh/runtime@0.16.3
+  - @graphql-mesh/config@0.16.3
+  - @graphql-mesh/cli@0.29.10
+  - @graphql-mesh/openapi@0.16.7
+  - @graphql-mesh/transform-cache@0.8.46
+  - @graphql-mesh/transform-rename@0.8.16
+
+## 0.5.101
+
+### Patch Changes
+
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/cli@0.29.9
+  - @graphql-mesh/config@0.16.2
+  - @graphql-mesh/runtime@0.16.2
+  - @graphql-mesh/transform-cache@0.8.45
+  - @graphql-mesh/transform-rename@0.8.15
+  - @graphql-mesh/openapi@0.16.6
+
+## 0.5.100
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.8
+- @graphql-mesh/config@0.16.1
+- @graphql-mesh/openapi@0.16.5
+- @graphql-mesh/runtime@0.16.1
+- @graphql-mesh/transform-cache@0.8.44
+- @graphql-mesh/transform-rename@0.8.14
+
+## 0.5.99
+
+### Patch Changes
+
+- Updated dependencies [214b7a23c]
+  - @graphql-mesh/config@0.16.0
+  - @graphql-mesh/runtime@0.16.0
+  - @graphql-mesh/cli@0.29.7
+  - @graphql-mesh/openapi@0.16.4
+  - @graphql-mesh/transform-cache@0.8.43
+  - @graphql-mesh/transform-rename@0.8.13
+
+## 0.5.98
+
+### Patch Changes
+
+- Updated dependencies [1f4655ee6]
+  - @graphql-mesh/runtime@0.15.0
+  - @graphql-mesh/cli@0.29.6
+  - @graphql-mesh/config@0.15.7
+
+## 0.5.97
+
+### Patch Changes
+
+- @graphql-mesh/config@0.15.6
+- @graphql-mesh/openapi@0.16.3
+- @graphql-mesh/runtime@0.14.1
+- @graphql-mesh/transform-cache@0.8.42
+- @graphql-mesh/transform-rename@0.8.12
+- @graphql-mesh/cli@0.29.5
+
+## 0.5.96
+
+### Patch Changes
+
+- Updated dependencies [28f80c0a7]
+  - @graphql-mesh/cli@0.29.4
+
+## 0.5.95
+
+### Patch Changes
+
+- Updated dependencies [1caa8ffd3]
+  - @graphql-mesh/runtime@0.14.0
+  - @graphql-mesh/config@0.15.5
+  - @graphql-mesh/cli@0.29.3
+  - @graphql-mesh/openapi@0.16.2
+  - @graphql-mesh/transform-cache@0.8.41
+  - @graphql-mesh/transform-rename@0.8.11
+
 ## 0.5.94
 
 ### Patch Changes

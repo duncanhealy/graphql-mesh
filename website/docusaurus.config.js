@@ -10,12 +10,7 @@ module.exports = {
   themeConfig: {
     colorMode: {
       defaultMode: 'dark',
-    },
-    algolia: {
-      appId: 'ANRJKXZTRW',
-      apiKey: '811d453fc7f80306044dd5cc4b87e064',
-      indexName: 'theguild',
-      algoliaOptions: {},
+      disableSwitch: true,
     },
     navbar: {
       title: 'GraphQL Mesh',
@@ -42,58 +37,8 @@ module.exports = {
         },
       ],
     },
-    footer: {
-      links: [
-        /* {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Style Guide',
-              to: 'docs/doc1'
-            },
-            {
-              label: 'Second Doc',
-              to: 'docs/doc2'
-            }
-          ]
-        }, */
-        {
-          title: 'Community',
-          items: [
-            {
-              label: 'Discord',
-              href: 'http://bit.ly/guild-chat',
-            },
-            {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/graphql-mesh',
-            },
-          ],
-        },
-        {
-          title: 'Social',
-          items: [
-            {
-              label: 'GitHub',
-              href: 'https://github.com/Urigo/graphql-mesh/',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/TheGuildDev',
-            },
-          ],
-        },
-      ],
-      copyright: `Copyright © ${new Date().getFullYear()} GraphQL Mesh, The Guild, Inc. Built with Docusaurus.`,
-    },
   },
-  scripts: [
-    {
-      src: 'https://the-guild.dev/static/banner.js',
-      // we may want to load it ASAP
-      async: true,
-    },
-  ],
+  scripts: ['https://the-guild.dev/static/crisp.js'],
   presets: [
     [
       '@docusaurus/preset-classic',

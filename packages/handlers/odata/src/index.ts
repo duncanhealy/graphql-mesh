@@ -5,6 +5,7 @@ import {
   GetMeshSourceOptions,
   MeshSource,
   KeyValueCache,
+  ImportFn,
 } from '@graphql-mesh/types';
 import {
   parseInterpolationStrings,
@@ -13,6 +14,7 @@ import {
   jsonFlatStringify,
   getCachedFetch,
   loadFromModuleExportExpression,
+  stringInterpolator,
 } from '@graphql-mesh/utils';
 import urljoin from 'url-join';
 import {
@@ -50,6 +52,8 @@ import { EventEmitter } from 'events';
 import { parse as parseXML } from 'fast-xml-parser';
 import { pruneSchema } from '@graphql-tools/utils';
 import { Request, Response } from 'cross-fetch';
+import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import { env } from 'process';
 
 const SCALARS = new Map<string, string>([
   ['Edm.Binary', 'String'],
@@ -115,37 +119,30 @@ const queryOptionsFields = {
   },
 };
 
-export interface ODataIntrospectionCache {
-  metadataJson: any;
-}
-
 export default class ODataHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.ODataHandler;
   private baseDir: string;
   private cache: KeyValueCache;
   private eventEmitterSet = new Set<EventEmitter>();
-  private introspectionCache: ODataIntrospectionCache;
+  private metadataJson: any;
+  private importFn: ImportFn;
 
-  constructor({
-    name,
-    config,
-    baseDir,
-    cache,
-    introspectionCache,
-  }: GetMeshSourceOptions<YamlConfig.ODataHandler, ODataIntrospectionCache>) {
+  constructor({ name, config, baseDir, cache, store, importFn }: GetMeshSourceOptions<YamlConfig.ODataHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
-    this.introspectionCache = introspectionCache || {
-      metadataJson: null,
-    };
+    this.metadataJson = store.proxy('metadata.json', PredefinedProxyOptions.JsonWithoutValidation);
+    this.importFn = importFn;
   }
 
   async getCachedMetadataJson(fetch: ReturnType<typeof getCachedFetch>) {
-    if (!this.introspectionCache.metadataJson) {
-      const metadataUrl = urljoin(this.config.baseUrl, '$metadata');
+    return this.metadataJson.getWithSet(async () => {
+      const baseUrl = stringInterpolator.parse(this.config.baseUrl, {
+        env,
+      });
+      const metadataUrl = urljoin(baseUrl, '$metadata');
       const metadataText = await readFileOrUrlWithCache<string>(this.config.metadata || metadataUrl, this.cache, {
         allowUnknownExtensions: true,
         cwd: this.baseDir,
@@ -153,7 +150,7 @@ export default class ODataHandler implements MeshHandler {
         fetch,
       });
 
-      this.introspectionCache.metadataJson = parseXML(metadataText, {
+      return parseXML(metadataText, {
         attributeNamePrefix: '',
         attrNodeName: 'attributes',
         textNodeName: 'innerText',
@@ -162,8 +159,7 @@ export default class ODataHandler implements MeshHandler {
         arrayMode: true,
         allowBooleanAttributes: true,
       });
-    }
-    return this.introspectionCache.metadataJson;
+    });
   }
 
   async getMeshSource(): Promise<MeshSource> {
@@ -171,13 +167,20 @@ export default class ODataHandler implements MeshHandler {
     if (this.config.customFetch) {
       fetch =
         typeof this.config.customFetch === 'string'
-          ? await loadFromModuleExportExpression<ReturnType<typeof getCachedFetch>>(this.config.customFetch)
+          ? await loadFromModuleExportExpression<ReturnType<typeof getCachedFetch>>(this.config.customFetch, {
+              cwd: this.baseDir,
+              importFn: this.importFn,
+              defaultExportName: 'default',
+            })
           : this.config.customFetch;
     } else {
       fetch = getCachedFetch(this.cache);
     }
 
-    const { baseUrl, operationHeaders } = this.config;
+    const { baseUrl: nonInterpolatedBaseUrl, operationHeaders } = this.config;
+    const baseUrl = stringInterpolator.parse(nonInterpolatedBaseUrl, {
+      env,
+    });
 
     const schemaComposer = new SchemaComposer();
     schemaComposer.add(GraphQLBigInt);
@@ -463,92 +466,88 @@ export default class ODataHandler implements MeshHandler {
 
     const DATALOADER_FACTORIES = {
       multipart: (context: any) =>
-        new DataLoader(
-          async (requests: Request[]): Promise<Response[]> => {
-            let requestBody = '';
-            const requestBoundary = 'batch_' + Date.now();
-            for (const requestIndex in requests) {
-              requestBody += `--${requestBoundary}\n`;
-              const request = requests[requestIndex];
-              requestBody += `Content-Type: application/http\n`;
-              requestBody += `Content-Transfer-Encoding:binary\n`;
-              requestBody += `Content-ID: ${requestIndex}\n\n`;
-              requestBody += `${request.method} ${request.url} HTTP/1.1\n`;
-              request.headers?.forEach((value, key) => {
-                requestBody += `${key}: ${value}\n`;
-              });
-              if (request.body) {
-                const bodyAsStr = await request.text();
-                requestBody += `Content-Length: ${bodyAsStr.length}`;
-                requestBody += `\n`;
-                requestBody += bodyAsStr;
-              }
+        new DataLoader(async (requests: Request[]): Promise<Response[]> => {
+          let requestBody = '';
+          const requestBoundary = 'batch_' + Date.now();
+          for (const requestIndex in requests) {
+            requestBody += `--${requestBoundary}\n`;
+            const request = requests[requestIndex];
+            requestBody += `Content-Type: application/http\n`;
+            requestBody += `Content-Transfer-Encoding:binary\n`;
+            requestBody += `Content-ID: ${requestIndex}\n\n`;
+            requestBody += `${request.method} ${request.url} HTTP/1.1\n`;
+            request.headers?.forEach((value, key) => {
+              requestBody += `${key}: ${value}\n`;
+            });
+            if (request.body) {
+              const bodyAsStr = await request.text();
+              requestBody += `Content-Length: ${bodyAsStr.length}`;
               requestBody += `\n`;
+              requestBody += bodyAsStr;
             }
-            requestBody += `--${requestBoundary}--\n`;
-            const batchHeaders = headersFactory({ context }, 'POST');
-            batchHeaders.set('Content-Type', `multipart/mixed;boundary=${requestBoundary}`);
-            const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
-              method: 'POST',
-              body: requestBody,
-              headers: batchHeaders,
-            });
-            const batchResponse = await nativeFetch(batchRequest);
-            const batchResponseText = await batchResponse.text();
-            if (!batchResponseText.startsWith('--')) {
-              const batchResponseJson = JSON.parse(batchResponseText);
-              return handleBatchJsonResults(batchResponseJson, requests);
-            }
-            const responseLines = batchResponseText.split('\n');
-            const responseBoundary = responseLines[0];
-            const actualResponse = responseLines.slice(1, responseLines.length - 2).join('\n');
-            const responseTextArr = actualResponse.split(responseBoundary);
-            return responseTextArr.map(responseTextWithContentHeader => {
-              const responseText = responseTextWithContentHeader.split('\n').slice(4).join('\n');
-              const { body, headers, statusCode, statusMessage } = parseResponse(responseText);
-              return new Response(body, {
-                headers,
-                status: parseInt(statusCode),
-                statusText: statusMessage,
-              });
-            });
+            requestBody += `\n`;
           }
-        ),
-      json: (context: any) =>
-        new DataLoader(
-          async (requests: Request[]): Promise<Response[]> => {
-            const batchHeaders = headersFactory({ context }, 'POST');
-            batchHeaders.set('Content-Type', 'application/json');
-            const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
-              method: 'POST',
-              body: jsonFlatStringify({
-                requests: await Promise.all(
-                  requests.map(async (request, index) => {
-                    const id = index.toString();
-                    const url = request.url.replace(baseUrl, '');
-                    const method = request.method;
-                    const headers: HeadersInit = {};
-                    request.headers?.forEach((value, key) => {
-                      headers[key] = value;
-                    });
-                    return {
-                      id,
-                      url,
-                      method,
-                      body: request.body && (await request.json()),
-                      headers,
-                    };
-                  })
-                ),
-              }),
-              headers: batchHeaders,
-            });
-            const batchResponse = await fetch(batchRequest);
-            const batchResponseText = await batchResponse.text();
+          requestBody += `--${requestBoundary}--\n`;
+          const batchHeaders = headersFactory({ context, env }, 'POST');
+          batchHeaders.set('Content-Type', `multipart/mixed;boundary=${requestBoundary}`);
+          const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
+            method: 'POST',
+            body: requestBody,
+            headers: batchHeaders,
+          });
+          const batchResponse = await nativeFetch(batchRequest);
+          const batchResponseText = await batchResponse.text();
+          if (!batchResponseText.startsWith('--')) {
             const batchResponseJson = JSON.parse(batchResponseText);
             return handleBatchJsonResults(batchResponseJson, requests);
           }
-        ),
+          const responseLines = batchResponseText.split('\n');
+          const responseBoundary = responseLines[0];
+          const actualResponse = responseLines.slice(1, responseLines.length - 2).join('\n');
+          const responseTextArr = actualResponse.split(responseBoundary);
+          return responseTextArr.map(responseTextWithContentHeader => {
+            const responseText = responseTextWithContentHeader.split('\n').slice(4).join('\n');
+            const { body, headers, statusCode, statusMessage } = parseResponse(responseText);
+            return new Response(body, {
+              headers,
+              status: parseInt(statusCode),
+              statusText: statusMessage,
+            });
+          });
+        }),
+      json: (context: any) =>
+        new DataLoader(async (requests: Request[]): Promise<Response[]> => {
+          const batchHeaders = headersFactory({ context, env }, 'POST');
+          batchHeaders.set('Content-Type', 'application/json');
+          const batchRequest = new Request(urljoin(baseUrl, '$batch'), {
+            method: 'POST',
+            body: jsonFlatStringify({
+              requests: await Promise.all(
+                requests.map(async (request, index) => {
+                  const id = index.toString();
+                  const url = request.url.replace(baseUrl, '');
+                  const method = request.method;
+                  const headers: HeadersInit = {};
+                  request.headers?.forEach((value, key) => {
+                    headers[key] = value;
+                  });
+                  return {
+                    id,
+                    url,
+                    method,
+                    body: request.body && (await request.json()),
+                    headers,
+                  };
+                })
+              ),
+            }),
+            headers: batchHeaders,
+          });
+          const batchResponse = await fetch(batchRequest);
+          const batchResponseText = await batchResponse.text();
+          const batchResponseJson = JSON.parse(batchResponseText);
+          return handleBatchJsonResults(batchResponseJson, requests);
+        }),
       none: () =>
         new DataLoader(
           (requests: Request[]): Promise<Response[]> => Promise.all(requests.map(request => fetch(request)))
@@ -727,7 +726,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -760,7 +759,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -801,7 +800,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -872,7 +871,7 @@ export default class ODataHandler implements MeshHandler {
               const method = 'GET';
               const request = new Request(urlString, {
                 method,
-                headers: headersFactory({ root, args, context, info }, method),
+                headers: headersFactory({ root, args, context, info, env }, method),
               });
               const response = await context[contextDataloaderName].load(request);
               const responseText = await response.text();
@@ -950,7 +949,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -993,7 +992,7 @@ export default class ODataHandler implements MeshHandler {
               const method = 'POST';
               const request = new Request(urlString, {
                 method,
-                headers: headersFactory({ root, args, context, info }, method),
+                headers: headersFactory({ root, args, context, info, env }, method),
                 body: jsonFlatStringify(args),
               });
               const response = await context[contextDataloaderName].load(request);
@@ -1058,7 +1057,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'POST';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                   body: jsonFlatStringify(args),
                 });
                 const response = await context[contextDataloaderName].load(request);
@@ -1111,10 +1110,8 @@ export default class ODataHandler implements MeshHandler {
         const baseInputType = schemaComposer.getAnyTC(baseTypeName + 'Input') as InputTypeComposer;
         const baseAbstractType = getTCByTypeNames('I' + baseTypeName, baseTypeName) as InterfaceTypeComposer;
         const baseOutputType = getTCByTypeNames('T' + baseTypeName, baseTypeName) as ObjectTypeComposer;
-        const {
-          entityInfo: baseEntityInfo,
-          eventEmitter: baseEventEmitter,
-        } = baseOutputType.getExtensions() as EntityTypeExtensions;
+        const { entityInfo: baseEntityInfo, eventEmitter: baseEventEmitter } =
+          baseOutputType.getExtensions() as EntityTypeExtensions;
         const baseEventEmitterListener = () => {
           inputType.addFields(baseInputType.getFields());
           entityInfo.identifierFieldName = baseEntityInfo.identifierFieldName || entityInfo.identifierFieldName;
@@ -1160,7 +1157,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1205,7 +1202,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1233,7 +1230,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1256,7 +1253,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'GET';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1282,7 +1279,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'POST';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                   body: jsonFlatStringify(args.input),
                 });
                 const response = await context[contextDataloaderName].load(request);
@@ -1306,7 +1303,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'DELETE';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                 });
                 const response = await context[contextDataloaderName].load(request);
                 const responseText = await response.text();
@@ -1333,7 +1330,7 @@ export default class ODataHandler implements MeshHandler {
                 const method = 'PATCH';
                 const request = new Request(urlString, {
                   method,
-                  headers: headersFactory({ root, args, context, info }, method),
+                  headers: headersFactory({ root, args, context, info, env }, method),
                   body: jsonFlatStringify(args.input),
                 });
                 const response = await context[contextDataloaderName].load(request);

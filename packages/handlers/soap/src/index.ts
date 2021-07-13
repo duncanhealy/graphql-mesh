@@ -1,25 +1,41 @@
-import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
-import { soapGraphqlSchema, createSoapClient } from 'soap-graphql';
-import { WSSecurityCert } from 'soap';
-import { getCachedFetch, loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
-
-type AnyFn = (...args: any[]) => any;
+import { GetMeshSourceOptions, MeshHandler, YamlConfig, KeyValueCache, ImportFn, Logger } from '@graphql-mesh/types';
+import { soapGraphqlSchema, createSoapClient } from './soap-graphql';
+import soap from 'soap';
+import {
+  getCachedFetch,
+  getHeadersObject,
+  loadFromModuleExportExpression,
+  readFileOrUrlWithCache,
+} from '@graphql-mesh/utils';
+import { PredefinedProxyOptions, StoreProxy } from '@graphql-mesh/store';
+import { env } from 'process';
+import { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios';
 
 export default class SoapHandler implements MeshHandler {
   private config: YamlConfig.SoapHandler;
   private baseDir: string;
   private cache: KeyValueCache;
+  private wsdlResponse: StoreProxy<AxiosResponse>;
+  private importFn: ImportFn;
+  private logger: Logger;
 
-  constructor({ config, baseDir, cache }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
+  constructor({ config, baseDir, cache, store, importFn, logger }: GetMeshSourceOptions<YamlConfig.SoapHandler>) {
     this.config = config;
     this.baseDir = baseDir;
     this.cache = cache;
+    this.wsdlResponse = store.proxy('wsdlResponse.json', PredefinedProxyOptions.JsonWithoutValidation);
+    this.importFn = importFn;
+    this.logger = logger;
   }
 
   async getMeshSource() {
     let schemaHeaders =
       typeof this.config.schemaHeaders === 'string'
-        ? await loadFromModuleExportExpression(this.config.schemaHeaders, { cwd: this.baseDir })
+        ? await loadFromModuleExportExpression(this.config.schemaHeaders, {
+            cwd: this.baseDir,
+            defaultExportName: 'default',
+            importFn: this.importFn,
+          })
         : this.config.schemaHeaders;
     if (typeof schemaHeaders === 'function') {
       schemaHeaders = schemaHeaders();
@@ -31,38 +47,32 @@ export default class SoapHandler implements MeshHandler {
     const soapClient = await createSoapClient(this.config.wsdl, {
       basicAuth: this.config.basicAuth,
       options: {
-        request: ((requestObj: any, callback: AnyFn) => {
-          let _request: any = null;
+        request: (async (requestObj: AxiosRequestConfig): Promise<AxiosResponse<any>> => {
+          const isWsdlRequest = requestObj.url === this.config.wsdl;
           const sendRequest = async () => {
             const headers = {
               ...requestObj.headers,
-              ...(requestObj.uri.href === this.config.wsdl ? schemaHeaders : this.config.operationHeaders),
+              ...(isWsdlRequest ? schemaHeaders : this.config.operationHeaders),
             };
-            const res = await fetch(requestObj.uri.href, {
+            const res = await fetch(requestObj.url, {
               headers,
               method: requestObj.method,
-              body: requestObj.body,
+              body: requestObj.data,
             });
-            // eslint-disable-next-line dot-notation
-            _request = res.body;
-            const body = await res.text();
-            return { res, body };
+            const data = await res.text();
+            return {
+              data,
+              status: res.status,
+              statusText: res.statusText,
+              headers: getHeadersObject(res.headers),
+              config: requestObj,
+            };
           };
-          sendRequest()
-            .then(({ res, body }) =>
-              callback(
-                null,
-                {
-                  ...res,
-                  statusCode: res.status,
-                },
-                body
-              )
-            )
-            .catch(err => callback(err));
-          // eslint-disable-next-line dot-notation
-          return _request;
-        }) as any,
+          if (isWsdlRequest) {
+            return this.wsdlResponse.getWithSet(() => sendRequest());
+          }
+          return sendRequest();
+        }) as AxiosInstance,
       },
     });
 
@@ -88,11 +98,14 @@ export default class SoapHandler implements MeshHandler {
               cwd: this.baseDir,
             })),
       ]);
-      soapClient.setSecurity(new WSSecurityCert(privateKey, publicKey, password));
+      soapClient.setSecurity(new soap.WSSecurityCert(privateKey, publicKey, password));
     }
 
     const schema = await soapGraphqlSchema({
       soapClient,
+      logger: this.logger,
+      debug: !!env.DEBUG,
+      warnings: !!env.DEBUG,
     });
 
     return {

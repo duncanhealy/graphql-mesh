@@ -10,9 +10,10 @@ sources:
     handler:
       graphql:
         endpoint: https://api.github.com/graphql
-        introspection: https://raw.githubusercontent.com/octokit/graphql-schema/master/schema.graphql
+        schemaHeaders:
+          Authorization: bearer {env.GH_ACCESS_TOKEN}
         operationHeaders:
-          Authorization: bearer ${GH_ACCESS_TOKEN}
+          Authorization: bearer {env.GH_ACCESS_TOKEN}
     transforms:
       - prefix:
           value: Github
@@ -22,24 +23,23 @@ additionalTypeDefs: |
       extend type GeoCity {
         developers(limit: Int = 10): [GithubUser]
       }
+
 additionalResolvers:
-  - type: GeoCity
-    field: developers
+  - targetTypeName: GeoCity
+    targetFieldName: developers
     requiredSelectionSet: |
       {
         name
       }
-    targetSource: Github
-    targetMethod: Githubsearch
-    returnData: nodes
-    args:
-      type: "USER"
-      query: "location:{root.name}"
+    sourceName: Github
+    sourceTypeName: Query
+    sourceFieldName: Githubsearch
+    sourceArgs:
+      type: USER
+      query: location:{root.name}
       first: "{args.limit}"
+    result: nodes
+    resultType: GithubUser
 
-cache:
-  file:
-    path: ./mesh-cache.json
-
-serve:
-  exampleQuery: ./src/test.query.graphql
+documents:
+  - ./src/test.query.graphql

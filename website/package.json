@@ -12,8 +12,9 @@
     "deploy": "docusaurus deploy"
   },
   "dependencies": {
-    "@docusaurus/core": "2.0.0-alpha.ffe8b6106",
-    "@docusaurus/preset-classic": "2.0.0-alpha.ffe8b6106",
+    "@theguild/components": "1.4.5",
+    "@docusaurus/core": "2.0.0-beta.ff31de0ff",
+    "@docusaurus/preset-classic": "2.0.0-beta.ff31de0ff",
     "babel-preset-minify": "0.5.1",
     "classnames": "2.3.1",
     "react": "16.14.0",

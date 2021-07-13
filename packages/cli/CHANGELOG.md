@@ -1,5 +1,123 @@
 # @graphql-mesh/cli
 
+## 0.30.2
+
+### Patch Changes
+
+- Updated dependencies [01cf89298]
+  - @graphql-mesh/config@0.17.0
+  - @graphql-mesh/runtime@0.17.0
+
+## 0.30.1
+
+### Patch Changes
+
+- Updated dependencies [bdb58dfec]
+  - @graphql-mesh/utils@0.12.0
+  - @graphql-mesh/config@0.16.6
+  - @graphql-mesh/runtime@0.16.6
+
+## 0.30.0
+
+### Minor Changes
+
+- d27f36029: Add support to require local modules as an addition to installed packages
+
+## 0.29.14
+
+### Patch Changes
+
+- b9036c51b: fix(serve): better error handling
+- 4d96aa9b5: fix(cli): fix duplicate methods in incontext sdk typings
+
+## 0.29.13
+
+### Patch Changes
+
+- ee86d8fa7: fix(serve): do not throw if stack is undefined
+
+## 0.29.12
+
+### Patch Changes
+
+- Updated dependencies [7d0e33660]
+  - @graphql-mesh/utils@0.11.4
+  - @graphql-mesh/config@0.16.5
+  - @graphql-mesh/runtime@0.16.5
+
+## 0.29.11
+
+### Patch Changes
+
+- @graphql-mesh/config@0.16.4
+- @graphql-mesh/runtime@0.16.4
+
+## 0.29.10
+
+### Patch Changes
+
+- Updated dependencies [3c4c51100]
+  - @graphql-mesh/runtime@0.16.3
+  - @graphql-mesh/utils@0.11.3
+  - @graphql-mesh/config@0.16.3
+
+## 0.29.9
+
+### Patch Changes
+
+- e6acdbd7d: enhance(runtime): do not compose unnecessary resolvers
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/config@0.16.2
+  - @graphql-mesh/runtime@0.16.2
+  - @graphql-mesh/utils@0.11.2
+
+## 0.29.8
+
+### Patch Changes
+
+- Updated dependencies [69c89666d]
+  - @graphql-mesh/utils@0.11.1
+  - @graphql-mesh/config@0.16.1
+  - @graphql-mesh/runtime@0.16.1
+
+## 0.29.7
+
+### Patch Changes
+
+- Updated dependencies [214b7a23c]
+  - @graphql-mesh/config@0.16.0
+  - @graphql-mesh/runtime@0.16.0
+
+## 0.29.6
+
+### Patch Changes
+
+- Updated dependencies [1f4655ee6]
+  - @graphql-mesh/runtime@0.15.0
+  - @graphql-mesh/config@0.15.7
+
+## 0.29.5
+
+### Patch Changes
+
+- @graphql-mesh/config@0.15.6
+- @graphql-mesh/runtime@0.14.1
+
+## 0.29.4
+
+### Patch Changes
+
+- 28f80c0a7: fix(serve): fix subscriptions
+
+## 0.29.3
+
+### Patch Changes
+
+- Updated dependencies [1caa8ffd3]
+  - @graphql-mesh/runtime@0.14.0
+  - @graphql-mesh/utils@0.11.0
+  - @graphql-mesh/config@0.15.5
+
 ## 0.29.2
 
 ### Patch Changes

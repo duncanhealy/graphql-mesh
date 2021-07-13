@@ -1,5 +1,145 @@
 # federation-handler-example
 
+## 0.5.109
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.30.2
+
+## 0.5.108
+
+### Patch Changes
+
+- Updated dependencies [bdb58dfec]
+  - @graphql-mesh/merger-federation@0.9.0
+  - @graphql-mesh/cli@0.30.1
+  - @graphql-mesh/graphql@0.17.10
+  - @graphql-mesh/transform-federation@0.5.15
+
+## 0.5.107
+
+### Patch Changes
+
+- Updated dependencies [d27f36029]
+  - @graphql-mesh/cli@0.30.0
+
+## 0.5.106
+
+### Patch Changes
+
+- Updated dependencies [a04e3f090]
+- Updated dependencies [b9036c51b]
+- Updated dependencies [4d96aa9b5]
+  - @graphql-mesh/graphql@0.17.9
+  - @graphql-mesh/cli@0.29.14
+
+## 0.5.105
+
+### Patch Changes
+
+- Updated dependencies [ee86d8fa7]
+  - @graphql-mesh/cli@0.29.13
+
+## 0.5.104
+
+### Patch Changes
+
+- Updated dependencies [674bbadc9]
+  - @graphql-mesh/graphql@0.17.8
+
+## 0.5.103
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.12
+- @graphql-mesh/graphql@0.17.7
+- @graphql-mesh/merger-federation@0.8.39
+- @graphql-mesh/transform-federation@0.5.14
+
+## 0.5.102
+
+### Patch Changes
+
+- @graphql-mesh/graphql@0.17.6
+- @graphql-mesh/merger-federation@0.8.38
+- @graphql-mesh/transform-federation@0.5.13
+- @graphql-mesh/cli@0.29.11
+
+## 0.5.101
+
+### Patch Changes
+
+- Updated dependencies [3c4c51100]
+  - @graphql-mesh/merger-federation@0.8.37
+  - @graphql-mesh/cli@0.29.10
+  - @graphql-mesh/graphql@0.17.5
+  - @graphql-mesh/transform-federation@0.5.12
+
+## 0.5.100
+
+### Patch Changes
+
+- Updated dependencies [a48368992]
+  - @graphql-mesh/graphql@0.17.4
+
+## 0.5.99
+
+### Patch Changes
+
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/cli@0.29.9
+  - @graphql-mesh/graphql@0.17.3
+  - @graphql-mesh/merger-federation@0.8.36
+  - @graphql-mesh/transform-federation@0.5.11
+
+## 0.5.98
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.8
+- @graphql-mesh/graphql@0.17.2
+- @graphql-mesh/transform-federation@0.5.10
+
+## 0.5.97
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.7
+- @graphql-mesh/graphql@0.17.1
+- @graphql-mesh/merger-federation@0.8.35
+- @graphql-mesh/transform-federation@0.5.9
+
+## 0.5.96
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.6
+
+## 0.5.95
+
+### Patch Changes
+
+- Updated dependencies [0d2f7bfcd]
+  - @graphql-mesh/graphql@0.17.0
+  - @graphql-mesh/merger-federation@0.8.34
+  - @graphql-mesh/transform-federation@0.5.8
+  - @graphql-mesh/cli@0.29.5
+
+## 0.5.94
+
+### Patch Changes
+
+- Updated dependencies [28f80c0a7]
+  - @graphql-mesh/cli@0.29.4
+
+## 0.5.93
+
+### Patch Changes
+
+- @graphql-mesh/cli@0.29.3
+- @graphql-mesh/graphql@0.16.2
+- @graphql-mesh/transform-federation@0.5.7
+
 ## 0.5.92
 
 ### Patch Changes

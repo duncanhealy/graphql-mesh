@@ -1,1 +1,3 @@
 src/config.ts
+src/commands/serve/playground-content.js
+

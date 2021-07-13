@@ -1,5 +1,86 @@
 # @graphql-mesh/grpc
 
+## 0.14.9
+
+### Patch Changes
+
+- Updated dependencies [bdb58dfec]
+  - @graphql-mesh/utils@0.12.0
+
+## 0.14.8
+
+### Patch Changes
+
+- 465a7aceb: fixed trivial warnings in grpc handler
+
+## 0.14.7
+
+### Patch Changes
+
+- Updated dependencies [7d0e33660]
+  - @graphql-mesh/utils@0.11.4
+
+## 0.14.6
+
+### Patch Changes
+
+- Updated dependencies [cfb517b3d]
+  - @graphql-mesh/types@0.42.0
+
+## 0.14.5
+
+### Patch Changes
+
+- Updated dependencies [3c4c51100]
+  - @graphql-mesh/utils@0.11.3
+
+## 0.14.4
+
+### Patch Changes
+
+- Updated dependencies [e6acdbd7d]
+  - @graphql-mesh/types@0.41.1
+  - @graphql-mesh/utils@0.11.2
+
+## 0.14.3
+
+### Patch Changes
+
+- Updated dependencies [69c89666d]
+  - @graphql-mesh/utils@0.11.1
+
+## 0.14.2
+
+### Patch Changes
+
+- a01e439e6: fix(grpc): patch LongJS to support BigInt
+- Updated dependencies [214b7a23c]
+  - @graphql-mesh/types@0.41.0
+
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies [0d2f7bfcd]
+  - @graphql-mesh/types@0.40.0
+
+## 0.14.0
+
+### Minor Changes
+
+- 5198e7ab7: chore(grpc): align protobufjs versions
+
+## 0.13.0
+
+### Minor Changes
+
+- 1caa8ffd3: enhance(runtime): use graphql-jit to improve the performance
+
+### Patch Changes
+
+- Updated dependencies [1caa8ffd3]
+  - @graphql-mesh/utils@0.11.0
+
 ## 0.12.2
 
 ### Patch Changes

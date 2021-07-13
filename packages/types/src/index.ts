@@ -1,33 +1,40 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
-import { IResolvers } from '@graphql-tools/utils';
-import { GraphQLSchema, GraphQLResolveInfo, DocumentNode } from 'graphql';
+import { IResolvers, Executor } from '@graphql-tools/utils';
+import {
+  GraphQLSchema,
+  GraphQLResolveInfo,
+  DocumentNode,
+  ExecutionArgs,
+  ExecutionResult,
+  SelectionSetNode,
+} from 'graphql';
 import * as YamlConfig from './config';
 import { KeyValueCache, KeyValueCacheSetOptions } from 'fetchache';
-import { Executor, Subscriber, Transform } from '@graphql-tools/delegate';
+import { Transform, MergedTypeConfig } from '@graphql-tools/delegate';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import { MeshStore } from '@graphql-mesh/store';
+
+export { default as jsonSchema } from './config-schema.json';
 
 export { YamlConfig };
-
-export function getJsonSchema() {
-  return require('./config-schema.json');
-}
 
 export type MeshSource<ContextType = any, InitialContext = any> = {
   schema: GraphQLSchema;
   executor?: Executor;
-  subscriber?: Subscriber;
   contextVariables?: (keyof InitialContext)[];
   contextBuilder?: (initialContextValue: InitialContext) => Promise<ContextType>;
   batch?: boolean;
 };
 
-export type GetMeshSourceOptions<THandlerConfig, TIntrospectionCache = never> = {
+export type GetMeshSourceOptions<THandlerConfig> = {
   name: string;
   config: THandlerConfig;
-  baseDir?: string;
+  baseDir: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
-  introspectionCache?: TIntrospectionCache;
+  store: MeshStore;
+  logger: Logger;
+  importFn: ImportFn;
 };
 
 // Handlers
@@ -35,8 +42,8 @@ export interface MeshHandler<TContext = any> {
   getMeshSource: () => Promise<MeshSource<TContext>>;
 }
 
-export interface MeshHandlerLibrary<TConfig = any, TContext = any, TIntrospectionCache = any> {
-  new (options: GetMeshSourceOptions<TConfig, TIntrospectionCache>): MeshHandler<TContext>;
+export interface MeshHandlerLibrary<TConfig = any, TContext = any> {
+  new (options: GetMeshSourceOptions<TConfig>): MeshHandler<TContext>;
 }
 
 export type ResolverData<TParent = any, TArgs = any, TContext = any, TResult = any> = {
@@ -45,6 +52,7 @@ export type ResolverData<TParent = any, TArgs = any, TContext = any, TResult = a
   context?: TContext;
   info?: GraphQLResolveInfo;
   result?: TResult;
+  env: Record<string, string>;
 };
 
 // Hooks
@@ -53,6 +61,7 @@ export type AllHooks = {
   resolverCalled: { resolverData: ResolverData };
   resolverDone: { resolverData: ResolverData; result: any };
   resolverError: { resolverData: ResolverData; error: Error };
+  executionDone: ExecutionArgs & { executionResult: ExecutionResult };
   [key: string]: any;
 };
 export type HookName = keyof AllHooks & string;
@@ -69,11 +78,12 @@ export interface MeshPubSub {
 }
 
 export interface MeshTransformOptions<Config = any> {
-  apiName?: string;
+  apiName: string;
   config: Config;
   baseDir: string;
   cache: KeyValueCache;
   pubsub: MeshPubSub;
+  syncImportFn: SyncImportFn;
 }
 
 export interface MeshTransformLibrary<Config = any> {
@@ -88,15 +98,28 @@ export type Maybe<T> = null | undefined | T;
 
 export { KeyValueCache, KeyValueCacheSetOptions };
 
-export type MergerFn = (options: {
-  rawSources: RawSourceOutput[];
+export interface MeshMergerOptions {
   cache: KeyValueCache;
   pubsub: MeshPubSub;
+  logger: Logger;
+  store: MeshStore;
+}
+
+export interface MeshMergerLibrary {
+  new (options: MeshMergerOptions): MeshMerger;
+}
+
+export interface MeshMergerContext {
+  rawSources: RawSourceOutput[];
   typeDefs?: DocumentNode[];
-  resolvers?: IResolvers;
+  resolvers?: IResolvers | IResolvers[];
   transforms?: Transform[];
-  executor?: Executor;
-}) => Promise<GraphQLSchema> | GraphQLSchema;
+}
+
+export interface MeshMerger {
+  name: string;
+  getUnifiedSchema(mergerContext: MeshMergerContext): GraphQLSchema | Promise<GraphQLSchema>;
+}
 
 export type RawSourceOutput = {
   name: string;
@@ -104,13 +127,27 @@ export type RawSourceOutput = {
   contextBuilder: null | ((initialContextValue?: any) => Promise<any>);
   schema: GraphQLSchema;
   executor?: Executor;
-  subscriber?: Subscriber;
   transforms: MeshTransform[];
   contextVariables: (keyof any)[];
   handler: MeshHandler;
   batch: boolean;
+  merge?: Record<string, MergedTypeConfig>;
 };
 
 export type GraphQLOperation<TData, TVariables> = TypedDocumentNode<TData, TVariables> | string;
 
-export type ImportFn = (moduleId: string) => Promise<any>;
+export type ImportFn = <T = any>(moduleId: string) => Promise<T>;
+export type SyncImportFn = <T = any>(moduleId: string) => T;
+
+export type Logger = {
+  name: string;
+  log: (message: string) => void;
+  warn: (message: string) => void;
+  info: (message: string) => void;
+  error: (message: string) => void;
+  debug: (message: string) => void;
+  child: (name: string) => Logger;
+};
+
+export type SelectionSetParam = SelectionSetNode | DocumentNode | string | SelectionSetNode;
+export type SelectionSetParamOrFactory = ((subtree: SelectionSetNode) => SelectionSetParam) | SelectionSetParam;

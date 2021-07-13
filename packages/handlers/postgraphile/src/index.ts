@@ -5,80 +5,97 @@ import {
   MeshSource,
   YamlConfig,
   MeshPubSub,
-  KeyValueCache,
+  Logger,
+  ImportFn,
 } from '@graphql-mesh/types';
-import { subscribe, print } from 'graphql';
-import { withPostGraphileContext, Plugin } from 'postgraphile';
+import { Plugin, withPostGraphileContext } from 'postgraphile';
 import { getPostGraphileBuilder } from 'postgraphile-core';
-import { Pool } from 'pg';
+import pg from 'pg';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { globalLruCache, loadFromModuleExportExpression, readFileOrUrlWithCache } from '@graphql-mesh/utils';
-import { compileQuery, isCompiledQuery } from 'graphql-jit';
-import { ExecutionParams } from '@graphql-tools/delegate';
-
-interface PostGraphileIntrospection {
-  pgCache?: any;
-}
+import { loadFromModuleExportExpression, readJSON } from '@graphql-mesh/utils';
+import { PredefinedProxyOptions } from '@graphql-mesh/store';
+import { execute, ExecutionArgs, subscribe } from 'graphql';
 
 export default class PostGraphileHandler implements MeshHandler {
   private name: string;
   private config: YamlConfig.PostGraphileHandler;
   private baseDir: string;
-  private cache: KeyValueCache;
   private pubsub: MeshPubSub;
-  private introspectionCache: PostGraphileIntrospection;
+  private pgCache: any;
+  private logger: Logger;
+  private importFn: ImportFn;
 
   constructor({
     name,
     config,
     baseDir,
-    cache,
     pubsub,
-    introspectionCache = {},
-  }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler, PostGraphileIntrospection>) {
+    store,
+    logger,
+    importFn,
+  }: GetMeshSourceOptions<YamlConfig.PostGraphileHandler>) {
     this.name = name;
     this.config = config;
     this.baseDir = baseDir;
-    this.cache = cache;
     this.pubsub = pubsub;
-    this.introspectionCache = introspectionCache;
+    this.pgCache = store.proxy('pgCache.json', PredefinedProxyOptions.JsonWithoutValidation);
+    this.logger = logger;
+    this.importFn = importFn;
   }
 
   async getMeshSource(): Promise<MeshSource> {
-    let pgPool: Pool;
+    let pgPool: pg.Pool;
 
     if (typeof this.config?.pool === 'string') {
-      pgPool = await loadFromModuleExportExpression<any>(this.config.pool, { cwd: this.baseDir });
+      pgPool = await loadFromModuleExportExpression<any>(this.config.pool, {
+        cwd: this.baseDir,
+        importFn: this.importFn,
+        defaultExportName: 'default',
+      });
     }
 
     if (!pgPool || !('connect' in pgPool)) {
-      pgPool = new Pool({
+      const pgLogger = this.logger.child('PostgreSQL');
+      pgPool = new pg.Pool({
         connectionString: this.config.connectionString,
+        log: messages => pgLogger.debug(messages),
         ...this.config?.pool,
       });
     }
 
     this.pubsub.subscribe('destroy', () => pgPool.end());
 
-    const cacheKey = this.name + '_introspection';
+    const cacheKey = this.name + '_introspection.json';
 
     const dummyCacheFilePath = join(tmpdir(), cacheKey);
-    const cachedIntrospection = this.introspectionCache;
+    let cachedIntrospection = await this.pgCache.get();
 
     let writeCache: () => Promise<void>;
 
     const appendPlugins = await Promise.all<Plugin>(
       (this.config.appendPlugins || []).map(pluginName =>
-        loadFromModuleExportExpression<any>(pluginName, { cwd: this.baseDir })
+        loadFromModuleExportExpression<any>(pluginName, {
+          cwd: this.baseDir,
+          importFn: this.importFn,
+          defaultExportName: 'default',
+        })
       )
     );
     const skipPlugins = await Promise.all<Plugin>(
       (this.config.skipPlugins || []).map(pluginName =>
-        loadFromModuleExportExpression<any>(pluginName, { cwd: this.baseDir })
+        loadFromModuleExportExpression<any>(pluginName, {
+          cwd: this.baseDir,
+          importFn: this.importFn,
+          defaultExportName: 'default',
+        })
       )
     );
-    const options = await loadFromModuleExportExpression<any>(this.config.options, { cwd: this.baseDir });
+    const options = await loadFromModuleExportExpression<any>(this.config.options, {
+      cwd: this.baseDir,
+      importFn: this.importFn,
+      defaultExportName: 'default',
+    });
 
     const builder = await getPostGraphileBuilder(pgPool, this.config.schemaName || 'public', {
       dynamicJson: true,
@@ -91,6 +108,7 @@ export default class PostGraphileHandler implements MeshHandler {
       },
       appendPlugins,
       skipPlugins,
+      simpleCollections: 'both',
       ...options,
     });
 
@@ -98,53 +116,34 @@ export default class PostGraphileHandler implements MeshHandler {
 
     if (!cachedIntrospection) {
       await writeCache();
-      const writtenCache = await readFileOrUrlWithCache(cacheKey, this.cache, {
-        cwd: this.baseDir,
-      });
-      this.introspectionCache.pgCache = writtenCache;
+      cachedIntrospection = await readJSON(dummyCacheFilePath);
+      await this.pgCache.set(cachedIntrospection);
     }
-
-    const executor: any = ({ document, variables, context: meshContext, info }: ExecutionParams) => {
-      const operationName = info?.operation?.name?.value;
-      const documentStr = typeof document === 'string' ? document : print(document);
-      const cacheKey = [documentStr, operationName].join('_');
-      if (!globalLruCache.has(cacheKey)) {
-        const compiledQuery = compileQuery(schema, document, operationName);
-        globalLruCache.set(cacheKey, compiledQuery);
-      }
-      const cachedQuery = globalLruCache.get(cacheKey);
-      if (isCompiledQuery(cachedQuery)) {
-        return withPostGraphileContext({ pgPool }, async postgraphileContext => {
-          // Execute your GraphQL query in this function with the provided
-          // `context` object, which should NOT be used outside of this
-          // function.
-          const cachedQuery = globalLruCache.get(cacheKey);
-          if (isCompiledQuery(cachedQuery)) {
-            const contextValue = { ...meshContext, ...postgraphileContext };
-            return cachedQuery.query(info?.rootValue, contextValue, variables);
-          }
-          return cachedQuery;
-        });
-      }
-      return cachedQuery;
-    };
 
     return {
       schema,
-      executor,
-      subscriber: ({ document, variables, context: meshContext }) =>
+      executor: ({ document, variables, context: meshContext, rootValue, operationName, operationType }) =>
         withPostGraphileContext(
-          { pgPool },
-          // Execute your GraphQL query in this function with the provided
-          // `context` object, which should NOT be used outside of this
-          // function.
-          postgraphileContext =>
-            subscribe({
-              schema, // The schema from `createPostGraphileSchema`
+          {
+            pgPool,
+          },
+          async pgContext => {
+            const executionArgs: ExecutionArgs = {
+              schema,
               document,
-              contextValue: { ...postgraphileContext, ...meshContext }, // You can add more to context if you like
               variableValues: variables,
-            }) as any
+              contextValue: {
+                ...meshContext,
+                ...pgContext,
+              },
+              rootValue,
+              operationName,
+            };
+            if (operationType === 'subscription') {
+              return subscribe(executionArgs) as any;
+            }
+            return execute(executionArgs) as any;
+          }
         ) as any,
     };
   }

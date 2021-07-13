@@ -1,33 +1,46 @@
 {
   "name": "@graphql-mesh/json-schema",
-  "version": "0.13.1",
+  "version": "0.16.1",
   "sideEffects": false,
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
   },
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
   },
   "devDependencies": {
-    "@types/to-json-schema": "0.2.0",
-    "@types/url-join": "4.0.0"
+    "@types/to-json-schema": "0.2.1",
+    "@types/url-join": "4.0.1",
+    "@types/qs": "6.9.7"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.39.0",
-    "@graphql-mesh/utils": "0.10.0",
-    "@ardatan/aggregate-error": "0.0.6",
-    "ajv": "8.1.0",
-    "lodash": "4.17.21",
-    "graphql-compose": "7.25.1",
-    "graphql-scalars": "1.9.0",
+    "json-machete": "0.0.0",
+    "@graphql-mesh/types": "0.42.0",
+    "@graphql-mesh/utils": "0.12.0",
+    "@graphql-mesh/store": "0.0.0",
+    "@graphql-tools/utils": "8.0.0-alpha-c42e811d.0",
+    "graphql-compose": "9.0.1",
+    "graphql-scalars": "1.10.0",
     "pascal-case": "3.1.2",
-    "url-join": "4.0.1",
     "to-json-schema": "0.2.5",
-    "object-hash": "2.1.1"
+    "url-join": "4.0.1",
+    "qs": "6.10.1",
+    "ajv": "8.6.1",
+    "ajv-formats": "2.1.0"
   },
   "publishConfig": {
     "access": "public",

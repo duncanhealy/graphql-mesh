@@ -11,15 +11,13 @@ sources:
           someKey: 'someValue'
           connection_type: ['headers', 'connection']
         protoFilePath:
-          file: io/xtech/service.proto
+          file: ./proto/io/xtech/service.proto
           load:
             includeDirs:
               - ./proto
-        serviceName: Example
-        packageName: io.xtech
     transforms:
       - namingConvention:
           fieldNames: camelCase
 
-serve:
-  exampleQuery: example-queries/*.graphql
+documents:
+  - example-queries/*.graphql

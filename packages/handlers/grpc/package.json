@@ -1,28 +1,39 @@
 {
   "name": "@graphql-mesh/grpc",
-  "version": "0.12.2",
+  "version": "0.14.9",
   "sideEffects": false,
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
   },
   "license": "MIT",
   "peerDependencies": {
     "graphql": "*"
   },
   "dependencies": {
-    "@graphql-mesh/types": "0.39.0",
-    "@graphql-mesh/utils": "0.10.0",
+    "@graphql-mesh/types": "0.42.0",
+    "@graphql-mesh/utils": "0.12.0",
+    "@graphql-mesh/store": "0.0.0",
     "@grpc/grpc-js": "^1.1.7",
-    "@grpc/proto-loader": "0.6.1",
-    "camel-case": "4.1.2",
-    "graphql-scalars": "1.9.0",
-    "graphql-compose": "7.25.1",
-    "grpc-reflection-js": "0.1.1",
-    "protobufjs": "6.10.2",
-    "pascal-case": "3.1.2",
+    "@grpc/proto-loader": "0.6.4",
+    "graphql-scalars": "1.10.0",
+    "graphql-compose": "9.0.1",
+    "grpc-reflection-js": "0.1.2",
+    "globby": "11.0.4",
+    "long": "4.0.0",
+    "protobufjs": "6.11.2",
     "lodash": "4.17.21"
   },
   "publishConfig": {

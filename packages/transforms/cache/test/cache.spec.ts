@@ -13,7 +13,7 @@ import {
 } from 'graphql';
 import CacheTransform from '../src';
 import { computeCacheKey } from '../src/compute-cache-key';
-import objectHash from 'object-hash';
+import { hashObject } from '@graphql-mesh/utils';
 import { format } from 'date-fns';
 import { applyResolversHooksToSchema } from '@graphql-mesh/runtime';
 import { PubSub } from 'graphql-subscriptions';
@@ -160,7 +160,7 @@ describe('cache', () => {
 
   describe('Resolvers Composition', () => {
     it('should replace resolvers correctly with a specific type and field', async () => {
-      expect(schema.getQueryType()?.getFields().user.resolve).toBe(spies.Query.user);
+      expect(schema.getQueryType()?.getFields().user.resolve.name).toBe(spies.Query.user.bind(null).name);
 
       const transform = new CacheTransform({
         cache,
@@ -174,13 +174,13 @@ describe('cache', () => {
       });
       const modifiedSchema = transform.transformSchema(schema);
 
-      expect(modifiedSchema!.getQueryType()?.getFields().user.resolve).not.toBe(spies.Query.user);
-      expect(modifiedSchema!.getQueryType()?.getFields().users.resolve).toBe(spies.Query.users);
+      expect(modifiedSchema!.getQueryType()?.getFields().user.resolve.name).not.toBe(spies.Query.user.bind(null).name);
+      expect(modifiedSchema!.getQueryType()?.getFields().users.resolve.name).toBe(spies.Query.users.bind(null).name);
     });
 
     it('should replace resolvers correctly with a wildcard', async () => {
-      expect(schema.getQueryType()?.getFields().user.resolve).toBe(spies.Query.user);
-      expect(schema.getQueryType()?.getFields().users.resolve).toBe(spies.Query.users);
+      expect(schema.getQueryType()?.getFields().user.resolve.name).toBe(spies.Query.user.bind(null).name);
+      expect(schema.getQueryType()?.getFields().users.resolve.name).toBe(spies.Query.users.bind(null).name);
 
       const transform = new CacheTransform({
         cache,
@@ -195,8 +195,10 @@ describe('cache', () => {
 
       const modifiedSchema = transform.transformSchema(schema);
 
-      expect(modifiedSchema!.getQueryType()?.getFields().user.resolve).not.toBe(spies.Query.user);
-      expect(modifiedSchema!.getQueryType()?.getFields().users.resolve).not.toBe(spies.Query.users);
+      expect(modifiedSchema!.getQueryType()?.getFields().user.resolve.name).not.toBe(spies.Query.user.bind(null).name);
+      expect(modifiedSchema!.getQueryType()?.getFields().users.resolve.name).not.toBe(
+        spies.Query.users.bind(null).name
+      );
     });
   });
 
@@ -365,7 +367,7 @@ describe('cache', () => {
     });
 
     it('Should work correctly with argsHash', async () => {
-      const expectedHash = `query-user-${objectHash({ id: '1' })}`;
+      const expectedHash = `query-user-${hashObject({ id: '1' })}`;
 
       await checkCache(
         [
@@ -379,7 +381,7 @@ describe('cache', () => {
     });
 
     it('Should work correctly with hash helper', async () => {
-      const expectedHash = objectHash('1');
+      const expectedHash = hashObject('1');
 
       await checkCache(
         [

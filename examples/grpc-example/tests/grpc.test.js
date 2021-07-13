@@ -1,8 +1,9 @@
+require('json-bigint-patch');
 const { findAndParseConfig } = require('@graphql-mesh/config');
 const { getMesh } = require('@graphql-mesh/runtime');
 const { basename, join } = require('path');
 
-const { introspectionFromSchema, lexicographicSortSchema } = require('graphql');
+const { printSchema, lexicographicSortSchema } = require('graphql');
 const { readFile } = require('fs-extra');
 
 const config$ = findAndParseConfig({
@@ -17,7 +18,7 @@ describe('gRPC Example', () => {
   it('should generate correct schema', async () => {
     const { schema } = await mesh$;
     expect(
-      introspectionFromSchema(lexicographicSortSchema(schema), {
+      printSchema(lexicographicSortSchema(schema), {
         descriptions: false,
       })
     ).toMatchSnapshot('grpc-schema');
@@ -29,7 +30,8 @@ describe('gRPC Example', () => {
     const result = await execute(GetMoviesQuery);
     expect(result).toMatchSnapshot('get-movies-grpc-example-result');
   });
-  it('should fetch movies by cast as a subscription correctly', async () => {
+  //TODO
+  it.skip('should fetch movies by cast as a subscription correctly', async () => {
     const MoviesByCastSubscription = await readFile(join(__dirname, '../example-queries/MoviesByCast.subscription.graphql'), 'utf8');
     const { subscribe } = await mesh$;
     await grpc$;

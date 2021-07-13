@@ -1,12 +1,22 @@
 {
   "name": "@graphql-mesh/types",
-  "version": "0.39.0",
+  "version": "0.42.0",
   "sideEffects": false,
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "typescript": {
     "definition": "dist/index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./*": {
+      "require": "./dist/*.js",
+      "import": "./dist/*.mjs"
+    }
   },
   "license": "MIT",
   "peerDependencies": {
@@ -14,8 +24,8 @@
   },
   "dependencies": {
     "fetchache": "0.1.1",
-    "@graphql-tools/delegate": "7.1.2",
-    "@graphql-tools/utils": "7.7.3",
+    "@graphql-tools/delegate": "8.0.0-alpha-c42e811d.0",
+    "@graphql-tools/utils": "8.0.0-alpha-c42e811d.0",
     "@graphql-typed-document-node/core": "3.1.0"
   },
   "publishConfig": {
