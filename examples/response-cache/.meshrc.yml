@@ -1,0 +1,30 @@
+sources:
+  - name: Hello World
+    handler:
+      jsonSchema:
+        operations:
+          - type: Query
+            field: greeting
+            method: GET
+            path: /
+            responseSample:
+              hello: world
+          - type: Query
+            field: withTTL
+            method: GET
+            path: /
+            responseSample:
+              hello: world
+plugins:
+  - mock:
+      mocks:
+        - apply: Query.greeting
+  - responseCache:
+      ttl: 100
+      # Same shape as https://codesandbox.io/p/sandbox/clever-williams-j8m76t (#5102)
+      sessionId: '{context.headers.test}'
+      cacheKey: '{sessionId}'
+      includeExtensionMetadata: true
+      ttlPerCoordinate:
+        - coordinate: Query.withTTL
+          ttl: 3600000

@@ -1,8 +1,7 @@
-const { getBuiltMesh } = require('./.mesh');
+import { execute } from './.mesh/index.mjs';
 
 async function main() {
-  const client = await getBuiltMesh();
-  const result = await client.execute(
+  const result = await execute(
     /* GraphQL */ `
       query fetchRecentEmails {
         me {
@@ -23,7 +22,7 @@ async function main() {
     {},
     {
       accessToken: 'someAccessToken',
-    }
+    },
   );
   console.log({
     result,

@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Query Parameters generates correct schema 1`] = `
+"schema @source(name: "query-params", http: {baseURL: "http://localhost:3000"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+  query: Query
+}
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
+type Query {
+  """Get a list of products"""
+  listOfProducts(
+    """Get approved products"""
+    isApproved: Boolean = true
+  ): [Product] @connect(source: "query-params", http: {GET: "/listOfProducts", queryParams: "{\\n  isApproved: $args.isApproved\\n}"}, selection: "id name")
+}
+
+type Product {
+  id: String
+  name: String
+}
+
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
+`;

@@ -1,0 +1,422 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`SQLite Chinook should generate correct schema: sqlite-chinook-schema 1`] = `
+"schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  albums(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Album]
+  album(
+    albumId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Album
+  artists(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Artist]
+  artist(
+    artistId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Artist
+  customers(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Customer]
+  customer(
+    customerId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Customer
+  employees(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Employee]
+  employee(
+    employeeId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Employee
+  genres(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Genre]
+  genre(
+    genreId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Genre
+  invoices(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Invoice]
+  invoice(
+    invoiceId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Invoice
+  invoiceItems(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [InvoiceItem]
+  invoiceItem(
+    invoiceLineId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): InvoiceItem
+  mediaTypes(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [MediaType]
+  mediaType(
+    mediaTypeId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): MediaType
+  playlists(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Playlist]
+  playlist(
+    playlistId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Playlist
+  tracks(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Track]
+  track(
+    trackId: Int
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+  ): Track
+}
+
+type Album {
+  albumId: Int!
+  title: String!
+  artistId: Int!
+  tracks(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Track]
+  artist: Artist
+}
+
+type Track {
+  trackId: Int!
+  name: String!
+  albumId: Int
+  mediaTypeId: Int!
+  genreId: Int
+  composer: String
+  milliseconds: Int!
+  bytes: Int
+  unitPrice: String!
+  invoiceItems(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [InvoiceItem]
+  mediaType: MediaType
+  genre: Genre
+  album: Album
+  playlists: [Playlist]
+}
+
+type InvoiceItem {
+  invoiceLineId: Int!
+  invoiceId: Int!
+  trackId: Int!
+  unitPrice: String!
+  quantity: Int!
+  track: Track
+  invoice: Invoice
+}
+
+type Invoice {
+  invoiceId: Int!
+  customerId: Int!
+  invoiceDate: String!
+  billingAddress: String
+  billingCity: String
+  billingState: String
+  billingCountry: String
+  billingPostalCode: String
+  total: String!
+  invoiceItems(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [InvoiceItem]
+  customer: Customer
+}
+
+"""The \`JSON\` scalar type represents raw JSON as values."""
+scalar SequelizeJSON
+
+type Customer {
+  customerId: Int!
+  firstName: String!
+  lastName: String!
+  company: String
+  address: String
+  city: String
+  state: String
+  country: String
+  postalCode: String
+  phone: String
+  fax: String
+  email: String!
+  supportRepId: Int
+  invoices(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Invoice]
+  employee: Employee
+}
+
+type Employee {
+  employeeId: Int!
+  lastName: String!
+  firstName: String!
+  title: String
+  reportsTo: Int
+  birthDate: String
+  hireDate: String
+  address: String
+  city: String
+  state: String
+  country: String
+  postalCode: String
+  phone: String
+  fax: String
+  email: String
+  customers(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Customer]
+  employees(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Employee]
+  employee: Employee
+}
+
+type MediaType {
+  mediaTypeId: Int!
+  name: String
+  tracks(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Track]
+}
+
+type Genre {
+  genreId: Int!
+  name: String
+  tracks(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Track]
+}
+
+type Playlist {
+  playlistId: Int!
+  name: String
+  tracks: [Track]
+}
+
+type Artist {
+  artistId: Int!
+  name: String
+  albums(
+    limit: Int
+    order: String
+    """
+    A JSON object conforming the the shape specified in http://docs.sequelizejs.com/en/latest/docs/querying/
+    """
+    where: SequelizeJSON
+    offset: Int
+  ): [Album]
+}
+
+type Mutation {
+  createAlbum(title: String!, artistId: Int!): Album
+  updateAlbum(albumId: Int, title: String, artistId: Int): Album
+  deleteAlbum(albumId: Int!): GenericResponse
+  createArtist(name: String): Artist
+  updateArtist(artistId: Int, name: String): Artist
+  deleteArtist(artistId: Int!): GenericResponse
+  createCustomer(firstName: String!, lastName: String!, company: String, address: String, city: String, state: String, country: String, postalCode: String, phone: String, fax: String, email: String!, supportRepId: Int): Customer
+  updateCustomer(customerId: Int, firstName: String, lastName: String, company: String, address: String, city: String, state: String, country: String, postalCode: String, phone: String, fax: String, email: String, supportRepId: Int): Customer
+  deleteCustomer(customerId: Int!): GenericResponse
+  createEmployee(lastName: String!, firstName: String!, title: String, reportsTo: Int, birthDate: String, hireDate: String, address: String, city: String, state: String, country: String, postalCode: String, phone: String, fax: String, email: String): Employee
+  updateEmployee(employeeId: Int, lastName: String, firstName: String, title: String, reportsTo: Int, birthDate: String, hireDate: String, address: String, city: String, state: String, country: String, postalCode: String, phone: String, fax: String, email: String): Employee
+  deleteEmployee(employeeId: Int!): GenericResponse
+  createGenre(name: String): Genre
+  updateGenre(genreId: Int, name: String): Genre
+  deleteGenre(genreId: Int!): GenericResponse
+  createInvoice(customerId: Int!, invoiceDate: String!, billingAddress: String, billingCity: String, billingState: String, billingCountry: String, billingPostalCode: String, total: String!): Invoice
+  updateInvoice(invoiceId: Int, customerId: Int, invoiceDate: String, billingAddress: String, billingCity: String, billingState: String, billingCountry: String, billingPostalCode: String, total: String): Invoice
+  deleteInvoice(invoiceId: Int!): GenericResponse
+  createInvoiceItem(invoiceId: Int!, trackId: Int!, unitPrice: String!, quantity: Int!): InvoiceItem
+  updateInvoiceItem(invoiceLineId: Int, invoiceId: Int, trackId: Int, unitPrice: String, quantity: Int): InvoiceItem
+  deleteInvoiceItem(invoiceLineId: Int!): GenericResponse
+  createMediaType(name: String): MediaType
+  updateMediaType(mediaTypeId: Int, name: String): MediaType
+  deleteMediaType(mediaTypeId: Int!): GenericResponse
+  createPlaylist(name: String): Playlist
+  updatePlaylist(playlistId: Int, name: String): Playlist
+  deletePlaylist(playlistId: Int!): GenericResponse
+  addPlaylistToTrack(playlistId: Int!, trackId: Int!): GenericResponse
+  removePlaylistFromTrack(playlistId: Int!, trackId: Int!): GenericResponse
+  createTrack(name: String!, albumId: Int, mediaTypeId: Int!, genreId: Int, composer: String, milliseconds: Int!, bytes: Int, unitPrice: String!): Track
+  updateTrack(trackId: Int, name: String, albumId: Int, mediaTypeId: Int, genreId: Int, composer: String, milliseconds: Int, bytes: Int, unitPrice: String): Track
+  deleteTrack(trackId: Int!): GenericResponse
+  addTrackToPlaylist(trackId: Int!, playlistId: Int!): GenericResponse
+  removeTrackFromPlaylist(trackId: Int!, playlistId: Int!): GenericResponse
+}
+
+type GenericResponse {
+  success: Boolean
+}"
+`;
+
+exports[`SQLite Chinook should give correct response for example queries: example-query.graphql-sqlite-chinook-result 1`] = `
+{
+  "data": {
+    "albums": [
+      {
+        "albumId": 1,
+        "artist": {
+          "name": "AC/DC",
+        },
+        "title": "For Those About To Rock We Salute You",
+      },
+      {
+        "albumId": 2,
+        "artist": {
+          "name": "Accept",
+        },
+        "title": "Balls to the Wall",
+      },
+    ],
+  },
+}
+`;

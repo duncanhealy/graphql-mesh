@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`required-ref-param should generate the schema correctly: schema 1`] = `
+"schema @source(name: "TestAPI", http: {baseURL: "http://localhost:3000"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+  query: Query
+}
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
+type Query {
+  getFoo(id: UUID!): getFoo_200_response @connect(source: "TestAPI", http: {GET: "/v1/foo", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  id: $args.id\\n}"}, selection: "result")
+  getBar(id: UUID): getBar_200_response @connect(source: "TestAPI", http: {GET: "/v1/bar", headers: [{name: "accept", value: "application/json"}], queryParams: "{\\n  id: $args.id\\n}"}, selection: "result")
+}
+
+type getFoo_200_response {
+  result: String
+}
+
+"""
+A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier.
+"""
+scalar UUID
+
+type getBar_200_response {
+  result: String
+}
+
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
+`;

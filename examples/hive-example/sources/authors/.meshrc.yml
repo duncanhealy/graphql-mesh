@@ -1,0 +1,5 @@
+sources:
+  - name: Authors
+    handler:
+      openapi:
+        source: http://localhost:4001/openapi.json

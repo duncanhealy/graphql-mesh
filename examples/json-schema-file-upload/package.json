@@ -1,0 +1,22 @@
+{
+  "name": "@examples/json-schema-file-upload",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"npm run start:api\" \"npm run start:mesh\"",
+    "start:api": "ts-node src/index.ts",
+    "start:mesh": "mesh dev"
+  },
+  "dependencies": {
+    "@graphql-mesh/cli": "0.103.4",
+    "@graphql-mesh/json-schema": "0.112.6",
+    "fets": "0.8.13",
+    "graphql": "16.14.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "concurrently": "10.0.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}

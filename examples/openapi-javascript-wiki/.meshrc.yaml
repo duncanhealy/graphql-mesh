@@ -3,16 +3,17 @@ sources:
     handler:
       openapi:
         source: https://api.apis.guru/v2/specs/wikimedia.org/1.0.0/swagger.yaml
+        endpoint: https://wikimedia.org/api/rest_v1
+        operationHeaders:
+          # Descriptive UA required by Wikimedia; generic values are often blocked.
+          User-Agent: graphql-mesh-javascript-wiki-example (https://github.com/ardatan/graphql-mesh)
 
 additionalTypeDefs: |
-      extend type Query {
-        viewsInPastMonth(project: String!): Float!
-      }
+  extend type Query {
+    viewsInPastMonth(project: String!): Int!
+  }
 additionalResolvers:
   - ./additional-resolvers.ts
-
-require:
-  - "ts-node/register/transpile-only"
 
 documents:
   - example-queries/*.graphql

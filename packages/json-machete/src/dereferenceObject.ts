@@ -1,22 +1,31 @@
-import { JsonPointer } from 'json-ptr';
-import { readJSON } from '@graphql-mesh/utils';
-import { dirname, isAbsolute, join } from 'path';
-import { healJSONSchema } from './healJSONSchema';
+import JsonPointer from 'json-pointer';
+import urlJoin from 'url-join';
+import { handleUntitledDefinitions } from './healUntitledDefinitions.js';
 
 export const resolvePath = (path: string, root: any): any => {
-  return JsonPointer.get(root, path);
+  try {
+    return JsonPointer.get(root, path);
+  } catch (e) {
+    if (e.message?.startsWith('Invalid reference')) {
+      return undefined;
+    }
+    throw e;
+  }
 };
+
+function isUrl(str: string): boolean {
+  return /^https?:\/\//.test(str);
+}
+
 function isRefObject(obj: any): obj is { $ref: string } {
-  return typeof obj === 'object' && obj.$ref;
+  return typeof obj === 'object' && typeof obj.$ref === 'string';
 }
 
 const getAbsolute$Ref = (given$ref: string, baseFilePath: string) => {
   const [givenExternalFileRelativePath, givenRefPath] = given$ref.split('#');
   if (givenExternalFileRelativePath) {
-    const cwd = dirname(baseFilePath);
-    const givenExternalFilePath = isAbsolute(givenExternalFileRelativePath)
-      ? givenExternalFileRelativePath
-      : join(cwd, givenExternalFileRelativePath);
+    const cwd = getCwd(baseFilePath);
+    const givenExternalFilePath = getAbsolutePath(givenExternalFileRelativePath, cwd);
     if (givenRefPath) {
       return `${givenExternalFilePath}#${givenRefPath}`;
     }
@@ -24,86 +33,309 @@ const getAbsolute$Ref = (given$ref: string, baseFilePath: string) => {
   }
   return `${baseFilePath}#${givenRefPath}`;
 };
-// eslint-disable-next-line @typescript-eslint/ban-types
+
+function normalizeUrl(url: string) {
+  return new URL(url).toString();
+}
+
+/**
+ * Collapse `.` / `..` segments so the same file reached via different relative
+ * `$ref`s (`utils.json` vs `../../utils.json`) shares one cache key.
+ */
+export function normalizeFsPath(path: string): string {
+  if (isUrl(path)) {
+    return path;
+  }
+  const windowsAbs = /^[a-zA-Z]:/.test(path);
+  const isAbs = path.startsWith('/') || windowsAbs;
+  const parts = path.replace(/\\/g, '/').split('/');
+  const stack: string[] = [];
+  for (const part of parts) {
+    if (part === '.' || part === '') {
+      continue;
+    }
+    if (part === '..') {
+      if (stack.length && stack[stack.length - 1] !== '..' && !(windowsAbs && stack.length === 1)) {
+        stack.pop();
+      } else if (!isAbs) {
+        stack.push('..');
+      }
+      continue;
+    }
+    stack.push(part);
+  }
+  if (windowsAbs) {
+    return stack.join('/');
+  }
+  return (isAbs ? '/' : '') + stack.join('/');
+}
+
+export function getAbsolutePath(path: string, cwd: string) {
+  if (isUrl(path)) {
+    return path;
+  }
+  if (isUrl(cwd)) {
+    return normalizeUrl(urlJoin(cwd, path));
+  }
+  if (path.startsWith('/') || /^[a-zA-Z]:[\\/]/.test(path)) {
+    return normalizeFsPath(path);
+  }
+  return normalizeFsPath(cwd + '/' + path);
+}
+
+export function getCwd(path: string) {
+  const pathParts = path.split('/');
+  pathParts.pop();
+  return pathParts.join('/');
+}
+
+/** Maps $id URIs to schema nodes and $id#anchor compound keys to anchored sub-schemas. */
+interface SchemaIndex {
+  ids: Map<string, any>;
+  anchors: Map<string, any>;
+}
+
+/**
+ * Pre-scans a schema document to index all $id and $anchor declarations.
+ * Per JSON Schema 2020-12 §8.2.1, $id applies to the entire lexical scope
+ * of a schema resource, so all identifiers must be collected before any
+ * $ref resolution begins.
+ */
+function buildSchemaIndex(root: any): SchemaIndex {
+  const ids = new Map<string, any>();
+  const anchors = new Map<string, any>();
+  const visited = new WeakSet();
+
+  function walk(obj: any, baseId: string | null) {
+    if (obj == null || typeof obj !== 'object' || visited.has(obj)) return;
+    visited.add(obj);
+
+    let currentBaseId = baseId;
+    if (typeof obj.$id === 'string') {
+      currentBaseId = obj.$id;
+      ids.set(currentBaseId, obj);
+    }
+    if (typeof obj.$anchor === 'string' && currentBaseId != null) {
+      anchors.set(`${currentBaseId}#${obj.$anchor}`, obj);
+    }
+
+    for (const key in obj) {
+      const val = obj[key];
+      if (typeof val === 'object' && val !== null) {
+        walk(val, currentBaseId);
+      }
+    }
+  }
+
+  walk(root, null);
+  return { ids, anchors };
+}
+
+/**
+ * Attempts to resolve a split $ref (id part + fragment) against the schema index.
+ * Returns the target schema object, or undefined to fall through to standard resolution.
+ */
+function resolveFromSchemaIndex(
+  index: SchemaIndex,
+  idPart: string,
+  fragment: string | undefined,
+  root: any,
+): any | undefined {
+  if (idPart) {
+    const schema = index.ids.get(idPart);
+    if (!schema) return undefined;
+    if (!fragment) return schema;
+    if (fragment.startsWith('/')) return resolvePath(fragment, schema);
+    return index.anchors.get(`${idPart}#${fragment}`);
+  }
+  if (fragment && !fragment.startsWith('/')) {
+    const rootId = root?.$id;
+    if (rootId) return index.anchors.get(`${rootId}#${fragment}`);
+  }
+  return undefined;
+}
+
+/**
+ * Walks an object graph and resolves every $ref in-place on its parent.
+ * Tries three strategies in order: the schema index ($id/$anchor),
+ * external file/URL loading, and same-document JSON Pointer.
+ */
 export async function dereferenceObject<T extends object, TRoot = T>(
   obj: T,
   {
-    cwd = process.cwd(),
+    cwd = globalThis.process?.cwd?.(),
     externalFileCache = new Map<string, any>(),
     refMap = new Map<string, any>(),
     root = obj as any,
+    debugLogFn,
+    readFileOrUrl,
+    resolvedObjects = new WeakSet(),
+    schemaIndex: schemaIndexOpt,
   }: {
     cwd?: string;
     externalFileCache?: Map<string, any>;
     refMap?: Map<string, any>;
     root?: TRoot;
-  } = {}
+    debugLogFn?(message?: any): void;
+    readFileOrUrl(path: string, opts: { cwd: string }): Promise<any> | any;
+    resolvedObjects?: WeakSet<any>;
+    schemaIndex?: SchemaIndex;
+  },
 ): Promise<T> {
-  if (typeof obj === 'object') {
+  const schemaIndex = schemaIndexOpt ?? buildSchemaIndex(root);
+  if (obj != null && typeof obj === 'object') {
     if (isRefObject(obj)) {
       const $ref = obj.$ref;
       if (refMap.has($ref)) {
         return refMap.get($ref);
       } else {
+        debugLogFn?.(`Resolving ${$ref}`);
         const [externalRelativeFilePath, refPath] = $ref.split('#');
-        if (externalRelativeFilePath) {
-          const externalFilePath = isAbsolute(externalRelativeFilePath)
-            ? externalRelativeFilePath
-            : join(cwd, externalRelativeFilePath);
-          const newCwd = dirname(externalFilePath);
-          let externalFile = externalFileCache.get(externalFilePath);
-          if (!externalFile) {
-            externalFile = await readJSON(externalFilePath);
-            externalFile = await healJSONSchema(externalFile);
-            externalFileCache.set(externalFilePath, externalFile);
+        const indexedSchema = resolveFromSchemaIndex(
+          schemaIndex,
+          externalRelativeFilePath,
+          refPath,
+          root,
+        );
+        if (indexedSchema) {
+          if (resolvedObjects.has(indexedSchema)) {
+            refMap.set($ref, indexedSchema);
+            return indexedSchema;
           }
-          const fakeRefObject = {
-            $ref: `#${refPath}`,
-            ...externalFile,
-          };
-          return dereferenceObject(refPath ? fakeRefObject : externalFile, {
-            cwd: newCwd,
-            externalFileCache,
-            refMap: new Proxy(refMap, {
-              get: (originalRefMap, key) => {
-                switch (key) {
-                  case 'has':
-                    return (given$ref: string) => {
-                      const original$Ref = getAbsolute$Ref(given$ref, externalFilePath);
-                      return originalRefMap.has(original$Ref);
-                    };
-                  case 'get':
-                    return (given$ref: string) => {
-                      const original$Ref = getAbsolute$Ref(given$ref, externalFilePath);
-                      return originalRefMap.get(original$Ref);
-                    };
-                  case 'set':
-                    return (given$ref: string, val: any) => {
-                      const original$Ref = getAbsolute$Ref(given$ref, externalFilePath);
-                      return originalRefMap.set(original$Ref, val);
-                    };
-                }
-                throw new Error('Not implemented ' + key.toString());
-              },
-            }),
-          });
-        } else {
-          const result = resolvePath(refPath, root);
-          refMap.set($ref, result);
-          return dereferenceObject(result, {
+          const result = await dereferenceObject(indexedSchema, {
             cwd,
             externalFileCache,
             refMap,
             root,
+            debugLogFn,
+            readFileOrUrl,
+            resolvedObjects,
+            schemaIndex,
           });
+          if (!result) {
+            return obj;
+          }
+          resolvedObjects.add(result);
+          refMap.set($ref, result);
+          if (!result.$resolvedRef && refPath) {
+            result.$resolvedRef = refPath;
+          }
+          return result;
+        }
+        if (externalRelativeFilePath) {
+          const externalFilePath = getAbsolutePath(externalRelativeFilePath, cwd);
+          const newCwd = getCwd(externalFilePath);
+          let externalFile = externalFileCache.get(externalFilePath);
+          if (!externalFile) {
+            try {
+              externalFile = await readFileOrUrl(externalFilePath, { cwd });
+            } catch (e) {
+              console.error(e);
+              throw new Error(`Unable to load ${externalRelativeFilePath} from ${cwd}`);
+            }
+            externalFileCache.set(externalFilePath, externalFile);
+
+            // Title should not be overwritten by the title given from the reference
+            // Usually Swagger and OpenAPI Schemas have this
+            handleUntitledDefinitions(externalFile);
+          }
+          const result = await dereferenceObject(
+            refPath
+              ? {
+                  $ref: `#${refPath}`,
+                }
+              : externalFile,
+            {
+              cwd: newCwd,
+              externalFileCache,
+              refMap: new Proxy(refMap, {
+                get: (originalRefMap, key) => {
+                  switch (key) {
+                    case 'has':
+                      return (given$ref: string) => {
+                        const original$Ref = getAbsolute$Ref(given$ref, externalFilePath);
+                        return originalRefMap.has(original$Ref);
+                      };
+                    case 'get':
+                      return (given$ref: string) => {
+                        const original$Ref = getAbsolute$Ref(given$ref, externalFilePath);
+                        return originalRefMap.get(original$Ref);
+                      };
+                    case 'set':
+                      return (given$ref: string, val: any) => {
+                        const original$Ref = getAbsolute$Ref(given$ref, externalFilePath);
+                        return originalRefMap.set(original$Ref, val);
+                      };
+                  }
+                  throw new Error('Not implemented ' + key.toString());
+                },
+              }),
+              debugLogFn,
+              readFileOrUrl,
+              root: externalFile,
+              resolvedObjects,
+            },
+          );
+          refMap.set($ref, result);
+          resolvedObjects.add(result);
+          if (result && !result.$resolvedRef) {
+            result.$resolvedRef = refPath;
+          }
+          if ((obj as any).title && !result.title) {
+            result.title = (obj as any).title;
+          }
+          return result;
+        } else {
+          const resolvedObj = resolvePath(refPath, root);
+          if (resolvedObjects.has(resolvedObj)) {
+            refMap.set($ref, resolvedObj);
+            return resolvedObj;
+          }
+          /*
+          if (resolvedObj && !resolvedObj.$resolvedRef) {
+            resolvedObj.$resolvedRef = refPath;
+          }
+          */
+          const result = await dereferenceObject(resolvedObj, {
+            cwd,
+            externalFileCache,
+            refMap,
+            root,
+            debugLogFn,
+            readFileOrUrl,
+            resolvedObjects,
+            schemaIndex,
+          });
+          if (!result) {
+            return obj;
+          }
+          resolvedObjects.add(result);
+          refMap.set($ref, result);
+          if (!result.$resolvedRef) {
+            result.$resolvedRef = refPath;
+          }
+          return result;
         }
       }
     } else {
-      await Promise.all(
-        Object.entries(obj).map(async ([key, val]) => {
-          obj[key] = await dereferenceObject<any>(val, { cwd, externalFileCache, refMap, root });
-        })
-      );
+      if (!resolvedObjects.has(obj)) {
+        resolvedObjects.add(obj);
+        for (const key in obj) {
+          const val = obj[key];
+          if (typeof val === 'object') {
+            obj[key] = await dereferenceObject<any>(val, {
+              cwd,
+              externalFileCache,
+              refMap,
+              root,
+              debugLogFn,
+              readFileOrUrl,
+              resolvedObjects,
+              schemaIndex,
+            });
+          }
+        }
+      }
     }
   }
   return obj;

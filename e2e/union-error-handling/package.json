@@ -1,0 +1,10 @@
+{
+  "name": "@e2e/union-error-handling",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/compose-cli": "*",
+    "@omnigraph/openapi": "*",
+    "express": "5.3.0",
+    "graphql": "^16.14.0"
+  }
+}

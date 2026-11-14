@@ -1,0 +1,1448 @@
+import { OperationTypeNode } from 'graphql';
+import type { JSONSchemaObject } from 'json-machete';
+import { dereferenceObject, handleUntitledDefinitions, resolvePath } from 'json-machete';
+import type { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
+import { Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
+import {
+  getInterpolatedHeadersFactory,
+  getInterpolationKeys,
+  stringInterpolator,
+} from '@graphql-mesh/string-interpolation';
+import type { MeshFetch } from '@graphql-mesh/types';
+import { defaultImportFn, readFileOrUrl, sanitizeNameForGraphQL } from '@graphql-mesh/utils';
+import { asArray } from '@graphql-tools/utils';
+import {
+  setMeshEntityRef,
+  setMeshTypeConnect,
+  type HTTPMethod,
+  type JSONSchemaHTTPJSONOperationConfig,
+  type JSONSchemaOperationConfig,
+  type JSONSchemaOperationResponseConfig,
+  type JSONSchemaPubSubOperationConfig,
+  type OperationHeadersConfiguration,
+} from '@omnigraph/json-schema';
+import type { SelectQueryOrMutationFieldConfig } from './types.js';
+import { getFieldNameFromPath } from './utils.js';
+
+function mimeType(contentType: string): string {
+  return contentType.split(';')[0].trim().toLowerCase();
+}
+
+function cleanDescription(description?: string | null): string | undefined {
+  if (typeof description !== 'string') {
+    return undefined;
+  }
+  return description.trim() === '' ? undefined : description;
+}
+
+/**
+ * Pick a request body content type.
+ * Prefer an explicit Content-Type header when it matches the spec.
+ * Otherwise keep `application/json` unless `application/x-www-form-urlencoded`
+ * is listed first (OAuth token endpoints, RFC 6749).
+ */
+function pickRequestContentKey(
+  contentKeys: readonly (string | number)[],
+  preferredContentType?: string,
+): string | undefined {
+  const keys = contentKeys.map(String);
+  if (keys.length === 0) {
+    return undefined;
+  }
+  if (preferredContentType) {
+    const preferred = mimeType(preferredContentType);
+    const match = keys.find(key => mimeType(key) === preferred);
+    if (match) {
+      return match;
+    }
+  }
+  const formKey = keys.find(key => mimeType(key) === 'application/x-www-form-urlencoded');
+  const jsonKey = keys.find(key => mimeType(key).includes('json'));
+  if (formKey != null && (jsonKey == null || keys.indexOf(formKey) < keys.indexOf(jsonKey))) {
+    return formKey;
+  }
+  return jsonKey ?? keys[0];
+}
+
+export interface HATEOASConfig {
+  /**
+   * @default "rel"
+   */
+  linkNameIdentifier: string;
+  /**
+   * @default "href"
+   */
+  linkPathIdentifier: string;
+  /**
+   * @default "_links"
+   */
+  linkObjectIdentifier: string;
+  /**
+   * @default "x-links"
+   */
+  linkObjectExtensionIdentifier: string;
+}
+
+const defaultHateoasConfig: HATEOASConfig = {
+  linkNameIdentifier: 'rel',
+  linkPathIdentifier: 'href',
+  linkObjectIdentifier: '_links',
+  linkObjectExtensionIdentifier: 'x-links',
+};
+
+interface GetJSONSchemaOptionsFromOpenAPIOptionsParams {
+  source: OpenAPIV3.Document | OpenAPIV2.Document | string;
+  fallbackFormat?: 'json' | 'yaml' | 'js' | 'ts';
+  cwd?: string;
+  fetch?: MeshFetch;
+  endpoint?: string;
+  schemaHeaders?: Record<string, string>;
+  operationHeaders?: OperationHeadersConfiguration;
+  queryParams?: Record<string, any>;
+  selectQueryOrMutationField?: SelectQueryOrMutationFieldConfig[];
+  log?: Logger;
+  jsonApi?: boolean;
+  HATEOAS?: Partial<HATEOASConfig> | boolean;
+}
+
+type FutureLink = (
+  name: string,
+  oasDoc: OpenAPIV3.Document | OpenAPIV2.Document,
+  methodObjFieldMap: MethodObjFieldMap,
+) => boolean;
+
+type MethodObjFieldMap = WeakMap<
+  OpenAPIV2.OperationObject | OpenAPIV3.OperationObject,
+  JSONSchemaHTTPJSONOperationConfig & {
+    responseByStatusCode: Record<string, JSONSchemaOperationResponseConfig>;
+  }
+>;
+
+export interface HATEOASContext {
+  futureLinks: Set<FutureLink>;
+  loadedSchemas: Map<
+    string,
+    {
+      oasDoc: OpenAPIV3.Document | OpenAPIV2.Document;
+      methodObjFieldMap: MethodObjFieldMap;
+    }
+  >;
+}
+
+/**
+ * Process-local fallback when no `HATEOASContext` is passed (compose loads each
+ * OpenAPI subgraph independently). Shared so sequential `loadOpenAPISubgraph`
+ * calls in one compose process can resolve cross-schema HATEOAS links.
+ */
+const defaultFutureLinks = new Set<FutureLink>();
+const defaultLoadedSchemas: HATEOASContext['loadedSchemas'] = new Map();
+
+export async function getJSONSchemaOptionsFromOpenAPIOptions(
+  name: string,
+  {
+    source,
+    fallbackFormat,
+    cwd,
+    fetch: fetchFn,
+    endpoint,
+    schemaHeaders,
+    operationHeaders,
+    queryParams = {},
+    selectQueryOrMutationField = [],
+    log = new Logger({
+      prefix: 'getJSONSchemaOptionsFromOpenAPIOptions',
+      ...(process.env.JEST ? { level: false as const } : {}),
+    }),
+    jsonApi,
+    HATEOAS,
+  }: GetJSONSchemaOptionsFromOpenAPIOptionsParams,
+  hateoasContext?: HATEOASContext,
+) {
+  const contextFutureLinks = hateoasContext?.futureLinks ?? defaultFutureLinks;
+  const loadedSchemas = hateoasContext?.loadedSchemas ?? defaultLoadedSchemas;
+
+  const hateOasConfig: HATEOASConfig | false =
+    HATEOAS === true
+      ? defaultHateoasConfig
+      : HATEOAS === false
+        ? false
+        : {
+            ...defaultHateoasConfig,
+            ...HATEOAS,
+          };
+  if (typeof source === 'string') {
+    source = stringInterpolator.parse(source, {
+      env: process.env,
+    });
+  }
+  const fieldTypeMap: Record<string, SelectQueryOrMutationFieldConfig['fieldName']> = {};
+  for (const { fieldName, type } of selectQueryOrMutationField) {
+    fieldTypeMap[fieldName] = type;
+  }
+  const schemaHeadersFactory = getInterpolatedHeadersFactory(schemaHeaders);
+  log?.debug(`Fetching OpenAPI Document from ${source}`);
+  let oasOrSwagger: OpenAPIV3.Document | OpenAPIV2.Document;
+  const readFileOrUrlForJsonMachete = (path: string, opts: { cwd: string }) =>
+    readFileOrUrl(path, {
+      cwd: opts.cwd,
+      fetch: fetchFn,
+      headers: schemaHeadersFactory({ env: process.env }),
+      importFn: defaultImportFn,
+      log,
+      fallbackFormat,
+    });
+  if (typeof source === 'string') {
+    oasOrSwagger = (await dereferenceObject(
+      {
+        $ref: source,
+      },
+      {
+        cwd,
+        readFileOrUrl: readFileOrUrlForJsonMachete,
+        debugLogFn: log.debug.bind(log),
+      },
+    )) as any;
+  } else {
+    oasOrSwagger = await dereferenceObject(source, {
+      cwd,
+      readFileOrUrl: readFileOrUrlForJsonMachete,
+      debugLogFn: log.debug.bind(log),
+    });
+  }
+
+  handleUntitledDefinitions(oasOrSwagger);
+
+  function lookByTitle(map: any, key: string): any {
+    if (map != null) {
+      for (const keyInMap in map) {
+        const val = map[keyInMap];
+        if (val.title === key) {
+          return val;
+        }
+      }
+    }
+  }
+
+  function lookFromMap(map: any, key: string): any {
+    if (map != null) {
+      const val = map[key];
+      if (val == null) {
+        return lookByTitle(map, key);
+      }
+      return val;
+    }
+  }
+
+  function lookFromMaps(oas: OpenAPIV3.Document | OpenAPIV2.Document, key: string) {
+    return (
+      lookFromMap((oas as OpenAPIV3.Document).components?.schemas, key) ||
+      lookFromMap((oas as OpenAPIV2.Document).definitions, key)
+    );
+  }
+
+  function isObjectRecord(value: unknown): value is Record<string, unknown> {
+    return value != null && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  function ensureDiscriminatorMapping(schema: Record<string, unknown>): Record<string, unknown> {
+    const discriminatorMapping = schema.discriminatorMapping;
+    if (isObjectRecord(discriminatorMapping)) {
+      return discriminatorMapping;
+    }
+    const newDiscriminatorMapping: Record<string, unknown> = {};
+    schema.discriminatorMapping = newDiscriminatorMapping;
+    return newDiscriminatorMapping;
+  }
+
+  function getRefPathFromMappingValue(value: string): {
+    refPath: string;
+    isExternalFileRef: boolean;
+  } | null {
+    if (value.startsWith('#')) {
+      return {
+        refPath: value.slice(1),
+        isExternalFileRef: false,
+      };
+    }
+    if (value.startsWith('..')) {
+      const hashIndex = value.indexOf('#');
+      if (hashIndex === -1) {
+        const refPath = value.slice(2);
+        const firstSegment = refPath.split('/').find(Boolean);
+        if (!refPath.startsWith('/') || firstSegment?.includes('.')) {
+          return null;
+        }
+        return {
+          refPath,
+          isExternalFileRef: false,
+        };
+      }
+      return {
+        refPath: value.slice(hashIndex + 1),
+        isExternalFileRef: true,
+      };
+    }
+    return null;
+  }
+
+  function lookInUnionBranchesByResolvedRef(
+    schema: Record<string, unknown>,
+    refPath: string,
+  ): unknown {
+    for (const combinator of ['oneOf', 'anyOf', 'allOf'] as const) {
+      const list = schema[combinator];
+      if (Array.isArray(list)) {
+        for (const subSchema of list) {
+          if (isObjectRecord(subSchema) && subSchema.$resolvedRef === refPath) {
+            return subSchema;
+          }
+        }
+      }
+    }
+  }
+
+  function tryApplyDiscriminatorMapping(schema: Record<string, unknown>) {
+    const discriminator = schema.discriminator;
+    if (!isObjectRecord(discriminator)) {
+      return;
+    }
+
+    const mapping = discriminator.mapping;
+    if (!isObjectRecord(mapping)) {
+      return;
+    }
+
+    for (const [key, value] of Object.entries(mapping)) {
+      if (typeof value !== 'string') {
+        continue;
+      }
+
+      const ref = getRefPathFromMappingValue(value);
+      if (ref != null) {
+        const resolvedSchema = ref.isExternalFileRef
+          ? lookInUnionBranchesByResolvedRef(schema, ref.refPath) ||
+            resolvePath(ref.refPath, oasOrSwagger)
+          : resolvePath(ref.refPath, oasOrSwagger) ||
+            lookInUnionBranchesByResolvedRef(schema, ref.refPath);
+        if (!resolvedSchema) {
+          log.warn(`Invalid discriminator mapping: ${value}`);
+          continue;
+        }
+        ensureDiscriminatorMapping(schema)[key] = resolvedSchema;
+      } else if (value.includes('/')) {
+        log.warn(`Unsupported discriminator mapping: ${value}`);
+      } else {
+        const schemaObj = lookFromMaps(oasOrSwagger, value);
+        if (!schemaObj) {
+          log.warn(`Invalid discriminator mapping: ${value}`);
+          continue;
+        }
+        ensureDiscriminatorMapping(schema)[key] = schemaObj;
+      }
+    }
+  }
+
+  const visitedSchemas = new WeakSet<object>();
+
+  function visitSchemaOrSchemas(schemaOrSchemas: unknown) {
+    if (Array.isArray(schemaOrSchemas)) {
+      for (const schema of schemaOrSchemas) {
+        visitSchema(schema);
+      }
+    } else {
+      visitSchema(schemaOrSchemas);
+    }
+  }
+
+  function visitSchema(schema: unknown) {
+    if (!isObjectRecord(schema)) {
+      return;
+    }
+    if (visitedSchemas.has(schema)) {
+      return;
+    }
+    visitedSchemas.add(schema);
+
+    tryApplyDiscriminatorMapping(schema);
+
+    for (const combinator of ['oneOf', 'anyOf', 'allOf'] as const) {
+      const list = schema[combinator];
+      if (Array.isArray(list)) {
+        for (const sub of list) {
+          visitSchema(sub);
+        }
+      }
+    }
+
+    for (const schemaKey of [
+      'additionalItems',
+      'additionalProperties',
+      'contains',
+      'else',
+      'if',
+      'items',
+      'not',
+      'then',
+    ] as const) {
+      visitSchemaOrSchemas(schema[schemaKey]);
+    }
+
+    for (const propsKey of ['definitions', 'properties', 'patternProperties'] as const) {
+      const props = schema[propsKey];
+      if (isObjectRecord(props)) {
+        for (const sub of Object.values(props)) {
+          visitSchema(sub);
+        }
+      }
+    }
+
+    // Freshly-resolved mapping targets may themselves contain inline discriminators
+    const resolvedMapping = schema.discriminatorMapping;
+    if (isObjectRecord(resolvedMapping)) {
+      for (const sub of Object.values(resolvedMapping)) {
+        visitSchema(sub);
+      }
+    }
+  }
+
+  function visitContent(content: unknown) {
+    if (!isObjectRecord(content)) {
+      return;
+    }
+    for (const media of Object.values(content)) {
+      if (isObjectRecord(media)) {
+        visitSchema(media.schema);
+      }
+    }
+  }
+
+  function visitParameters(parameters: unknown) {
+    if (!Array.isArray(parameters)) {
+      return;
+    }
+    for (const parameter of parameters) {
+      if (!isObjectRecord(parameter)) {
+        continue;
+      }
+      // OpenAPI v3 / Swagger v2 body parameter
+      visitSchema(parameter.schema);
+      // OpenAPI v3 parameter content variant
+      visitContent(parameter.content);
+    }
+  }
+
+  function visitRequestBody(requestBody: unknown) {
+    if (!isObjectRecord(requestBody)) {
+      return;
+    }
+    visitContent(requestBody.content);
+  }
+
+  function visitResponses(responses: unknown) {
+    if (!isObjectRecord(responses)) {
+      return;
+    }
+    for (const response of Object.values(responses)) {
+      if (!isObjectRecord(response)) {
+        continue;
+      }
+      // OpenAPI v3
+      visitContent(response.content);
+      // Swagger v2
+      visitSchema(response.schema);
+      const headers = response.headers;
+      if (isObjectRecord(headers)) {
+        for (const header of Object.values(headers)) {
+          if (isObjectRecord(header)) {
+            visitSchema(header.schema);
+          }
+        }
+      }
+    }
+  }
+
+  const operationMethodNames = new Set([
+    'get',
+    'post',
+    'put',
+    'delete',
+    'patch',
+    'options',
+    'head',
+    'trace',
+  ]);
+  const visitedPathItems = new WeakSet<object>();
+
+  function visitOperation(operation: unknown) {
+    if (!isObjectRecord(operation)) {
+      return;
+    }
+    visitParameters(operation.parameters);
+    visitRequestBody(operation.requestBody);
+    visitResponses(operation.responses);
+    visitCallbacks(operation.callbacks);
+  }
+
+  function visitPathItem(pathItem: unknown) {
+    if (!isObjectRecord(pathItem)) {
+      return;
+    }
+    if (visitedPathItems.has(pathItem)) {
+      return;
+    }
+    visitedPathItems.add(pathItem);
+
+    visitParameters(pathItem.parameters);
+    for (const [key, operation] of Object.entries(pathItem)) {
+      if (!operationMethodNames.has(key.toLowerCase())) {
+        continue;
+      }
+      visitOperation(operation);
+    }
+  }
+
+  function visitCallbacks(callbacks: unknown) {
+    if (!isObjectRecord(callbacks)) {
+      return;
+    }
+    for (const callback of Object.values(callbacks)) {
+      if (!isObjectRecord(callback)) {
+        continue;
+      }
+      for (const pathItem of Object.values(callback)) {
+        visitPathItem(pathItem);
+      }
+    }
+  }
+
+  function visitOpenAPIDocument(oas: OpenAPIV3.Document | OpenAPIV2.Document) {
+    const v3Components = (oas as OpenAPIV3.Document).components;
+    if (isObjectRecord(v3Components)) {
+      const schemas = v3Components.schemas;
+      if (isObjectRecord(schemas)) {
+        for (const schema of Object.values(schemas)) {
+          visitSchema(schema);
+        }
+      }
+      const parameters = v3Components.parameters;
+      if (isObjectRecord(parameters)) {
+        visitParameters(Object.values(parameters));
+      }
+      const requestBodies = v3Components.requestBodies;
+      if (isObjectRecord(requestBodies)) {
+        for (const requestBody of Object.values(requestBodies)) {
+          visitRequestBody(requestBody);
+        }
+      }
+      const componentResponses = v3Components.responses;
+      if (isObjectRecord(componentResponses)) {
+        visitResponses(componentResponses);
+      }
+      const headers = v3Components.headers;
+      if (isObjectRecord(headers)) {
+        for (const header of Object.values(headers)) {
+          if (isObjectRecord(header)) {
+            visitSchema(header.schema);
+          }
+        }
+      }
+      visitCallbacks(v3Components.callbacks);
+    }
+
+    const v2Definitions = (oas as OpenAPIV2.Document).definitions;
+    if (isObjectRecord(v2Definitions)) {
+      for (const schema of Object.values(v2Definitions)) {
+        visitSchema(schema);
+      }
+    }
+    const v2Parameters = (oas as OpenAPIV2.Document).parameters;
+    if (isObjectRecord(v2Parameters)) {
+      visitParameters(Object.values(v2Parameters));
+    }
+    const v2Responses = (oas as OpenAPIV2.Document).responses;
+    if (isObjectRecord(v2Responses)) {
+      visitResponses(v2Responses);
+    }
+
+    const paths = oas.paths;
+    if (isObjectRecord(paths)) {
+      for (const pathItem of Object.values(paths)) {
+        visitPathItem(pathItem);
+      }
+    }
+  }
+
+  visitOpenAPIDocument(oasOrSwagger);
+
+  const operations: JSONSchemaOperationConfig[] = [];
+  let baseOperationArgTypeMap: Record<string, JSONSchemaObject>;
+
+  if (!endpoint) {
+    if ('servers' in oasOrSwagger) {
+      const serverObj = oasOrSwagger.servers[0];
+      endpoint = serverObj.url.split('{').join('{args.');
+      if (serverObj.variables) {
+        for (const variableName in serverObj.variables) {
+          const variable = serverObj.variables[variableName];
+          if (!(variable as JSONSchemaObject).type) {
+            (variable as JSONSchemaObject).type = 'string';
+          }
+          baseOperationArgTypeMap = baseOperationArgTypeMap || {};
+          baseOperationArgTypeMap[variableName] = variable as JSONSchemaObject;
+          if (variable.default) {
+            endpoint = endpoint.replace(
+              `{args.${variableName}}`,
+              `{args.${variableName}:${variable.default}}`,
+            );
+          }
+        }
+      }
+    }
+
+    if ('schemes' in oasOrSwagger && oasOrSwagger.schemes.length > 0 && oasOrSwagger.host) {
+      endpoint = oasOrSwagger.schemes[0] + '://' + oasOrSwagger.host;
+      if ('basePath' in oasOrSwagger) {
+        endpoint += oasOrSwagger.basePath;
+      }
+    }
+  }
+
+  type OperationConfig = JSONSchemaHTTPJSONOperationConfig & {
+    responseByStatusCode: Record<string, JSONSchemaOperationResponseConfig>;
+  };
+
+  const methodObjFieldMap = new WeakMap<
+    OpenAPIV2.OperationObject | OpenAPIV3.OperationObject,
+    OperationConfig
+  >();
+
+  // Try to resolve any pending future links with currently loaded schemas
+  for (const [schemaName, schemaData] of loadedSchemas) {
+    for (const futureLink of Array.from(contextFutureLinks)) {
+      if (futureLink(schemaName, schemaData.oasDoc, schemaData.methodObjFieldMap)) {
+        contextFutureLinks.delete(futureLink);
+      }
+    }
+  }
+
+  // Try to resolve future links with current schema
+  for (const futureLink of Array.from(contextFutureLinks)) {
+    if (futureLink(name, oasOrSwagger, methodObjFieldMap)) {
+      contextFutureLinks.delete(futureLink);
+    }
+  }
+
+  for (const relativePath in oasOrSwagger.paths) {
+    const pathObj = oasOrSwagger.paths[relativePath];
+    const pathParameters = pathObj.parameters;
+    for (const method in pathObj) {
+      if (
+        method === 'parameters' ||
+        method === 'summary' ||
+        method === 'description' ||
+        method === 'servers' ||
+        method === '$resolvedRef' ||
+        method.startsWith('x-')
+      ) {
+        continue;
+      }
+      const methodObj = pathObj[method as OpenAPIV2.HttpMethods] as
+        OpenAPIV2.OperationObject | OpenAPIV3.OperationObject;
+      const operationConfig: OperationConfig = {
+        method: method.toUpperCase() as HTTPMethod,
+        path: relativePath,
+        type: method.toUpperCase() === 'GET' ? 'query' : 'mutation',
+        field: methodObj.operationId && sanitizeNameForGraphQL(methodObj.operationId),
+        description: cleanDescription(methodObj.description) || cleanDescription(methodObj.summary),
+        schemaHeaders,
+        operationHeaders,
+        responseByStatusCode: {},
+        deprecated: methodObj.deprecated,
+        ...(baseOperationArgTypeMap
+          ? {
+              argTypeMap: {
+                ...baseOperationArgTypeMap,
+              },
+            }
+          : {}),
+        jsonApiFields: jsonApi,
+      } as OperationConfig;
+      operations.push(operationConfig);
+      methodObjFieldMap.set(methodObj, operationConfig);
+      let allParams;
+      if (methodObj.parameters && Array.isArray(methodObj.parameters)) {
+        allParams = [...(pathParameters || []), ...methodObj.parameters];
+      } else {
+        allParams = {
+          ...(pathParameters || {}),
+          ...((methodObj.parameters || {}) as any),
+        };
+      }
+      for (const paramObjIndex in allParams) {
+        const paramObj = allParams[paramObjIndex] as
+          OpenAPIV2.ParameterObject | OpenAPIV3.ParameterObject;
+        const argName = sanitizeNameForGraphQL(paramObj.name);
+        const operationArgTypeMap = (operationConfig.argTypeMap =
+          operationConfig.argTypeMap || {}) as Record<string, JSONSchemaObject>;
+
+        switch (paramObj.in) {
+          case 'query':
+            operationConfig.queryParamArgMap = operationConfig.queryParamArgMap || {};
+            operationConfig.queryParamArgMap[paramObj.name] = argName;
+            if (paramObj.name in queryParams) {
+              paramObj.required = false;
+              if (!paramObj.schema?.default) {
+                paramObj.schema = paramObj.schema || {
+                  type: 'string',
+                };
+                paramObj.required = false;
+                paramObj.schema.nullable = true;
+                const valueFromQueryParams = queryParams[paramObj.name];
+                if (valueFromQueryParams === 'string' && !valueFromQueryParams.includes('{')) {
+                  paramObj.schema.default = queryParams[paramObj.name];
+                }
+              }
+            }
+            if ('explode' in paramObj || paramObj.style === 'deepObject') {
+              operationConfig.queryStringOptionsByParam =
+                operationConfig.queryStringOptionsByParam || {};
+              operationConfig.queryStringOptionsByParam[paramObj.name] =
+                operationConfig.queryStringOptionsByParam[paramObj.name] || {};
+              if (paramObj.style === 'deepObject') {
+                // OpenAPI deepObject → `filter[name]=…`. Emit expands known
+                // properties; runtime still flattens via destructObject+deepObject.
+                operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'repeat';
+                operationConfig.queryStringOptionsByParam[paramObj.name].destructObject = true;
+                operationConfig.queryStringOptionsByParam[paramObj.name].deepObject = true;
+              } else if (paramObj.explode) {
+                operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'repeat';
+                operationConfig.queryStringOptionsByParam[paramObj.name].destructObject = true;
+              } else {
+                switch (paramObj.style) {
+                  case 'form':
+                  case 'simple': // simple is not intended for a query param but seems to be used in some APIs
+                    operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat = 'comma';
+                    break;
+                  default:
+                    if (paramObj.style === undefined && paramObj.schema.type === 'array') {
+                      // when params is array and style is not defined, we assume it is form style.
+                      // it is how swagger editor behaves
+                      operationConfig.queryStringOptionsByParam[paramObj.name].arrayFormat =
+                        'comma';
+                      break;
+                    }
+                    log.warn(
+                      `Other styles including ${paramObj.style} of query parameters are not supported yet.`,
+                    );
+                }
+              }
+            }
+            break;
+          case 'path': {
+            // If it is in the path, let JSON Schema handler put it
+            operationConfig.path = operationConfig.path.replace(
+              `{${paramObj.name}}`,
+              `{args.${argName}}`,
+            );
+            break;
+          }
+          case 'header': {
+            operationConfig.headers = operationConfig.headers || {};
+
+            if (typeof operationHeaders === 'object' && operationHeaders[paramObj.name]) {
+              paramObj.required = false;
+              const valueFromGlobal = operationHeaders[paramObj.name];
+              if (!valueFromGlobal.includes('{')) {
+                if (paramObj.schema) {
+                  paramObj.schema.default = valueFromGlobal;
+                }
+              } else {
+                if (paramObj.schema?.default) {
+                  delete paramObj.schema.default;
+                }
+              }
+            }
+
+            if (typeof operationHeaders === 'function') {
+              paramObj.required = false;
+              if (paramObj.schema?.default) {
+                delete paramObj.schema.default;
+              }
+            }
+
+            let defaultValueSuffix = '';
+
+            if (paramObj.schema?.default) {
+              defaultValueSuffix = `:${paramObj.schema.default}`;
+            }
+
+            operationConfig.headers[paramObj.name] = `{args.${argName}${defaultValueSuffix}}`;
+
+            break;
+          }
+          case 'cookie': {
+            operationConfig.headers = operationConfig.headers || {};
+            operationConfig.headers.cookie = operationConfig.headers.cookie || '';
+            const cookieParams = operationConfig.headers.cookie.split(' ').filter(c => !!c);
+            cookieParams.push(`${paramObj.name}={args.${argName}};`);
+            operationConfig.headers.cookie = `${cookieParams.join(' ')}`;
+            break;
+          }
+          case 'body': {
+            // Swagger 2 body parameters are the `input` argument, not a second argument
+            // named after the parameter. A required name with no property becomes `JSON!`.
+            const hasBodySchema = !!(paramObj.schema && Object.keys(paramObj.schema).length > 0);
+            if (hasBodySchema) {
+              operationConfig.requestSchema = paramObj.schema;
+            }
+            if (paramObj.example) {
+              operationConfig.requestSample = paramObj.example;
+            }
+            if (paramObj.examples) {
+              operationConfig.requestSample = Object.values(paramObj.examples)[0];
+            }
+            if (paramObj.required && (hasBodySchema || paramObj.example || paramObj.examples)) {
+              operationConfig.requiredArgs = operationConfig.requiredArgs || [];
+              if (!operationConfig.requiredArgs.includes('input')) {
+                operationConfig.requiredArgs.push('input');
+              }
+            }
+            continue;
+          }
+        }
+
+        operationArgTypeMap[argName] =
+          paramObj.schema || paramObj.content?.['application/json']?.schema || paramObj;
+        if (!operationArgTypeMap[argName].title) {
+          operationArgTypeMap[argName].name = paramObj.name;
+        }
+        if (!operationArgTypeMap[argName].description) {
+          operationArgTypeMap[argName].description = paramObj.description;
+        }
+        if (paramObj.required) {
+          operationConfig.requiredArgs = operationConfig.requiredArgs || [];
+          operationConfig.requiredArgs.push(argName);
+        }
+        if (
+          !('type' in paramObj) &&
+          !paramObj.schema &&
+          !paramObj.content &&
+          !paramObj.example &&
+          !paramObj.examples
+        ) {
+          operationArgTypeMap[argName].type = 'string';
+        }
+      }
+
+      if ('requestBody' in methodObj) {
+        const requestBodyObj = methodObj.requestBody;
+        if ('content' in requestBodyObj) {
+          const preferredContentType =
+            typeof operationHeaders === 'object'
+              ? operationHeaders['Content-Type'] || operationHeaders['content-type']
+              : undefined;
+          const contentKeys = Object.keys(requestBodyObj.content);
+          const contentKey = pickRequestContentKey(contentKeys, preferredContentType);
+          if (contentKey) {
+            const contentSchema = requestBodyObj.content[contentKey]?.schema;
+            if (contentSchema && Object.keys(contentSchema).length > 0) {
+              operationConfig.requestSchema = contentSchema as JSONSchemaObject;
+            }
+            const examplesObj = requestBodyObj.content[contentKey]?.examples;
+            if (examplesObj) {
+              const firstItem = Object.values(examplesObj)[0];
+              if (typeof firstItem === 'object' && 'value' in firstItem) {
+                operationConfig.requestSample = firstItem.value;
+              } else {
+                operationConfig.requestSample = firstItem;
+              }
+            }
+            if (!operationConfig.headers?.['Content-Type']) {
+              operationConfig.headers = operationConfig.headers || {};
+              operationConfig.headers['Content-Type'] = contentKey;
+            }
+          }
+        }
+      }
+
+      const responseByStatusCode = operationConfig.responseByStatusCode;
+
+      // Handling multiple response types
+      for (const responseKey in methodObj.responses) {
+        if (responseKey === '$resolvedRef') {
+          continue;
+        }
+
+        const responseObj = methodObj.responses[responseKey] as
+          OpenAPIV3.ResponseObject | OpenAPIV2.ResponseObject;
+
+        let schemaObj: JSONSchemaObject;
+
+        if (
+          'consumes' in methodObj &&
+          Array.isArray(methodObj.consumes) &&
+          methodObj.consumes.length
+        ) {
+          operationConfig.headers = operationConfig.headers || {};
+          const preferredContentType =
+            typeof operationHeaders === 'object'
+              ? operationHeaders['Content-Type'] || operationHeaders['content-type']
+              : undefined;
+          operationConfig.headers['Content-Type'] =
+            pickRequestContentKey(methodObj.consumes, preferredContentType) ||
+            methodObj.consumes[0];
+        }
+
+        if ('produces' in methodObj) {
+          operationConfig.headers = operationConfig.headers || {};
+          operationConfig.headers.Accept = methodObj.produces.join(', ');
+        }
+
+        /**
+         * The OAS rule is that 204 responses should not specify a content key.
+         * But in the real world, it happens that some specifications present 204 responses with an
+         * empty content key.
+         *
+         * @see https://swagger.io/docs/specification/v3_0/describing-responses/#empty-response-body
+         */
+        if ('content' in responseObj && Object.keys(responseObj.content).length !== 0) {
+          const responseObjForStatusCode: {
+            oneOf: JSONSchemaObject[];
+          } = {
+            oneOf: [],
+          };
+
+          let allMimeTypes: string[] = [];
+          if (typeof operationHeaders === 'object') {
+            const acceptFromOperationHeader = operationHeaders.accept || operationHeaders.Accept;
+            if (acceptFromOperationHeader) {
+              allMimeTypes = [acceptFromOperationHeader];
+            }
+          }
+          if (allMimeTypes.length === 0) {
+            allMimeTypes = Object.keys(responseObj.content) as string[];
+          }
+          const jsonLikeMimeTypes = allMimeTypes.filter(
+            c => c !== '*/*' && c.toString().includes('json'),
+          );
+          const mimeTypes = jsonLikeMimeTypes.length > 0 ? jsonLikeMimeTypes : allMimeTypes;
+
+          // If we have a better accept header, overwrite User's choice
+          if (
+            (!operationConfig.headers?.accept && !operationConfig.headers?.Accept) ||
+            mimeTypes.length === 1
+          ) {
+            operationConfig.headers = operationConfig.headers || {};
+            if (operationConfig.headers.Accept) {
+              delete operationConfig.headers.Accept;
+            }
+            operationConfig.headers.accept =
+              jsonLikeMimeTypes.length > 0
+                ? jsonLikeMimeTypes.join(',')
+                : allMimeTypes[0].toString();
+          }
+
+          for (const contentKey in responseObj.content) {
+            if (!mimeTypes.some(mimeType => mimeType.includes(contentKey))) {
+              continue;
+            }
+            schemaObj = responseObj.content[contentKey].schema as any;
+            if (schemaObj && Object.keys(schemaObj).length > 0) {
+              responseObjForStatusCode.oneOf.push(schemaObj);
+            } else if (contentKey.toString().startsWith('text')) {
+              responseObjForStatusCode.oneOf.push({ type: 'string' });
+            } else {
+              const examplesObj = responseObj.content[contentKey].examples;
+              if (examplesObj) {
+                let examples = Object.values(examplesObj);
+                if (contentKey.includes('json')) {
+                  examples = examples.map(example => {
+                    if (typeof example === 'string') {
+                      return JSON.parse(example);
+                    }
+                    return example;
+                  });
+                }
+                responseObjForStatusCode.oneOf.push({
+                  examples,
+                });
+              }
+              let example = responseObj.content[contentKey].example;
+              if (example) {
+                if (typeof example === 'string' && contentKey.includes('json')) {
+                  example = JSON.parse(example);
+                }
+                responseObjForStatusCode.oneOf.push({
+                  examples: [example],
+                });
+              }
+            }
+          }
+
+          if (responseObjForStatusCode.oneOf.length === 1) {
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSchema = responseObjForStatusCode.oneOf[0];
+          } else if (responseObjForStatusCode.oneOf.length > 1) {
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSchema = responseObjForStatusCode;
+          }
+        } else if ('schema' in responseObj) {
+          schemaObj = responseObj.schema as any;
+          if (schemaObj && Object.keys(schemaObj).length > 0) {
+            responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+            responseByStatusCode[responseKey].responseSchema = schemaObj;
+          }
+        } else if ('examples' in responseObj) {
+          const examples = Object.values(responseObj.examples);
+          responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+          let example = examples[0];
+          if (typeof example === 'string') {
+            try {
+              // Parse if possible
+              example = JSON.parse(example);
+            } catch (e) {
+              // Do nothing
+            }
+          }
+          responseByStatusCode[responseKey].responseSample = example;
+        } else if (responseKey.toString() === '204') {
+          responseByStatusCode[responseKey] = responseByStatusCode[responseKey] || {};
+          responseByStatusCode[responseKey].responseSchema = {
+            type: 'null',
+            description: cleanDescription(responseObj.description),
+          };
+        }
+
+        if (
+          hateOasConfig &&
+          schemaObj?.properties?.[hateOasConfig.linkObjectIdentifier]?.properties
+        ) {
+          const links = (responseByStatusCode[responseKey].links ||= {});
+          await Promise.all(
+            (
+              Object.keys(
+                schemaObj.properties[hateOasConfig.linkObjectIdentifier].properties,
+              ) as string[]
+            ).map(async linkName => {
+              const xLinkObj = schemaObj.properties?.[hateOasConfig.linkObjectIdentifier]?.[
+                hateOasConfig.linkObjectExtensionIdentifier
+              ]?.find(link => link[hateOasConfig.linkNameIdentifier] === linkName);
+              if (xLinkObj) {
+                const xLinkHref = xLinkObj[hateOasConfig.linkPathIdentifier];
+                // Remove query parameters and path parameters for comparison
+                const cleanXLinkHref = xLinkHref.split('?')[0].replace(/{[^}]+}/g, '{}');
+                const deferred = Promise.withResolvers<void>();
+                function findActualOperationAndPath(
+                  possibleName: string,
+                  possibleOasDoc: typeof oasOrSwagger,
+                  possibleMethodObjFieldMap: typeof methodObjFieldMap,
+                ) {
+                  let actualOperation: OpenAPIV3.OperationObject;
+                  let actualPath: string;
+                  for (const path in possibleOasDoc.paths) {
+                    const cleanPath = path.split('?')[0].replace(/{[^}]+}/g, '{}');
+                    if (cleanPath === cleanXLinkHref) {
+                      actualPath = path;
+                      // Find the operation by looking for GET method or first available method
+                      const pathObj = possibleOasDoc.paths[path];
+                      actualOperation = pathObj.get || (pathObj[Object.keys(pathObj)[0]] as any);
+                      break;
+                    }
+                  }
+                  if (actualOperation) {
+                    const args = {};
+                    const paramsInLink = getInterpolationKeys(xLinkHref);
+                    const paramsInTarget = getInterpolationKeys(actualPath);
+                    for (const paramIndex in paramsInTarget) {
+                      args[paramsInTarget[paramIndex]] = `{root['${paramsInLink[paramIndex]}']}`;
+                    }
+                    if (possibleName === name) {
+                      links[linkName] = {
+                        get fieldName() {
+                          const linkOperationConfig =
+                            possibleMethodObjFieldMap.get(actualOperation);
+                          return linkOperationConfig.field;
+                        },
+                        args,
+                      };
+                    } else {
+                      const succesfulRes = actualOperation.responses[200];
+                      if (succesfulRes && 'content' in succesfulRes) {
+                        const contentKeys = Object.keys(succesfulRes.content);
+                        const contentKey =
+                          contentKeys.find(
+                            contentKey =>
+                              typeof contentKey === 'string' && contentKey.match('json'),
+                          ) || contentKeys[0];
+                        const content = succesfulRes.content[contentKey];
+                        const contentSchema = content.schema;
+                        let objectSchema: any;
+                        if ('$ref' in contentSchema) {
+                          throw new Error('Reference in response is not supported');
+                        } else {
+                          if (contentSchema.type === 'array') {
+                            const items = asArray(contentSchema.items);
+                            for (const item of items) {
+                              if ('$ref' in item) {
+                                throw new Error('Array of references is not supported');
+                              }
+                              if (item.title) {
+                                objectSchema = item;
+                                break;
+                              }
+                            }
+                          } else if (contentSchema.title) {
+                            objectSchema = contentSchema;
+                          }
+                        }
+                        if (objectSchema) {
+                          // Map entity key fields → parent JSON fields for Connectors
+                          // selection `supplier: { id: supplierId }` (Federation entity ref).
+                          // `{root['supplierId']}` / `{root.supplierId}` → `supplierId`.
+                          const meshEntityRef: Record<string, string> = {};
+                          for (const [keyField, interp] of Object.entries(args)) {
+                            const raw = String(interp);
+                            const fromBracket = raw.match(/^\{root\[['"]([^'"]+)['"]\]\}$/);
+                            const fromDot = raw.match(/^\{root\.([^}]+)\}$/);
+                            const from =
+                              fromBracket?.[1] || fromDot?.[1] || paramsInLink[0] || keyField;
+                            meshEntityRef[keyField] = sanitizeNameForGraphQL(from);
+                          }
+                          // Prefer Mesh operation path (`/suppliers/{args.id}`); fall back to
+                          // OpenAPI path (`/suppliers/{id}`) — normalize both to `$this.<key>`
+                          // without relying on methodObjFieldMap identity (Promise.all races).
+                          const linkOperationConfig =
+                            possibleMethodObjFieldMap.get(actualOperation);
+                          let typeConnectPath = String(
+                            (linkOperationConfig &&
+                              'path' in linkOperationConfig &&
+                              linkOperationConfig.path) ||
+                              actualPath,
+                          );
+                          for (const keyField of Object.keys(args)) {
+                            typeConnectPath = typeConnectPath
+                              .replaceAll(`{${keyField}}`, `{$this.${keyField}}`)
+                              .replaceAll(`{args.${keyField}}`, `{$this.${keyField}}`)
+                              .replaceAll(`{$args.${keyField}}`, `{$this.${keyField}}`);
+                          }
+                          const leafNames = Object.keys(objectSchema.properties || {}).filter(
+                            prop => {
+                              const p = objectSchema.properties?.[prop];
+                              return (
+                                p &&
+                                typeof p === 'object' &&
+                                !('$ref' in p) &&
+                                (p as JSONSchemaObject).type !== 'object' &&
+                                (p as JSONSchemaObject).type !== 'array'
+                              );
+                            },
+                          );
+                          // Full target type on this subgraph + entity stub in parent selection.
+                          // Type-level `@connect` lets Hive `hydrateEntityStubFieldResolvers`
+                          // fill `name` inside the Products subgraph (same-subgraph path).
+                          schemaObj.properties[linkName] = {
+                            ...objectSchema,
+                            meshEntityRef,
+                          };
+                          if (objectSchema.title) {
+                            setMeshTypeConnect(objectSchema.title, {
+                              source: name,
+                              http: {
+                                GET: typeConnectPath,
+                                headers: [{ name: 'accept', value: 'application/json' }],
+                              },
+                              selection: leafNames.length ? leafNames.join(' ') : 'id',
+                            });
+                          }
+                          // Survives JSON→GraphQL composers (extensions often drop custom keys).
+                          // Bake `supplier: { __typename: $("Supplier") id: supplierId }` into
+                          // parent `@connect(selection:)`.
+                          if (schemaObj.title && Object.keys(meshEntityRef).length) {
+                            setMeshEntityRef(schemaObj.title, linkName, meshEntityRef);
+                          }
+                        }
+                      }
+                    }
+                    contextFutureLinks.delete(findActualOperationAndPath);
+                    if (timeout) clearTimeout(timeout);
+                    deferred.resolve();
+                    return true;
+                  }
+                  return false;
+                }
+                let timeout: ReturnType<typeof setTimeout> | undefined;
+                const tryResolveAgainstLoaded = () => {
+                  if (findActualOperationAndPath(name, oasOrSwagger, methodObjFieldMap)) {
+                    return true;
+                  }
+                  // Other subgraphs may have finished first (compose uses Promise.all).
+                  for (const [schemaName, schemaData] of loadedSchemas) {
+                    if (schemaName === name) continue;
+                    if (
+                      findActualOperationAndPath(
+                        schemaName,
+                        schemaData.oasDoc,
+                        schemaData.methodObjFieldMap,
+                      )
+                    ) {
+                      return true;
+                    }
+                  }
+                  return false;
+                };
+                // Only set timeout if we're not in batch mode (no context provided)
+                if (!hateoasContext) {
+                  timeout = setTimeout(() => {
+                    log.warn(
+                      `Could not find operation for link ${linkName} in ${name} for ${xLinkHref}`,
+                    );
+                    contextFutureLinks.delete(findActualOperationAndPath);
+                    deferred.resolve();
+                  }, 5000);
+                }
+                if (!tryResolveAgainstLoaded()) {
+                  contextFutureLinks.add(findActualOperationAndPath);
+                }
+
+                // In batch mode, resolve immediately since we'll handle resolution later
+                if (hateoasContext) {
+                  deferred.resolve();
+                }
+
+                return deferred.promise;
+              }
+            }),
+          );
+        }
+
+        if ('links' in responseObj) {
+          const dereferencedLinkObj = await dereferenceObject(
+            {
+              links: responseObj.links,
+            },
+            {
+              cwd,
+              root: oasOrSwagger,
+              readFileOrUrl: readFileOrUrlForJsonMachete,
+            },
+          );
+          responseByStatusCode[responseKey].links = responseByStatusCode[responseKey].links || {};
+          for (const linkName in dereferencedLinkObj.links) {
+            const linkObj = responseObj.links[linkName] as OpenAPIV3.LinkObject;
+            let args: Record<string, string>;
+            if (linkObj.parameters) {
+              args = {};
+              for (const parameterName in linkObj.parameters) {
+                const parameterExp = linkObj.parameters[parameterName];
+                const sanitizedParamName = sanitizeNameForGraphQL(parameterName);
+                if (typeof parameterExp === 'string') {
+                  args[sanitizedParamName] = parameterExp.startsWith('$')
+                    ? `{root.${parameterExp}}`
+                    : parameterExp.split('$').join('root.$');
+                } else {
+                  args[sanitizedParamName] = parameterExp;
+                }
+              }
+            }
+            const sanitizedLinkName = sanitizeNameForGraphQL(linkName);
+            if ('operationRef' in linkObj) {
+              const [externalPath, ref] = linkObj.operationRef.split('#');
+              if (externalPath) {
+                log.debug(
+                  `Skipping external operation reference ${linkObj.operationRef}\n Use additionalTypeDefs and additionalResolvers instead.`,
+                );
+              } else {
+                const actualOperation = resolvePath(ref, oasOrSwagger);
+                responseByStatusCode[responseKey].links[sanitizedLinkName] = {
+                  get fieldName() {
+                    const linkOperationConfig = methodObjFieldMap.get(actualOperation);
+                    return linkOperationConfig.field;
+                  },
+                  args,
+                  description: cleanDescription(linkObj.description),
+                };
+              }
+            } else if ('operationId' in linkObj) {
+              responseByStatusCode[responseKey].links[sanitizedLinkName] = {
+                fieldName: sanitizeNameForGraphQL(linkObj.operationId),
+                args,
+                description: cleanDescription(linkObj.description),
+              };
+            }
+          }
+        }
+
+        if (!operationConfig.field) {
+          methodObj.operationId = getFieldNameFromPath(
+            relativePath,
+            method,
+            schemaObj?.$resolvedRef,
+          );
+          // Operation ID might not be avaiable so let's generate field name from path and response type schema
+          operationConfig.field = sanitizeNameForGraphQL(methodObj.operationId);
+        }
+
+        // Give a better name to the request input object
+        if (
+          typeof operationConfig.requestSchema === 'object' &&
+          !operationConfig.requestSchema.title
+        ) {
+          operationConfig.requestSchema.title = operationConfig.field + '_request';
+        }
+      }
+
+      if ('callbacks' in methodObj) {
+        for (const callbackKey in methodObj.callbacks) {
+          const callbackObj = methodObj.callbacks[callbackKey] as OpenAPIV3.CallbackObject;
+          for (const callbackUrlRefKey in callbackObj) {
+            if (callbackUrlRefKey.startsWith('$')) {
+              continue;
+            }
+            const pubsubTopicSuffix = callbackUrlRefKey
+              .split('$request.query')
+              .join('args')
+              .split('$request.body#/')
+              .join('args.')
+              .split('$response.body#/')
+              .join('args.');
+            const callbackOperationConfig: JSONSchemaPubSubOperationConfig = {
+              type: OperationTypeNode.SUBSCRIPTION,
+              field: '',
+              pubsubTopic: '',
+            };
+            const callbackUrlObj = callbackObj[callbackUrlRefKey];
+            for (const method in callbackUrlObj) {
+              const callbackOperation: OpenAPIV3.OperationObject =
+                callbackUrlObj[method as OpenAPIV2.HttpMethods];
+              callbackOperationConfig.pubsubTopic = `webhook:${method}:${pubsubTopicSuffix}`;
+              callbackOperationConfig.field = callbackOperation.operationId;
+              callbackOperationConfig.description =
+                cleanDescription(callbackOperation.description) ||
+                cleanDescription(callbackOperation.summary);
+              const requestBodyContents = (
+                callbackOperation.requestBody as OpenAPIV3.RequestBodyObject
+              )?.content;
+              if (requestBodyContents) {
+                callbackOperationConfig.responseSchema = requestBodyContents[
+                  Object.keys(requestBodyContents)[0]
+                ].schema as any;
+              }
+              const responses = callbackOperation.responses;
+              if (responses) {
+                const response = responses[Object.keys(responses)[0]];
+                if (response) {
+                  const responseContents = (response as OpenAPIV3.ResponseObject).content;
+                  if (responseContents) {
+                    callbackOperationConfig.requestSchema = responseContents[
+                      Object.keys(responseContents)[0]
+                    ].schema as any;
+                  }
+                }
+              }
+            }
+            callbackOperationConfig.field =
+              callbackOperationConfig.field || sanitizeNameForGraphQL(callbackKey);
+            operations.push(callbackOperationConfig);
+          }
+        }
+      }
+
+      if (fieldTypeMap[operationConfig.field]) {
+        operationConfig.type = fieldTypeMap[operationConfig.field] as OperationTypeNode;
+      }
+    }
+  }
+
+  // Register for cross-schema HATEOAS (shared process map or explicit context).
+  loadedSchemas.set(name, {
+    oasDoc: oasOrSwagger,
+    methodObjFieldMap,
+  });
+
+  // Resolve any deferred cross-schema links now that this schema is available.
+  if (contextFutureLinks.size) {
+    for (const futureLink of Array.from(contextFutureLinks)) {
+      if (futureLink(name, oasOrSwagger, methodObjFieldMap)) {
+        contextFutureLinks.delete(futureLink);
+      }
+    }
+  }
+
+  return {
+    operations,
+    endpoint,
+    cwd,
+    fetch: fetchFn,
+    schemaHeaders,
+    operationHeaders,
+  };
+}
+
+/**
+ * Loads multiple OpenAPI schemas with proper HATEOAS cross-reference resolution.
+ * This function ensures that schemas referencing operations from other schemas
+ * are resolved correctly regardless of loading order.
+ */
+export async function getJSONSchemaOptionsFromMultipleOpenAPIOptions(
+  schemas: Array<{
+    name: string;
+    options: GetJSONSchemaOptionsFromOpenAPIOptionsParams;
+  }>,
+): Promise<
+  Array<{
+    name: string;
+    result: Awaited<ReturnType<typeof getJSONSchemaOptionsFromOpenAPIOptions>>;
+  }>
+> {
+  // Create shared context for cross-schema HATEOAS resolution
+  const hateoasContext: HATEOASContext = {
+    futureLinks: new Set(),
+    loadedSchemas: new Map(),
+  };
+
+  const results: Array<{
+    name: string;
+    result: Awaited<ReturnType<typeof getJSONSchemaOptionsFromOpenAPIOptions>>;
+  }> = [];
+
+  // First pass: Load all schemas
+  for (const { name, options } of schemas) {
+    const result = await getJSONSchemaOptionsFromOpenAPIOptions(name, options, hateoasContext);
+    results.push({ name, result });
+  }
+
+  // Second pass: Attempt to resolve any remaining future links
+  let maxAttempts = schemas.length * 2; // Prevent infinite loops
+
+  while (hateoasContext.futureLinks.size > 0 && maxAttempts > 0) {
+    const initialSize = hateoasContext.futureLinks.size;
+
+    for (const [schemaName, schemaData] of hateoasContext.loadedSchemas) {
+      for (const futureLink of Array.from(hateoasContext.futureLinks)) {
+        if (futureLink(schemaName, schemaData.oasDoc, schemaData.methodObjFieldMap)) {
+          hateoasContext.futureLinks.delete(futureLink);
+        }
+      }
+    }
+
+    // If no progress was made, break to avoid infinite loop
+    if (hateoasContext.futureLinks.size === initialSize) {
+      break;
+    }
+
+    maxAttempts--;
+  }
+
+  // Log remaining unresolved links
+  if (hateoasContext.futureLinks.size > 0) {
+    if (!process.env.JEST) {
+      const log = new Logger({ prefix: 'getJSONSchemaOptionsFromMultipleOpenAPIOptions' });
+      log.warn(
+        `${hateoasContext.futureLinks.size} HATEOAS links could not be resolved after loading all schemas. This may indicate missing operations or circular dependencies.`,
+      );
+    }
+  }
+
+  return results;
+}

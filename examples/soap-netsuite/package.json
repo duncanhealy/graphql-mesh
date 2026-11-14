@@ -1,21 +1,20 @@
 {
-  "name": "soap-netsuite",
-  "version": "0.0.18",
+  "name": "@examples/soap-netsuite",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "mesh dev",
-    "debug": "cross-env DEBUG=1 yarn dev",
     "build": "mesh build",
-    "start:prod": "mesh start",
-    "start": "yarn debug"
+    "debug": "cross-env DEBUG=1 yarn dev",
+    "dev": "mesh dev",
+    "start": "yarn debug",
+    "start:prod": "mesh start"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.38.0",
-    "@graphql-mesh/soap": "0.7.21",
-    "graphql": "15.4.0"
+    "@graphql-mesh/cli": "0.103.4",
+    "@graphql-mesh/soap": "0.110.3",
+    "graphql": "16.14.0"
   },
   "devDependencies": {
-    "cross-env": "7.0.3"
+    "cross-env": "10.1.0"
   }
 }

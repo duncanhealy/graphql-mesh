@@ -1,0 +1,19 @@
+{
+  "name": "@examples-v1-next/cfw-spacex",
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev"
+  },
+  "dependencies": {
+    "@envelop/core": "^6.0.0",
+    "@envelop/depth-limit": "^8.0.0",
+    "@graphql-hive/gateway": "^2.15.4",
+    "@graphql-mesh/cache-cfw-kv": "workspace:^",
+    "@graphql-mesh/plugin-rate-limit": "^0.109.3",
+    "@graphql-mesh/plugin-response-cache": "^0.107.4",
+    "graphql": "16.14.0"
+  },
+  "devDependencies": {
+    "wrangler": "4.158.0"
+  }
+}

@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Merge required attributes correctly in allOfs should generate correct schema: required-allof-schema 1`] = `
+"schema @source(name: "test", http: {baseURL: ""}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+  query: Query
+}
+
+directive @length(subgraph: String, min: Int, max: Int) on SCALAR
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
+type Admin implements User {
+  """The Name."""
+  name: query_getAdmin_allOf_0_name
+  """The type"""
+  type: String!
+  """The admin"""
+  admin: Boolean
+}
+
+interface User {
+  """The Name."""
+  name: query_getAdmin_allOf_0_name
+  """The type"""
+  type: String!
+}
+
+"""The Name."""
+scalar query_getAdmin_allOf_0_name @length(subgraph: "test", max: 100)
+
+type Editor implements User {
+  """The Name."""
+  name: query_getAdmin_allOf_0_name
+  """The type"""
+  type: String!
+}
+
+type Query {
+  """Get admin"""
+  getAdmin: Admin @connect(source: "test", http: {GET: "/admin", headers: [{name: "accept", value: "application/json"}]}, selection: "name type admin")
+  """Get editor"""
+  getEditor: Editor @connect(source: "test", http: {GET: "/editor", headers: [{name: "accept", value: "application/json"}]}, selection: "name type")
+}
+
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
+`;

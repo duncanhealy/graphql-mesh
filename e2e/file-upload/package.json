@@ -1,0 +1,10 @@
+{
+  "name": "@e2e/file-upload",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@graphql-hive/gateway": "^2.15.4",
+    "@graphql-tools/schema": "^11.0.8",
+    "graphql": "16.14.0"
+  }
+}

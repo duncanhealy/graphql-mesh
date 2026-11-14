@@ -1,0 +1,24 @@
+{
+  "name": "@examples/hello-world-esm",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "prestart": "mesh build --fileType js",
+    "start": "tsx index.ts",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@graphql-mesh/cli": "0.103.4",
+    "@graphql-mesh/json-schema": "0.112.6",
+    "@graphql-mesh/plugin-mock": "0.108.3",
+    "graphql": "16.14.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "jest": "30.4.2",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3"
+  }
+}

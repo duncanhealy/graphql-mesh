@@ -1,0 +1,1151 @@
+# example-response-cache
+
+## 0.9.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4b92af0`](https://github.com/ardatan/graphql-mesh/commit/4b92af01c10d1d746dfb1623491282c169e03248),
+  [`4b92af0`](https://github.com/ardatan/graphql-mesh/commit/4b92af01c10d1d746dfb1623491282c169e03248),
+  [`4b92af0`](https://github.com/ardatan/graphql-mesh/commit/4b92af01c10d1d746dfb1623491282c169e03248)]:
+  - @graphql-mesh/cli@0.103.4
+  - @graphql-mesh/plugin-mock@0.108.3
+  - @graphql-mesh/plugin-response-cache@0.107.4
+  - @graphql-mesh/json-schema@0.112.6
+
+## 0.9.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c),
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c),
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c)]:
+  - @graphql-mesh/cli@0.103.3
+  - @graphql-mesh/plugin-mock@0.108.2
+  - @graphql-mesh/plugin-response-cache@0.107.3
+  - @graphql-mesh/json-schema@0.112.5
+
+## 0.9.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.112.4
+
+## 0.9.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.103.2
+  - @graphql-mesh/json-schema@0.112.3
+  - @graphql-mesh/plugin-mock@0.108.1
+  - @graphql-mesh/plugin-response-cache@0.107.2
+
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.112.2
+
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6092e15`](https://github.com/ardatan/graphql-mesh/commit/6092e1539c92a0973569882955ae4bd5754a1b6d)]:
+  - @graphql-mesh/cli@0.103.1
+  - @graphql-mesh/json-schema@0.112.1
+  - @graphql-mesh/plugin-response-cache@0.107.1
+
+## 0.9.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`51b15f4`](https://github.com/ardatan/graphql-mesh/commit/51b15f445e07c8f8d892e0a21f0ae5b638ada74e),
+  [`ab73b38`](https://github.com/ardatan/graphql-mesh/commit/ab73b383c4ef294891dda6c9c8598a9651494762),
+  [`51b15f4`](https://github.com/ardatan/graphql-mesh/commit/51b15f445e07c8f8d892e0a21f0ae5b638ada74e)]:
+  - @graphql-mesh/cli@0.103.0
+  - @graphql-mesh/json-schema@0.112.0
+  - @graphql-mesh/plugin-mock@0.108.0
+  - @graphql-mesh/plugin-response-cache@0.107.0
+
+## 0.8.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b14fe65`](https://github.com/ardatan/graphql-mesh/commit/b14fe65bb198357064ba5dd1a804fd39f3e3ed74),
+  [`11567cd`](https://github.com/ardatan/graphql-mesh/commit/11567cd6dbbbf59d15ee4702bd761cf758bd899b),
+  [`c90f5fb`](https://github.com/ardatan/graphql-mesh/commit/c90f5fb1f85c4e0772d48946a8820e991b59551a),
+  [`b14fe65`](https://github.com/ardatan/graphql-mesh/commit/b14fe65bb198357064ba5dd1a804fd39f3e3ed74),
+  [`a29531b`](https://github.com/ardatan/graphql-mesh/commit/a29531b7918960a93f7db8918c47da8e74440794)]:
+  - @graphql-mesh/cli@0.102.0
+  - @graphql-mesh/plugin-response-cache@0.106.0
+  - @graphql-mesh/json-schema@0.111.0
+  - @graphql-mesh/plugin-mock@0.107.0
+
+## 0.7.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.101.2
+
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`7383889`](https://github.com/ardatan/graphql-mesh/commit/738388968fcb0701dbdd2a6dcb9791e8d43c02ec),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08)]:
+  - @graphql-mesh/cli@0.101.1
+  - @graphql-mesh/plugin-mock@0.106.1
+  - @graphql-mesh/json-schema@0.110.1
+
+## 0.7.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`478676c`](https://github.com/ardatan/graphql-mesh/commit/478676c5f97caad1b11bec1a4a0270cf76736623),
+  [`478676c`](https://github.com/ardatan/graphql-mesh/commit/478676c5f97caad1b11bec1a4a0270cf76736623)]:
+  - @graphql-mesh/cli@0.101.0
+  - @graphql-mesh/json-schema@0.110.0
+  - @graphql-mesh/plugin-mock@0.106.0
+
+## 0.6.56
+
+### Patch Changes
+
+- Updated dependencies
+  [[`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`59a2e76`](https://github.com/ardatan/graphql-mesh/commit/59a2e76f34757a4688705bd63be59e2945b2c6ad),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`9aea3e9`](https://github.com/ardatan/graphql-mesh/commit/9aea3e9ad64deabc7ffd1e5855bff7e101ddff7f),
+  [`cfa9cd9`](https://github.com/ardatan/graphql-mesh/commit/cfa9cd9fbd8df765218c280683cc694148d6fe39),
+  [`d205b62`](https://github.com/ardatan/graphql-mesh/commit/d205b62d84ab20c04f2d1efe6cfd488019f27ca0),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd)]:
+  - @graphql-mesh/cli@0.100.54
+  - @graphql-mesh/json-schema@0.109.44
+  - @graphql-mesh/plugin-mock@0.105.40
+
+## 0.6.55
+
+### Patch Changes
+
+- Updated dependencies
+  [[`dbb27e6`](https://github.com/ardatan/graphql-mesh/commit/dbb27e635efbc621a3e07d594ad716f4cec1902f),
+  [`f66010a`](https://github.com/ardatan/graphql-mesh/commit/f66010a83d75f83bf28dadf4d4d029bbdd47ad20),
+  [`d957a64`](https://github.com/ardatan/graphql-mesh/commit/d957a64df17a7d27ffc2cef57c6cc8853544165c),
+  [`69a8aac`](https://github.com/ardatan/graphql-mesh/commit/69a8aacd0566879cbd6fe806de3dfd43635f43d6),
+  [`df3ebd7`](https://github.com/ardatan/graphql-mesh/commit/df3ebd703390658c879c3fab2184f1f0de205a0c),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f)]:
+  - @graphql-mesh/cli@0.100.53
+  - @graphql-mesh/plugin-mock@0.105.39
+  - @graphql-mesh/json-schema@0.109.43
+
+## 0.6.54
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3aabd36`](https://github.com/ardatan/graphql-mesh/commit/3aabd36e7a6b5573e985e2836c624e0ab3a6b08c)]:
+  - @graphql-mesh/cli@0.100.52
+  - @graphql-mesh/json-schema@0.109.42
+
+## 0.6.53
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4)]:
+  - @graphql-mesh/cli@0.100.51
+  - @graphql-mesh/plugin-mock@0.105.38
+  - @graphql-mesh/json-schema@0.109.41
+
+## 0.6.52
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3acfd01`](https://github.com/ardatan/graphql-mesh/commit/3acfd01f0b4190717dcc223e8dcdeb04945c1eeb)]:
+  - @graphql-mesh/cli@0.100.50
+
+## 0.6.51
+
+### Patch Changes
+
+- Updated dependencies
+  [[`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)]:
+  - @graphql-mesh/cli@0.100.49
+  - @graphql-mesh/plugin-mock@0.105.37
+  - @graphql-mesh/json-schema@0.109.40
+
+## 0.6.50
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5904514`](https://github.com/ardatan/graphql-mesh/commit/5904514273b0d29fc4581bbddf082b392175640a)]:
+  - @graphql-mesh/cli@0.100.48
+
+## 0.6.49
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.47
+
+## 0.6.48
+
+### Patch Changes
+
+- Updated dependencies
+  [[`efd48d3`](https://github.com/ardatan/graphql-mesh/commit/efd48d3e994b4db8415bc3eaf929bfbc40d80983)]:
+  - @graphql-mesh/cli@0.100.46
+  - @graphql-mesh/json-schema@0.109.39
+  - @graphql-mesh/plugin-mock@0.105.36
+
+## 0.6.47
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.45
+
+## 0.6.46
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8536e3f`](https://github.com/ardatan/graphql-mesh/commit/8536e3fec16fe2d1b31e2b43cf8684d347d348c5),
+  [`45bb6de`](https://github.com/ardatan/graphql-mesh/commit/45bb6dec17b81e9048945e4d3a3dd741a6f4824b),
+  [`3df9831`](https://github.com/ardatan/graphql-mesh/commit/3df9831771d8d5da5f6fab0144121fcdee4c79e1),
+  [`a0b0a27`](https://github.com/ardatan/graphql-mesh/commit/a0b0a2771304af1b9488eb2cc9b943fd5eabf59f)]:
+  - @graphql-mesh/cli@0.100.44
+  - @graphql-mesh/json-schema@0.109.38
+  - @graphql-mesh/plugin-mock@0.105.35
+
+## 0.6.45
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.109.37
+  - @graphql-mesh/plugin-mock@0.105.34
+  - @graphql-mesh/cli@0.100.43
+
+## 0.6.44
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.109.36
+  - @graphql-mesh/plugin-mock@0.105.33
+  - @graphql-mesh/cli@0.100.42
+
+## 0.6.43
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.109.35
+  - @graphql-mesh/plugin-mock@0.105.32
+  - @graphql-mesh/cli@0.100.41
+
+## 0.6.42
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.109.34
+  - @graphql-mesh/plugin-mock@0.105.31
+  - @graphql-mesh/cli@0.100.40
+
+## 0.6.41
+
+### Patch Changes
+
+- Updated dependencies
+  [[`78d1cd4`](https://github.com/ardatan/graphql-mesh/commit/78d1cd477d47be3ebdcac7133e41f30cf6bf67c6)]:
+  - @graphql-mesh/cli@0.100.39
+  - @graphql-mesh/json-schema@0.109.33
+  - @graphql-mesh/plugin-mock@0.105.30
+
+## 0.6.40
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.38
+  - @graphql-mesh/json-schema@0.109.32
+  - @graphql-mesh/plugin-mock@0.105.29
+
+## 0.6.39
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.37
+  - @graphql-mesh/json-schema@0.109.31
+  - @graphql-mesh/plugin-mock@0.105.28
+
+## 0.6.38
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.36
+
+## 0.6.37
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d90b2c9`](https://github.com/ardatan/graphql-mesh/commit/d90b2c9b97ae6db771a006c3e24b8521b626d5bd),
+  [`d90b2c9`](https://github.com/ardatan/graphql-mesh/commit/d90b2c9b97ae6db771a006c3e24b8521b626d5bd)]:
+  - @graphql-mesh/cli@0.100.35
+
+## 0.6.36
+
+### Patch Changes
+
+- Updated dependencies
+  [[`dd6f9ef`](https://github.com/ardatan/graphql-mesh/commit/dd6f9ef66a753e6e4e02fea563f7a691928db5f8)]:
+  - @graphql-mesh/cli@0.100.34
+
+## 0.6.35
+
+### Patch Changes
+
+- Updated dependencies
+  [[`485ca58`](https://github.com/ardatan/graphql-mesh/commit/485ca58e8b692c2d8cb2c654dc17fde5ba69078f)]:
+  - @graphql-mesh/cli@0.100.33
+  - @graphql-mesh/json-schema@0.109.30
+  - @graphql-mesh/plugin-mock@0.105.27
+
+## 0.6.34
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ace8c95`](https://github.com/ardatan/graphql-mesh/commit/ace8c958b407c95e2c836afe65cf68df178c0201)]:
+  - @graphql-mesh/cli@0.100.32
+  - @graphql-mesh/json-schema@0.109.29
+
+## 0.6.33
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.31
+  - @graphql-mesh/json-schema@0.109.28
+  - @graphql-mesh/plugin-mock@0.105.26
+
+## 0.6.32
+
+### Patch Changes
+
+- Updated dependencies
+  [[`58b1e03`](https://github.com/ardatan/graphql-mesh/commit/58b1e03414146df6ea7c865bc3c3cc6078ac84da)]:
+  - @graphql-mesh/cli@0.100.30
+
+## 0.6.31
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ec81ee4`](https://github.com/ardatan/graphql-mesh/commit/ec81ee4927ffb9a9e3cd450d822d453338f5b1c5),
+  [`9d8b2b0`](https://github.com/ardatan/graphql-mesh/commit/9d8b2b05544d5238ad9d87837fd909cdccd547dd)]:
+  - @graphql-mesh/cli@0.100.29
+  - @graphql-mesh/json-schema@0.109.27
+
+## 0.6.30
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.28
+  - @graphql-mesh/json-schema@0.109.26
+  - @graphql-mesh/plugin-mock@0.105.25
+
+## 0.6.29
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e077ce4`](https://github.com/ardatan/graphql-mesh/commit/e077ce4afbb9b97642f5d14c8f93e1a2c1641b45),
+  [`91e65e3`](https://github.com/ardatan/graphql-mesh/commit/91e65e3faf9c956ef60c24f91b329ee51666fe23)]:
+  - @graphql-mesh/cli@0.100.27
+  - @graphql-mesh/json-schema@0.109.25
+  - @graphql-mesh/plugin-mock@0.105.24
+
+## 0.6.28
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.26
+
+## 0.6.27
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.109.24
+  - @graphql-mesh/cli@0.100.25
+  - @graphql-mesh/plugin-mock@0.105.23
+
+## 0.6.26
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c219668`](https://github.com/ardatan/graphql-mesh/commit/c219668be72a56f0400a3086fe5144604b7ae948),
+  [`c219668`](https://github.com/ardatan/graphql-mesh/commit/c219668be72a56f0400a3086fe5144604b7ae948)]:
+  - @graphql-mesh/cli@0.100.24
+  - @graphql-mesh/plugin-mock@0.105.22
+  - @graphql-mesh/json-schema@0.109.23
+
+## 0.6.25
+
+### Patch Changes
+
+- Updated dependencies
+  [[`81e31f6`](https://github.com/ardatan/graphql-mesh/commit/81e31f6bbd34b0ec043d818182694740ab1c32a4)]:
+  - @graphql-mesh/cli@0.100.23
+  - @graphql-mesh/json-schema@0.109.22
+  - @graphql-mesh/plugin-mock@0.105.21
+
+## 0.6.24
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3d12bc1`](https://github.com/ardatan/graphql-mesh/commit/3d12bc1ebb223d3d00c76add906c4c28bd2601fc)]:
+  - @graphql-mesh/cli@0.100.22
+  - @graphql-mesh/json-schema@0.109.21
+
+## 0.6.23
+
+### Patch Changes
+
+- Updated dependencies
+  [[`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`7c0b01e`](https://github.com/ardatan/graphql-mesh/commit/7c0b01e01b61853feb95ae5b5c4045507c5def1c),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)]:
+  - @graphql-mesh/cli@0.100.21
+  - @graphql-mesh/plugin-mock@0.105.20
+  - @graphql-mesh/json-schema@0.109.20
+
+## 0.6.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.20
+  - @graphql-mesh/json-schema@0.109.19
+  - @graphql-mesh/plugin-mock@0.105.19
+
+## 0.6.21
+
+### Patch Changes
+
+- Updated dependencies
+  [[`123ad56`](https://github.com/ardatan/graphql-mesh/commit/123ad567d0ab84b7a6f7f47669c7fb172b239b00)]:
+  - @graphql-mesh/cli@0.100.19
+  - @graphql-mesh/json-schema@0.109.18
+
+## 0.6.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.18
+  - @graphql-mesh/json-schema@0.109.17
+  - @graphql-mesh/plugin-mock@0.105.18
+
+## 0.6.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.17
+
+## 0.6.18
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.16
+  - @graphql-mesh/json-schema@0.109.16
+  - @graphql-mesh/plugin-mock@0.105.17
+
+## 0.6.17
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ee33c09`](https://github.com/ardatan/graphql-mesh/commit/ee33c098fd686fc5b2d2c991a5a5fb5f2f7876c1)]:
+  - @graphql-mesh/plugin-mock@0.105.16
+
+## 0.6.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1db3c6b`](https://github.com/ardatan/graphql-mesh/commit/1db3c6bc7e1b88e246b4e27562072312ea2bd266)]:
+  - @graphql-mesh/plugin-mock@0.105.15
+  - @graphql-mesh/cli@0.100.15
+  - @graphql-mesh/json-schema@0.109.15
+
+## 0.6.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b6d7fd0`](https://github.com/ardatan/graphql-mesh/commit/b6d7fd033d7328f322bbf4eca11bec14730d004b),
+  [`fe339fa`](https://github.com/ardatan/graphql-mesh/commit/fe339fa0a652b5e723afab9e7a3c4a5cb11a44d2)]:
+  - @graphql-mesh/cli@0.100.14
+  - @graphql-mesh/json-schema@0.109.14
+  - @graphql-mesh/plugin-mock@0.105.14
+
+## 0.6.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.13
+  - @graphql-mesh/json-schema@0.109.13
+  - @graphql-mesh/plugin-mock@0.105.13
+
+## 0.6.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.12
+  - @graphql-mesh/json-schema@0.109.12
+  - @graphql-mesh/plugin-mock@0.105.12
+
+## 0.6.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.11
+  - @graphql-mesh/json-schema@0.109.11
+  - @graphql-mesh/plugin-mock@0.105.11
+
+## 0.6.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.10
+  - @graphql-mesh/json-schema@0.109.10
+  - @graphql-mesh/plugin-mock@0.105.10
+
+## 0.6.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.9
+  - @graphql-mesh/json-schema@0.109.9
+  - @graphql-mesh/plugin-mock@0.105.9
+
+## 0.6.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.8
+  - @graphql-mesh/json-schema@0.109.8
+  - @graphql-mesh/plugin-mock@0.105.8
+
+## 0.6.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.7
+  - @graphql-mesh/json-schema@0.109.7
+  - @graphql-mesh/plugin-mock@0.105.7
+
+## 0.6.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.6
+  - @graphql-mesh/json-schema@0.109.6
+  - @graphql-mesh/plugin-mock@0.105.6
+
+## 0.6.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.5
+  - @graphql-mesh/json-schema@0.109.5
+  - @graphql-mesh/plugin-mock@0.105.5
+
+## 0.6.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.4
+  - @graphql-mesh/json-schema@0.109.4
+  - @graphql-mesh/plugin-mock@0.105.4
+
+## 0.6.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/plugin-mock@0.105.3
+  - @graphql-mesh/cli@0.100.3
+
+## 0.6.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.2
+  - @graphql-mesh/json-schema@0.109.3
+  - @graphql-mesh/plugin-mock@0.105.2
+
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.109.2
+
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.1
+  - @graphql-mesh/json-schema@0.109.1
+  - @graphql-mesh/plugin-mock@0.105.1
+
+## 0.6.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.100.0
+  - @graphql-mesh/json-schema@0.109.0
+  - @graphql-mesh/plugin-mock@0.105.0
+
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.99.2
+  - @graphql-mesh/json-schema@0.108.24
+  - @graphql-mesh/plugin-mock@0.104.2
+
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3f5e0a1`](https://github.com/ardatan/graphql-mesh/commit/3f5e0a13c8a07bd68ec19e4da94f34030cc7d3dc)]:
+  - @graphql-mesh/cli@0.99.1
+  - @graphql-mesh/json-schema@0.108.23
+  - @graphql-mesh/plugin-mock@0.104.1
+
+## 0.5.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/plugin-mock@0.104.0
+  - @graphql-mesh/cli@0.99.0
+
+## 0.4.30
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/plugin-mock@0.103.21
+  - @graphql-mesh/cli@0.98.27
+
+## 0.4.29
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.26
+  - @graphql-mesh/json-schema@0.108.22
+  - @graphql-mesh/plugin-mock@0.103.20
+
+## 0.4.28
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)]:
+  - @graphql-mesh/cli@0.98.25
+  - @graphql-mesh/json-schema@0.108.21
+  - @graphql-mesh/plugin-mock@0.103.19
+
+## 0.4.27
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.24
+
+## 0.4.26
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.23
+  - @graphql-mesh/json-schema@0.108.20
+  - @graphql-mesh/plugin-mock@0.103.18
+
+## 0.4.25
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b44f8b7`](https://github.com/ardatan/graphql-mesh/commit/b44f8b7a413c8adb213b22fb8a243ca6aa06d2bd)]:
+  - @graphql-mesh/cli@0.98.22
+  - @graphql-mesh/json-schema@0.108.19
+  - @graphql-mesh/plugin-mock@0.103.17
+
+## 0.4.24
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.21
+  - @graphql-mesh/json-schema@0.108.18
+  - @graphql-mesh/plugin-mock@0.103.16
+
+## 0.4.23
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.20
+  - @graphql-mesh/json-schema@0.108.17
+  - @graphql-mesh/plugin-mock@0.103.15
+
+## 0.4.22
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a)]:
+  - @graphql-mesh/cli@0.98.19
+  - @graphql-mesh/plugin-mock@0.103.14
+  - @graphql-mesh/json-schema@0.108.16
+
+## 0.4.21
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.108.15
+
+## 0.4.20
+
+### Patch Changes
+
+- Updated dependencies
+  [[`25d9ea7`](https://github.com/ardatan/graphql-mesh/commit/25d9ea7fdd22c30425b9364237702a2a3e263e83)]:
+  - @graphql-mesh/cli@0.98.18
+  - @graphql-mesh/json-schema@0.108.14
+  - @graphql-mesh/plugin-mock@0.103.13
+
+## 0.4.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d3656b6`](https://github.com/ardatan/graphql-mesh/commit/d3656b60fe47c74122e9dfad28273426b07b42ab)]:
+  - @graphql-mesh/json-schema@0.108.13
+
+## 0.4.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7f223d5`](https://github.com/ardatan/graphql-mesh/commit/7f223d5ccf86fc43016350220506b7e9e50a8909)]:
+  - @graphql-mesh/json-schema@0.108.12
+
+## 0.4.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.17
+  - @graphql-mesh/json-schema@0.108.11
+  - @graphql-mesh/plugin-mock@0.103.12
+
+## 0.4.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.16
+
+## 0.4.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.15
+  - @graphql-mesh/json-schema@0.108.10
+  - @graphql-mesh/plugin-mock@0.103.11
+
+## 0.4.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.14
+
+## 0.4.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.13
+  - @graphql-mesh/json-schema@0.108.9
+  - @graphql-mesh/plugin-mock@0.103.10
+
+## 0.4.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.12
+
+## 0.4.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.11
+
+## 0.4.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/plugin-mock@0.103.9
+  - @graphql-mesh/cli@0.98.10
+
+## 0.4.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`93fb364`](https://github.com/ardatan/graphql-mesh/commit/93fb3643d90c52084725d79b586ace8ecd570911)]:
+  - @graphql-mesh/cli@0.98.9
+  - @graphql-mesh/json-schema@0.108.8
+  - @graphql-mesh/plugin-mock@0.103.8
+
+## 0.4.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.8
+  - @graphql-mesh/json-schema@0.108.7
+  - @graphql-mesh/plugin-mock@0.103.7
+
+## 0.4.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9),
+  [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)]:
+  - @graphql-mesh/json-schema@0.108.6
+  - @graphql-mesh/plugin-mock@0.103.6
+  - @graphql-mesh/cli@0.98.7
+
+## 0.4.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.6
+
+## 0.4.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9f9f6fe`](https://github.com/ardatan/graphql-mesh/commit/9f9f6fe61c74eaa6572866eddd97c348307107a8)]:
+  - @graphql-mesh/cli@0.98.5
+  - @graphql-mesh/json-schema@0.108.5
+  - @graphql-mesh/plugin-mock@0.103.5
+
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.4
+  - @graphql-mesh/json-schema@0.108.4
+  - @graphql-mesh/plugin-mock@0.103.4
+
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.3
+  - @graphql-mesh/json-schema@0.108.3
+  - @graphql-mesh/plugin-mock@0.103.3
+
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.2
+  - @graphql-mesh/json-schema@0.108.2
+  - @graphql-mesh/plugin-mock@0.103.2
+
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`92d3ce1`](https://github.com/ardatan/graphql-mesh/commit/92d3ce10bcfdb1bbf63165f77bdb5acd713c88ac),
+  [`92d3ce1`](https://github.com/ardatan/graphql-mesh/commit/92d3ce10bcfdb1bbf63165f77bdb5acd713c88ac)]:
+  - @graphql-mesh/cli@0.98.1
+  - @graphql-mesh/plugin-mock@0.103.1
+  - @graphql-mesh/json-schema@0.108.1
+
+## 0.4.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.98.0
+  - @graphql-mesh/json-schema@0.108.0
+  - @graphql-mesh/plugin-mock@0.103.0
+
+## 0.3.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.107.8
+
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.97.2
+  - @graphql-mesh/json-schema@0.107.7
+  - @graphql-mesh/plugin-mock@0.102.14
+
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.97.1
+  - @graphql-mesh/json-schema@0.107.6
+  - @graphql-mesh/plugin-mock@0.102.13
+
+## 0.3.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ac82d44`](https://github.com/ardatan/graphql-mesh/commit/ac82d4437b3fafd6eafb21d5470cc6bae8b7b482),
+  [`ac82d44`](https://github.com/ardatan/graphql-mesh/commit/ac82d4437b3fafd6eafb21d5470cc6bae8b7b482)]:
+  - @graphql-mesh/cli@0.97.0
+
+## 0.2.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.96.12
+
+## 0.2.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e7d48d4`](https://github.com/ardatan/graphql-mesh/commit/e7d48d4299143a1ad078cf94d5dbcb65baaaec54)]:
+  - @graphql-mesh/cli@0.96.11
+
+## 0.2.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.96.10
+  - @graphql-mesh/json-schema@0.107.5
+  - @graphql-mesh/plugin-mock@0.102.12
+
+## 0.2.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.96.9
+  - @graphql-mesh/json-schema@0.107.4
+  - @graphql-mesh/plugin-mock@0.102.11
+
+## 0.2.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.96.8
+  - @graphql-mesh/json-schema@0.107.3
+  - @graphql-mesh/plugin-mock@0.102.10
+
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.96.7
+  - @graphql-mesh/json-schema@0.107.2
+  - @graphql-mesh/plugin-mock@0.102.9
+
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/cli@0.96.6
+  - @graphql-mesh/plugin-mock@0.102.8
+  - @graphql-mesh/json-schema@0.107.1
+
+## 0.2.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.107.0
+
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`900e84c`](https://github.com/ardatan/graphql-mesh/commit/900e84c9846f84e84746860cf3f1c4724e64f377)]:
+  - @graphql-mesh/cli@0.96.5
+  - @graphql-mesh/json-schema@0.106.8
+  - @graphql-mesh/plugin-mock@0.102.7
+
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.96.4
+
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fd245f2`](https://github.com/ardatan/graphql-mesh/commit/fd245f2619346667038d3fcce9aa097994368815)]:
+  - @graphql-mesh/plugin-mock@0.102.6
+  - @graphql-mesh/cli@0.96.3
+  - @graphql-mesh/json-schema@0.106.7
+
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.96.2
+
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b50ad41`](https://github.com/ardatan/graphql-mesh/commit/b50ad4132197da143b2568f00b0136e013cee7d0),
+  [`04251e5`](https://github.com/ardatan/graphql-mesh/commit/04251e57d05b91a2d4018ac63639d8b1eb56855a)]:
+  - @graphql-mesh/cli@0.96.1
+
+## 0.1.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.96.0
+  - @graphql-mesh/json-schema@0.106.6
+  - @graphql-mesh/plugin-mock@0.102.5
+
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/json-schema@0.106.5
+
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.95.4
+  - @graphql-mesh/json-schema@0.106.4
+  - @graphql-mesh/plugin-mock@0.102.4
+
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.95.3
+  - @graphql-mesh/json-schema@0.106.3
+  - @graphql-mesh/plugin-mock@0.102.3
+
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.95.2
+  - @graphql-mesh/json-schema@0.106.2
+  - @graphql-mesh/plugin-mock@0.102.2
+
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/cli@0.95.1
+  - @graphql-mesh/json-schema@0.106.1
+  - @graphql-mesh/plugin-mock@0.102.1

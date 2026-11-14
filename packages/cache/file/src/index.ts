@@ -1,17 +1,23 @@
-import { KeyValueCache } from '@graphql-mesh/types';
-import { isAbsolute, join } from 'path';
-import _ from 'lodash';
 import DataLoader from 'dataloader';
-import { writeJSON } from '@graphql-mesh/utils';
-import { cwd } from 'process';
+import { path as pathModule, process } from '@graphql-mesh/cross-helpers';
+import type { ImportFn, KeyValueCache } from '@graphql-mesh/types';
+import { pathExists, writeJSON } from '@graphql-mesh/utils';
 
 export default class FileCache<V = any> implements KeyValueCache<V> {
   json$: Promise<Record<string, V>>;
   absolutePath: string;
-  writeDataLoader: DataLoader<any, any>;
-  constructor({ path }: { path: string }) {
-    this.absolutePath = isAbsolute(path) ? path : join(cwd(), path);
-    this.json$ = import(this.absolutePath).then(m => m.default || m);
+  writeDataLoader: DataLoader<string, string>;
+  constructor({ path, importFn }: { path: string; importFn: ImportFn }) {
+    this.absolutePath = pathModule.isAbsolute(path) ? path : pathModule.join(process.cwd(), path);
+    this.json$ = pathExists(this.absolutePath).then(async isExists => {
+      if (isExists) {
+        const existingData = await importFn(this.absolutePath);
+        return {
+          ...existingData,
+        };
+      }
+      return {};
+    });
     this.writeDataLoader = new DataLoader(async keys => {
       const json = await this.json$;
       await writeJSON(this.absolutePath, json);
@@ -19,18 +25,30 @@ export default class FileCache<V = any> implements KeyValueCache<V> {
     });
   }
 
+  async getKeysByPrefix(prefix: string) {
+    const json = await this.json$;
+    return Object.keys(json).filter(key => key.startsWith(prefix));
+  }
+
   async get(name: string) {
     const json = await this.json$;
-    return _.get(json, name);
+    return json[name];
   }
 
   async set(name: string, value: V) {
     const json = await this.json$;
-    _.set(json, name, value);
-    this.writeDataLoader.load({});
+    json[name] = value;
+    await this.writeDataLoader.load(name);
   }
 
   async delete(name: string) {
-    this.json$.then(json => (json[name] = undefined));
+    const json = await this.json$;
+    delete json[name];
+    try {
+      await this.writeDataLoader.load(name);
+      return true;
+    } catch {
+      return false;
+    }
   }
 }

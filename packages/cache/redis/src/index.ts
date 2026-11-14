@@ -1,77 +1,277 @@
-import { KeyValueCache, KeyValueCacheSetOptions, YamlConfig } from '@graphql-mesh/types';
-import Redis from 'ioredis';
-import { jsonFlatStringify } from '@graphql-mesh/utils';
-import DataLoader from 'dataloader';
-import { URL } from 'url';
+import Redis, { type Cluster } from 'ioredis';
+import RedisMock from 'ioredis-mock';
+import type { RedisOptions } from 'ioredis/built/redis/RedisOptions';
+import { type Logger } from '@graphql-hive/logger';
+import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import {
+  type KeyValueCache,
+  type KeyValueCacheSetOptions,
+  type YamlConfig,
+} from '@graphql-mesh/types';
+import { trace, type Tracer } from '@opentelemetry/api';
+import { DisposableSymbols } from '@whatwg-node/disposablestack';
+import {
+  buildIamRedisOptions,
+  setupIamAuthForCluster,
+  setupIamAuthRefreshForStandalone,
+} from './iam.js';
 
-export default class RedisCache<V = string> implements KeyValueCache<V> {
-  private client: Redis.Redis;
+function interpolateStrWithEnv(str: string): string {
+  return stringInterpolator.parse(str, { env: process.env });
+}
 
-  constructor(options: YamlConfig.Transform['redis'] = {}) {
-    let redisClient: Redis.Redis;
+export default class RedisCache<V = string> implements KeyValueCache<V>, Disposable {
+  private client: Redis | Cluster;
+  private tracer: Tracer;
+  private iamRefreshTimer?: ReturnType<typeof setInterval>;
+  // resolves once the initial IAM token is ready and cluster.connect() has been called
+  private iamInitPromise?: Promise<void>;
 
-    if (options.url) {
-      const redisUrl = new URL(options.url);
+  constructor(
+    options: YamlConfig.Cache['redis'] & {
+      log: Logger;
+    },
+  ) {
+    this.tracer = trace.getTracer('hive.cache.redis');
+    this.tracer.startActiveSpan('hive.cache.redis.init', span => {
+      try {
+        const lazyConnect = options.lazyConnect !== false;
+        if ('startupNodes' in options) {
+          const parsedUsername =
+            interpolateStrWithEnv(options.username?.toString()) || process.env.REDIS_USERNAME;
+          const parsedPassword =
+            interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
+          const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
+          const numDb = parseInt(parsedDb);
+          const redisOptions: RedisOptions = {
+            username: parsedUsername,
+            password: parsedPassword,
+            db: isNaN(numDb) ? undefined : numDb,
+            enableAutoPipelining: true,
+            ...(lazyConnect ? { lazyConnect: true } : {}),
+            tls: options.tls ? {} : undefined,
+          };
+          this.client = new Redis.Cluster(
+            options.startupNodes.map(s => ({
+              host: s.host && interpolateStrWithEnv(s.host),
+              port: s.port && parseInt(interpolateStrWithEnv(s.port)),
+              family: s.family && parseInt(interpolateStrWithEnv(s.family)),
+            })),
+            {
+              dnsLookup: options.dnsLookupAsIs
+                ? (address, callback) => callback(null, address)
+                : undefined,
+              redisOptions,
+              enableAutoPipelining: true,
+              enableOfflineQueue: true,
+              ...(lazyConnect ? { lazyConnect: true } : {}),
+            },
+          );
+          if (options.iamAuth) {
+            const clusterRef = this.client;
+            this.iamInitPromise = setupIamAuthForCluster(
+              clusterRef,
+              redisOptions,
+              options.iamAuth,
+              parsedUsername,
+              options.log,
+            )
+              .then(timer => {
+                this.iamRefreshTimer = timer;
+                // connect only after the token is populated so slot discovery authenticates correctly
+                return clusterRef.connect();
+              })
+              .then(() => {
+                // no need to keep this promise around after init is complete
+                // it will speed up subsequent get/set calls that would otherwise
+                // await it unnecessarily
+                this.iamInitPromise = undefined;
+              });
+          }
+        } else if ('sentinels' in options) {
+          this.client = new Redis({
+            name: options.name,
+            sentinelPassword:
+              options.sentinelPassword && interpolateStrWithEnv(options.sentinelPassword),
+            sentinels: options.sentinels.map(s => ({
+              host: s.host && interpolateStrWithEnv(s.host),
+              port: s.port && parseInt(interpolateStrWithEnv(s.port)),
+              family: s.family && parseInt(interpolateStrWithEnv(s.family)),
+            })),
+            role: options.role,
+            enableTLSForSentinelMode: options.enableTLSForSentinelMode,
+            enableAutoPipelining: true,
+            enableOfflineQueue: true,
+            lazyConnect,
+          });
+        } else if (options.url) {
+          const redisUrl = new URL(interpolateStrWithEnv(options.url));
 
-      redisUrl.searchParams.set('lazyConnect', 'true');
-      redisUrl.searchParams.set('enableAutoPipelining', 'true');
+          if (!['redis:', 'rediss:'].includes(redisUrl.protocol)) {
+            throw new Error('Redis URL must use either redis:// or rediss://');
+          }
 
-      if (!['redis:', 'rediss:'].includes(redisUrl.protocol)) {
-        throw new Error('Redis URL must use either redis:// or rediss://');
-      }
+          if (lazyConnect) {
+            redisUrl.searchParams.set('lazyConnect', 'true');
+          }
 
-      redisClient = new Redis(redisUrl.toString());
-    } else {
-      redisClient = new Redis({
-        host: options.host,
-        port: options.port,
-        password: options.password,
-        lazyConnect: true,
-        enableAutoPipelining: true,
-      });
-    }
-
-    const dataLoader = new DataLoader<string[], [any, string]>(async (commands: string[][]) => {
-      const responses = await redisClient.pipeline(commands).exec();
-      return responses.map(([err, data]) => {
-        if (err) {
-          return err;
+          redisUrl.searchParams.set('enableAutoPipelining', 'true');
+          redisUrl.searchParams.set('enableOfflineQueue', 'true');
+          const IPV6_REGEX =
+            /^(?:(?:[a-fA-F\d]{1,4}:){7}(?:[a-fA-F\d]{1,4}|:)|(?:[a-fA-F\d]{1,4}:){6}(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|:[a-fA-F\d]{1,4}|:)|(?:[a-fA-F\d]{1,4}:){5}(?::(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|(?::[a-fA-F\d]{1,4}){1,2}|:)|(?:[a-fA-F\d]{1,4}:){4}(?:(?::[a-fA-F\d]{1,4}){0,1}:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|(?::[a-fA-F\d]{1,4}){1,3}|:)|(?:[a-fA-F\d]{1,4}:){3}(?:(?::[a-fA-F\d]{1,4}){0,2}:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|(?::[a-fA-F\d]{1,4}){1,4}|:)|(?:[a-fA-F\d]{1,4}:){2}(?:(?::[a-fA-F\d]{1,4}){0,3}:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|(?::[a-fA-F\d]{1,4}){1,5}|:)|(?:[a-fA-F\d]{1,4}:){1}(?:(?::[a-fA-F\d]{1,4}){0,4}:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|(?::[a-fA-F\d]{1,4}){1,6}|:)|(?::(?:(?::[a-fA-F\d]{1,4}){0,5}:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|(?::[a-fA-F\d]{1,4}){1,7}|:)))(?:%[0-9a-zA-Z]{1,})?$/gm;
+          if (IPV6_REGEX.test(redisUrl.hostname)) {
+            redisUrl.searchParams.set('family', '6');
+          }
+          const urlStr = redisUrl.toString();
+          safelyLogURL(options.log, urlStr);
+          if (options.iamAuth) {
+            const redisRef: { current: Redis | null } = { current: null };
+            const connectorUsername = redisUrl.username || undefined;
+            // username from URL isn't in redisOptions so pass it via buildIamRedisOptions
+            const iamOpts = buildIamRedisOptions(
+              { username: connectorUsername },
+              options.iamAuth,
+              redisRef,
+            );
+            this.client = new Redis(urlStr, iamOpts);
+            // if you do not set redisRef.current you get an error when connecting
+            redisRef.current = this.client;
+            this.iamRefreshTimer = setupIamAuthRefreshForStandalone(
+              redisRef,
+              options.iamAuth,
+              connectorUsername,
+              options.log,
+            );
+          } else {
+            this.client = new Redis(urlStr);
+          }
+        } else {
+          const parsedHost =
+            interpolateStrWithEnv(options.host?.toString()) || process.env.REDIS_HOST;
+          const parsedPort =
+            interpolateStrWithEnv(options.port?.toString()) || process.env.REDIS_PORT;
+          const parsedUsername =
+            interpolateStrWithEnv(options.username?.toString()) || process.env.REDIS_USERNAME;
+          const parsedPassword =
+            interpolateStrWithEnv(options.password?.toString()) || process.env.REDIS_PASSWORD;
+          const parsedDb = interpolateStrWithEnv(options.db?.toString()) || process.env.REDIS_DB;
+          const parsedFamily =
+            interpolateStrWithEnv(options.family?.toString()) || process.env.REDIS_FAMILY;
+          const numPort = parseInt(parsedPort);
+          const numDb = parseInt(parsedDb);
+          if (parsedHost) {
+            options.log.debug(`Connecting to Redis at ${parsedHost}:${parsedPort}`);
+            const baseOpts: RedisOptions = {
+              host: parsedHost,
+              port: isNaN(numPort) ? undefined : numPort,
+              username: parsedUsername,
+              password: parsedPassword,
+              db: isNaN(numDb) ? undefined : numDb,
+              family: parsedFamily === '6' ? 6 : undefined,
+              ...(lazyConnect ? { lazyConnect: true } : {}),
+              enableAutoPipelining: true,
+              enableOfflineQueue: true,
+            };
+            if (options.iamAuth) {
+              const redisRef: { current: Redis | null } = { current: null };
+              this.client = new Redis(buildIamRedisOptions(baseOpts, options.iamAuth, redisRef));
+              redisRef.current = this.client;
+              this.iamRefreshTimer = setupIamAuthRefreshForStandalone(
+                redisRef,
+                options.iamAuth,
+                parsedUsername,
+                options.log,
+              );
+            } else {
+              this.client = new Redis(baseOpts);
+            }
+          } else {
+            options.log.debug(`Connecting to Redis mock`);
+            this.client = new RedisMock();
+          }
         }
-        return data;
-      });
-    });
-    this.client = new Proxy(redisClient, {
-      get:
-        (_, methodName: keyof Redis.Redis) =>
-        (...args: string[]) =>
-          dataLoader.load([methodName, ...args]),
+      } finally {
+        span.end();
+      }
     });
   }
 
-  async set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void> {
-    const stringifiedValue = jsonFlatStringify(value);
-    if (options?.ttl) {
-      await this.client.set(key, stringifiedValue, 'EX', options.ttl);
-    } else {
-      await this.client.set(key, stringifiedValue);
+  [DisposableSymbols.dispose](): void {
+    if (this.iamRefreshTimer != null) {
+      clearInterval(this.iamRefreshTimer);
     }
+    this.client.disconnect(false);
   }
 
-  async get(key: string): Promise<V | undefined> {
-    const reply = await this.client.get(key);
-    if (reply !== null) {
-      const value = JSON.parse(reply);
-      return value;
-    }
-    return undefined;
+  set(key: string, value: V, options?: KeyValueCacheSetOptions): Promise<void> {
+    return this.tracer.startActiveSpan('hive.cache.set', async span => {
+      try {
+        if (this.iamInitPromise) await this.iamInitPromise;
+        const stringifiedValue = JSON.stringify(value);
+        if (options?.ttl && options.ttl > 0) {
+          await this.client.set(key, stringifiedValue, 'PX', options.ttl * 1000);
+        } else {
+          await this.client.set(key, stringifiedValue);
+        }
+      } finally {
+        span.end();
+      }
+    });
   }
 
-  async delete(key: string): Promise<boolean> {
-    try {
-      await this.client.del(key);
-      return true;
-    } catch (e) {
-      return false;
-    }
+  get(key: string): Promise<V | undefined> {
+    return this.tracer.startActiveSpan('hive.cache.get', async span => {
+      try {
+        if (this.iamInitPromise) await this.iamInitPromise;
+        const value = await this.client.get(key);
+        return value != null ? JSON.parse(value) : undefined;
+      } finally {
+        span.end();
+      }
+    });
   }
+
+  getKeysByPrefix(prefix: string): Promise<string[]> {
+    return this.iamInitPromise
+      ? this.iamInitPromise.then(() => scanPatterns(this.client, `${prefix}*`))
+      : scanPatterns(this.client, `${prefix}*`);
+  }
+
+  delete(key: string): Promise<boolean> {
+    return this.tracer.startActiveSpan('hive.cache.delete', async span => {
+      try {
+        if (this.iamInitPromise) await this.iamInitPromise;
+        const value = await this.client.del(key);
+        return value > 0;
+      } catch {
+        return false;
+      } finally {
+        span.end();
+      }
+    });
+  }
+}
+
+function scanPatterns(
+  redis: Redis | Cluster,
+  pattern: string,
+  cursor: string = '0',
+  keys: string[] = [],
+) {
+  return redis.scan(cursor, 'MATCH', pattern, 'COUNT', '10').then(([nextCursor, nextKeys]) => {
+    keys.push(...nextKeys);
+    if (nextCursor === '0') {
+      return keys;
+    }
+    return scanPatterns(redis, pattern, nextCursor, keys);
+  });
+}
+
+function safelyLogURL(log: Logger, url: string): void {
+  const logURL = new URL(url);
+  if (logURL.password) {
+    logURL.password = '*'.repeat(logURL.password.length);
+  }
+  log.debug(`Connecting to Redis at ${logURL}`);
 }

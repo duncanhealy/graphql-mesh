@@ -6,8 +6,9 @@ sources:
           - type: Query
             field: greeting
             method: GET
+            path: /
             responseSample: greeting.json
-transforms:
+plugins:
   - mock:
       mocks:
         - apply: Query.greeting
@@ -16,3 +17,6 @@ documents:
     query HelloWorld {
       greeting
     }
+
+serve:
+  playground: true

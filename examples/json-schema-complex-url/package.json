@@ -1,0 +1,21 @@
+{
+  "name": "@examples/json-schema-complex-url",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "mesh build",
+    "start": "concurrently \"npm run start:api\" \"npm run start:mesh\"",
+    "start:api": "tsx src/index.ts",
+    "start:mesh": "mesh start"
+  },
+  "dependencies": {
+    "@graphql-mesh/cli": "0.103.4",
+    "@graphql-mesh/json-schema": "0.112.6",
+    "graphql": "16.14.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "concurrently": "10.0.6",
+    "tsx": "4.23.15"
+  }
+}

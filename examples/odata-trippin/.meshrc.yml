@@ -2,8 +2,9 @@ sources:
   - name: TripPin
     handler:
       odata:
-        baseUrl: https://services.odata.org/TripPinRESTierService/(S(qzsyox3345c15qeq305pblvw))/
-        batch: multipart
+        endpoint: https://services.odata.org/TripPinRESTierService/
+        # TripPin redirects into a session URL; POST /$batch does not survive that
+        # redirect reliably, so leave batching off (loader default: none).
         expandNavProps: true
 
 documents:

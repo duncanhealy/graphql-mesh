@@ -1,0 +1,146 @@
+import { Logger } from '@graphql-hive/logger';
+import { fs, path } from '@graphql-mesh/cross-helpers';
+import type { MeshInstance } from '@graphql-mesh/runtime';
+import type { YamlConfig } from '@graphql-mesh/types';
+import { pathExists, withCookies } from '@graphql-mesh/utils';
+import { createServerAdapter, Response } from '@whatwg-node/server';
+import { graphqlHandler } from './graphqlHandler.js';
+import { resolvePlaygroundConfig } from './playground.js';
+
+export { resolvePlaygroundConfig } from './playground.js';
+
+export type MeshHTTPHandler = ReturnType<typeof createMeshHTTPHandler>;
+
+export function createMeshHTTPHandler<TServerContext>({
+  baseDir,
+  getBuiltMesh,
+  rawServeConfig = {},
+  playgroundTitle,
+  renderGraphiQL,
+}: {
+  baseDir: string;
+  getBuiltMesh: () => Promise<MeshInstance>;
+  rawServeConfig?: YamlConfig.Config['serve'];
+  playgroundTitle?: string;
+  renderGraphiQL?: (options?: any) => string | Promise<string>;
+}) {
+  let readyFlag = false;
+  let log: Logger = new Logger({ prefix: 'Mesh HTTP' });
+
+  const {
+    cors: corsConfig,
+    staticFiles,
+    playground: playgroundConfig,
+    endpoint: graphqlPath = '/graphql',
+    batchingLimit,
+    healthCheckEndpoint = '/healthcheck',
+    extraParamNames,
+  } = rawServeConfig;
+  const { enabled: playgroundEnabled, offline: playgroundOffline } =
+    resolvePlaygroundConfig(playgroundConfig);
+
+  getBuiltMesh()
+    .then(mesh => {
+      readyFlag = true;
+      log = mesh.log.child('HTTP');
+    })
+    .catch(err => {
+      log.error(err);
+    });
+
+  return createServerAdapter<TServerContext>(
+    graphqlHandler({
+      getBuiltMesh,
+      playgroundTitle,
+      playgroundEnabled,
+      playgroundOffline,
+      graphqlEndpoint: graphqlPath,
+      corsConfig,
+      batchingLimit,
+      extraParamNames,
+      renderGraphiQL: playgroundOffline ? renderGraphiQL : undefined,
+    }),
+    {
+      plugins: [
+        {
+          onRequest({ request, url, endResponse }): void | Promise<void> {
+            switch (url.pathname) {
+              case healthCheckEndpoint:
+                endResponse(
+                  new Response(null, {
+                    status: 200,
+                  }),
+                );
+                return;
+              case '/readiness':
+                endResponse(
+                  new Response(null, {
+                    status: readyFlag ? 204 : 503,
+                  }),
+                );
+                return;
+            }
+            if (staticFiles && request.method === 'GET') {
+              let relativePath = url.pathname;
+              if (relativePath === '/' || !relativePath) {
+                relativePath = 'index.html';
+              }
+              const absoluteStaticFilesPath = path.join(baseDir, staticFiles);
+              const absolutePath = path.join(absoluteStaticFilesPath, relativePath);
+              if (absolutePath.startsWith(absoluteStaticFilesPath)) {
+                return pathExists(absolutePath).then(exists => {
+                  if (exists) {
+                    const readStream = fs.createReadStream(absolutePath);
+                    endResponse(
+                      new Response(readStream as any, {
+                        status: 200,
+                      }),
+                    );
+                  }
+                });
+              }
+            } else if (graphqlPath !== '/' && url.pathname === '/') {
+              endResponse(
+                new Response(null, {
+                  status: 302,
+                  headers: {
+                    Location: graphqlPath,
+                  },
+                }),
+              );
+
+              return;
+            }
+            withCookies(request);
+            if (readyFlag) {
+              return getBuiltMesh().then(async mesh => {
+                const expectedEvent = `webhook:${request.method.toLowerCase()}:${url.pathname}`;
+                const topics = await mesh.pubsub.subscribedTopics();
+                for (const eventName of topics) {
+                  if (eventName === expectedEvent) {
+                    const body = await request.text();
+                    log.debug(`Received webhook request for ${url.pathname}`, body);
+                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                    mesh.pubsub.publish(
+                      eventName,
+                      request.headers.get('content-type') === 'application/json'
+                        ? JSON.parse(body)
+                        : body,
+                    );
+                    endResponse(
+                      new Response(null, {
+                        status: 204,
+                        statusText: 'OK',
+                      }),
+                    );
+                    return;
+                  }
+                }
+              });
+            }
+          },
+        },
+      ],
+    },
+  );
+}

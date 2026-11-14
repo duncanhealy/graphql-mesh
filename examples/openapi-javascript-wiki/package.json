@@ -1,18 +1,16 @@
 {
-  "name": "javascript-wiki",
-  "version": "0.5.131",
+  "name": "@examples/openapi-javascript-wiki",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "mesh dev",
-    "build": "mesh build"
+    "build": "mesh build",
+    "start": "mesh dev"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.38.0",
-    "@graphql-mesh/openapi": "0.18.12",
-    "graphql": "15.4.0",
-    "moment": "2.29.1",
-    "ts-node": "10.2.1",
-    "typescript": "4.3.5"
+    "@graphql-mesh/cli": "0.103.4",
+    "@graphql-mesh/openapi": "0.112.7",
+    "graphql": "16.14.0",
+    "moment": "2.31.0",
+    "typescript": "^6.0.3"
   }
 }

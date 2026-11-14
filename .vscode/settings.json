@@ -1,11 +1,11 @@
 // Place your settings in this file to overwrite default and user settings.
 {
   "yaml.schemas": {
-    "./packages/types/src/config-schema.json": ".meshrc.*"
+    "./packages/legacy/types/src/config-schema.json": ".meshrc.*"
   },
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
-  "editor.rulers": [80],
+  "editor.rulers": [100],
   "editor.wordWrapColumn": 110,
   "prettier.semi": true,
   "files.trimTrailingWhitespace": true,
@@ -15,14 +15,13 @@
   "files.exclude": {
     "**/.git": true,
     "**/.DS_Store": true,
-    "**/node_modules": true,
-    "**/dist": true,
+    "**/node_modules": false,
+    "**/dist": false,
     "test-lib": true,
     "lib": true,
     "coverage": true,
-    "npm": true,
-    ".parcel-cache": true,
-    ".bob": true
+    "npm": true
+    // ".bob": true
   },
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "js/ts.tsdk.path": "node_modules/typescript/lib"
 }

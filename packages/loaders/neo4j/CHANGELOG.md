@@ -1,0 +1,1588 @@
+# @omnigraph/neo4j
+
+## 0.14.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4b92af0`](https://github.com/ardatan/graphql-mesh/commit/4b92af01c10d1d746dfb1623491282c169e03248),
+  [`4b92af0`](https://github.com/ardatan/graphql-mesh/commit/4b92af01c10d1d746dfb1623491282c169e03248)]:
+  - @graphql-mesh/transport-neo4j@0.13.3
+  - @graphql-mesh/types@0.107.3
+
+## 0.14.2
+
+### Patch Changes
+
+- [#9678](https://github.com/ardatan/graphql-mesh/pull/9678)
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.2.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.2.1)
+    (from `^12.1.1`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.1.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.1.3)
+    (from `^10.0.38`, in `dependencies`)
+- Updated dependencies
+  [[`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c),
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c)]:
+  - @graphql-mesh/transport-neo4j@0.13.2
+  - @graphql-mesh/types@0.107.2
+
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d),
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d)]:
+  - @graphql-mesh/types@0.107.1
+  - @graphql-mesh/transport-neo4j@0.13.1
+
+## 0.14.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ab73b38`](https://github.com/ardatan/graphql-mesh/commit/ab73b383c4ef294891dda6c9c8598a9651494762),
+  [`51b15f4`](https://github.com/ardatan/graphql-mesh/commit/51b15f445e07c8f8d892e0a21f0ae5b638ada74e)]:
+  - @graphql-mesh/types@0.107.0
+  - @graphql-mesh/transport-neo4j@0.13.0
+
+## 0.13.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`cb846cb`](https://github.com/ardatan/graphql-mesh/commit/cb846cb178c7c5b8f8600ad9f23d12cb5092701c),
+  [`64edb30`](https://github.com/ardatan/graphql-mesh/commit/64edb30895577c4d4ef7a07ef8aea614bd71e1e3),
+  [`57c30b6`](https://github.com/ardatan/graphql-mesh/commit/57c30b668972c504e6fdd7998bd685d21036d4ba),
+  [`07c7b8e`](https://github.com/ardatan/graphql-mesh/commit/07c7b8eb16138131aaa08e56adf577528874cc40)]:
+  - @graphql-mesh/transport-neo4j@0.12.0
+  - @graphql-mesh/types@0.106.0
+
+## 0.12.1
+
+### Patch Changes
+
+- [#9586](https://github.com/ardatan/graphql-mesh/pull/9586)
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.1.1` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.1.1)
+    (from `^12.0.19`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.38` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.38)
+    (from `^10.0.36`, in `dependencies`)
+- Updated dependencies
+  [[`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08)]:
+  - @graphql-mesh/transport-neo4j@0.11.1
+  - @graphql-mesh/types@0.105.1
+
+## 0.12.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b7def27`](https://github.com/ardatan/graphql-mesh/commit/b7def2769c68ce62b3c54c1b7282c3941715f94f)]:
+  - @graphql-mesh/types@0.105.0
+  - @graphql-mesh/transport-neo4j@0.11.0
+
+## 0.11.40
+
+### Patch Changes
+
+- [#9465](https://github.com/ardatan/graphql-mesh/pull/9465)
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9)
+  Thanks [@zcag](https://github.com/zcag)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/transport-neo4j@^0.10.39` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-neo4j/v/0.10.39)
+    (from `^0.10.38`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/types@^0.104.29` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.104.29)
+    (from `^0.104.28`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.17` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.17)
+    (from `^12.0.14`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.34` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.34)
+    (from `^10.0.32`, in `dependencies`)
+  - Updated dependency [`neo4j-driver@^6.1.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/6.1.0)
+    (from `^6.0.1`, in `dependencies`)
+
+- [#9527](https://github.com/ardatan/graphql-mesh/pull/9527)
+  [`59a2e76`](https://github.com/ardatan/graphql-mesh/commit/59a2e76f34757a4688705bd63be59e2945b2c6ad)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`neo4j-driver@^6.1.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/6.1.0)
+    (from `^6.0.1`, in `dependencies`)
+
+- [#9530](https://github.com/ardatan/graphql-mesh/pull/9530)
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.17` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.17)
+    (from `^12.0.16`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.34` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.34)
+    (from `^10.0.33`, in `dependencies`)
+
+- [#9545](https://github.com/ardatan/graphql-mesh/pull/9545)
+  [`561db64`](https://github.com/ardatan/graphql-mesh/commit/561db645201e5e054f359c871a6b5a52e4c6fb71)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`neo4j-driver@^6.2.0` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/6.2.0)
+    (from `^6.1.0`, in `dependencies`)
+
+- [#9547](https://github.com/ardatan/graphql-mesh/pull/9547)
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.18` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.18)
+    (from `^12.0.17`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.36` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.36)
+    (from `^10.0.34`, in `dependencies`)
+
+- [#9560](https://github.com/ardatan/graphql-mesh/pull/9560)
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.19` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.19)
+    (from `^12.0.18`, in `dependencies`)
+- Updated dependencies
+  [[`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`59a2e76`](https://github.com/ardatan/graphql-mesh/commit/59a2e76f34757a4688705bd63be59e2945b2c6ad),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`561db64`](https://github.com/ardatan/graphql-mesh/commit/561db645201e5e054f359c871a6b5a52e4c6fb71),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`5e39fc0`](https://github.com/ardatan/graphql-mesh/commit/5e39fc045bc7818459078c120e2b8fab6e859b28),
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`59a2e76`](https://github.com/ardatan/graphql-mesh/commit/59a2e76f34757a4688705bd63be59e2945b2c6ad),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a)]:
+  - @graphql-mesh/transport-neo4j@0.10.40
+  - @graphql-mesh/types@0.104.30
+
+## 0.11.39
+
+### Patch Changes
+
+- [#9470](https://github.com/ardatan/graphql-mesh/pull/9470)
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.15` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.15)
+    (from `^12.0.14`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.33` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.33)
+    (from `^10.0.32`, in `dependencies`)
+
+- [#9490](https://github.com/ardatan/graphql-mesh/pull/9490)
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.16` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.16)
+    (from `^12.0.15`, in `dependencies`)
+- Updated dependencies
+  [[`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`665fa63`](https://github.com/ardatan/graphql-mesh/commit/665fa63889b00ef8330d75dd2b0abc3a269f9a66),
+  [`7770794`](https://github.com/ardatan/graphql-mesh/commit/77707941f515f38e06b7b4ce9b58cf805855a2d4),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa)]:
+  - @graphql-mesh/transport-neo4j@0.10.39
+  - @graphql-mesh/types@0.104.29
+
+## 0.11.38
+
+### Patch Changes
+
+- [#9430](https://github.com/ardatan/graphql-mesh/pull/9430)
+  [`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.14)
+    (from `^12.0.13`, in `dependencies`)
+- Updated dependencies
+  [[`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4)]:
+  - @graphql-mesh/transport-neo4j@0.10.38
+  - @graphql-mesh/types@0.104.28
+
+## 0.11.37
+
+### Patch Changes
+
+- [#9406](https://github.com/ardatan/graphql-mesh/pull/9406)
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.32` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.32)
+    (from `^10.0.31`, in `dependencies`)
+- Updated dependencies
+  [[`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)]:
+  - @graphql-mesh/transport-neo4j@0.10.37
+  - @graphql-mesh/types@0.104.27
+
+## 0.11.36
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f3624fd`](https://github.com/ardatan/graphql-mesh/commit/f3624fd7ce2db9b506a2be977468710d9213b552)]:
+  - @graphql-mesh/transport-neo4j@0.10.36
+
+## 0.11.35
+
+### Patch Changes
+
+- [#9389](https://github.com/ardatan/graphql-mesh/pull/9389)
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.13` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.13)
+    (from `^12.0.12`, in `dependencies`)
+- Updated dependencies
+  [[`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2),
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2)]:
+  - @graphql-mesh/transport-neo4j@0.10.35
+  - @graphql-mesh/types@0.104.26
+
+## 0.11.34
+
+### Patch Changes
+
+- Updated dependencies
+  [[`43d5b60`](https://github.com/ardatan/graphql-mesh/commit/43d5b6090270c6c2912b0ed581eaf768bb95402e)]:
+  - @graphql-mesh/transport-neo4j@0.10.34
+
+## 0.11.33
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.10.33
+
+## 0.11.32
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.10.32
+
+## 0.11.31
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f9c3888`](https://github.com/ardatan/graphql-mesh/commit/f9c38886e54ebc6aa7c24c011328961e2bde41e6)]:
+  - @graphql-mesh/transport-neo4j@0.10.31
+
+## 0.11.30
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.10.30
+
+## 0.11.29
+
+### Patch Changes
+
+- [#9329](https://github.com/ardatan/graphql-mesh/pull/9329)
+  [`300aea0`](https://github.com/ardatan/graphql-mesh/commit/300aea0f32edb9da7a13562fbec35bf31fb40a91)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.12)
+    (from `^12.0.11`, in `dependencies`)
+- Updated dependencies
+  [[`300aea0`](https://github.com/ardatan/graphql-mesh/commit/300aea0f32edb9da7a13562fbec35bf31fb40a91),
+  [`300aea0`](https://github.com/ardatan/graphql-mesh/commit/300aea0f32edb9da7a13562fbec35bf31fb40a91)]:
+  - @graphql-mesh/transport-neo4j@0.10.29
+  - @graphql-mesh/types@0.104.25
+
+## 0.11.28
+
+### Patch Changes
+
+- [#9315](https://github.com/ardatan/graphql-mesh/pull/9315)
+  [`2c80833`](https://github.com/ardatan/graphql-mesh/commit/2c80833a1a11531aa37d35f9e64d9e97e1c6d728)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.11)
+    (from `^12.0.8`, in `dependencies`)
+- Updated dependencies
+  [[`2c80833`](https://github.com/ardatan/graphql-mesh/commit/2c80833a1a11531aa37d35f9e64d9e97e1c6d728),
+  [`2c80833`](https://github.com/ardatan/graphql-mesh/commit/2c80833a1a11531aa37d35f9e64d9e97e1c6d728)]:
+  - @graphql-mesh/transport-neo4j@0.10.28
+  - @graphql-mesh/types@0.104.24
+
+## 0.11.27
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.10.27
+
+## 0.11.26
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1e5da5c`](https://github.com/ardatan/graphql-mesh/commit/1e5da5c89332110e0f0e6696002d7d53e62b5104)]:
+  - @graphql-mesh/transport-neo4j@0.10.26
+
+## 0.11.25
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4f81520`](https://github.com/ardatan/graphql-mesh/commit/4f815200bde9abc509e6ce94a755b4eda333a112)]:
+  - @graphql-mesh/types@0.104.23
+  - @graphql-mesh/transport-neo4j@0.10.25
+
+## 0.11.24
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0664ddb`](https://github.com/ardatan/graphql-mesh/commit/0664ddba78476e90f38560b55fcb88410cdfa72d)]:
+  - @graphql-mesh/transport-neo4j@0.10.24
+
+## 0.11.23
+
+### Patch Changes
+
+- [#9261](https://github.com/ardatan/graphql-mesh/pull/9261)
+  [`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.8` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.8)
+    (from `^12.0.7`, in `dependencies`)
+- Updated dependencies
+  [[`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`080aca9`](https://github.com/ardatan/graphql-mesh/commit/080aca90b3d102791d01ee4d3a9405dacadb06da)]:
+  - @graphql-mesh/transport-neo4j@0.10.23
+  - @graphql-mesh/types@0.104.22
+
+## 0.11.22
+
+### Patch Changes
+
+- [#9228](https://github.com/ardatan/graphql-mesh/pull/9228)
+  [`d213cd9`](https://github.com/ardatan/graphql-mesh/commit/d213cd912412c65602120243094795c9a1b5a28e)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.7` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.7)
+    (from `^12.0.6`, in `dependencies`)
+- Updated dependencies
+  [[`d213cd9`](https://github.com/ardatan/graphql-mesh/commit/d213cd912412c65602120243094795c9a1b5a28e),
+  [`d213cd9`](https://github.com/ardatan/graphql-mesh/commit/d213cd912412c65602120243094795c9a1b5a28e)]:
+  - @graphql-mesh/transport-neo4j@0.10.22
+  - @graphql-mesh/types@0.104.21
+
+## 0.11.21
+
+### Patch Changes
+
+- [#9199](https://github.com/ardatan/graphql-mesh/pull/9199)
+  [`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.6)
+    (from `^12.0.4`, in `dependencies`)
+- Updated dependencies
+  [[`dba3d8b`](https://github.com/ardatan/graphql-mesh/commit/dba3d8b4d008f5d01e35bf032a32d77a8dcd697e),
+  [`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909),
+  [`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909),
+  [`6e3779c`](https://github.com/ardatan/graphql-mesh/commit/6e3779c7672c582e7a53779669300d0f3c8c5d95)]:
+  - @graphql-mesh/transport-neo4j@0.10.21
+  - @graphql-mesh/types@0.104.20
+
+## 0.11.20
+
+### Patch Changes
+
+- Updated dependencies
+  [[`909d54e`](https://github.com/ardatan/graphql-mesh/commit/909d54e6684c6e80a6c200433f1ef126eb2074ce)]:
+  - @graphql-mesh/transport-neo4j@0.10.20
+
+## 0.11.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2410c44`](https://github.com/ardatan/graphql-mesh/commit/2410c44712ecc0d2e3f7eaaa03d854a32dc847de)]:
+  - @graphql-mesh/transport-neo4j@0.10.19
+
+## 0.11.18
+
+### Patch Changes
+
+- [#9120](https://github.com/ardatan/graphql-mesh/pull/9120)
+  [`c219668`](https://github.com/ardatan/graphql-mesh/commit/c219668be72a56f0400a3086fe5144604b7ae948)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.3` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.3)
+    (from `^12.0.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.31` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.31)
+    (from `^10.0.30`, in `dependencies`)
+
+- [#9129](https://github.com/ardatan/graphql-mesh/pull/9129)
+  [`3f91b5a`](https://github.com/ardatan/graphql-mesh/commit/3f91b5a5ca6dcb470e0e3897dd96c607f6e358c8)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.4)
+    (from `^12.0.3`, in `dependencies`)
+- Updated dependencies
+  [[`c219668`](https://github.com/ardatan/graphql-mesh/commit/c219668be72a56f0400a3086fe5144604b7ae948),
+  [`3f91b5a`](https://github.com/ardatan/graphql-mesh/commit/3f91b5a5ca6dcb470e0e3897dd96c607f6e358c8),
+  [`c219668`](https://github.com/ardatan/graphql-mesh/commit/c219668be72a56f0400a3086fe5144604b7ae948),
+  [`3f91b5a`](https://github.com/ardatan/graphql-mesh/commit/3f91b5a5ca6dcb470e0e3897dd96c607f6e358c8)]:
+  - @graphql-mesh/transport-neo4j@0.10.18
+  - @graphql-mesh/types@0.104.19
+
+## 0.11.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.10.17
+
+## 0.11.16
+
+### Patch Changes
+
+- [#8817](https://github.com/ardatan/graphql-mesh/pull/8817)
+  [`72f470e`](https://github.com/ardatan/graphql-mesh/commit/72f470edd882829ef26471dbd70d078d4048a783)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`neo4j-driver@^6.0.1` ↗︎](https://www.npmjs.com/package/neo4j-driver/v/6.0.1)
+    (from `^5.9.2`, in `dependencies`)
+
+- [#9027](https://github.com/ardatan/graphql-mesh/pull/9027)
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.2` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.2)
+    (from `^12.0.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.30` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.30)
+    (from `^10.0.5`, in `dependencies`)
+- Updated dependencies
+  [[`72f470e`](https://github.com/ardatan/graphql-mesh/commit/72f470edd882829ef26471dbd70d078d4048a783),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`7c0b01e`](https://github.com/ardatan/graphql-mesh/commit/7c0b01e01b61853feb95ae5b5c4045507c5def1c),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)]:
+  - @graphql-mesh/transport-neo4j@0.10.16
+  - @graphql-mesh/types@0.104.18
+
+## 0.11.15
+
+### Patch Changes
+
+- [#9022](https://github.com/ardatan/graphql-mesh/pull/9022)
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^12.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/12.0.0)
+    (from `^11.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/transport-neo4j@0.10.15
+  - @graphql-mesh/types@0.104.17
+
+## 0.11.14
+
+### Patch Changes
+
+- Updated dependencies
+  [[`bb42d37`](https://github.com/ardatan/graphql-mesh/commit/bb42d37196e37c18289699db1a57aa3efd9a8a88),
+  [`bb42d37`](https://github.com/ardatan/graphql-mesh/commit/bb42d37196e37c18289699db1a57aa3efd9a8a88)]:
+  - @graphql-mesh/types@0.104.16
+  - @graphql-mesh/transport-neo4j@0.10.14
+
+## 0.11.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b077f20`](https://github.com/ardatan/graphql-mesh/commit/b077f2014379934deee9803adbed754926550098)]:
+  - @graphql-mesh/types@0.104.15
+  - @graphql-mesh/transport-neo4j@0.10.13
+
+## 0.11.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1db3c6b`](https://github.com/ardatan/graphql-mesh/commit/1db3c6bc7e1b88e246b4e27562072312ea2bd266)]:
+  - @graphql-mesh/types@0.104.14
+  - @graphql-mesh/transport-neo4j@0.10.12
+
+## 0.11.11
+
+### Patch Changes
+
+- [#8745](https://github.com/ardatan/graphql-mesh/pull/8745)
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^11.0.0` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/11.0.0)
+    (from `^10.0.28`, in `dependencies`)
+- Updated dependencies
+  [[`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`865b000`](https://github.com/ardatan/graphql-mesh/commit/865b000024850b1d98fe39244e8eb432e4c04d38),
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681)]:
+  - @graphql-mesh/transport-neo4j@0.10.11
+  - @graphql-mesh/types@0.104.13
+
+## 0.11.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.10.10
+  - @graphql-mesh/types@0.104.12
+
+## 0.11.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.10.9
+  - @graphql-mesh/types@0.104.11
+
+## 0.11.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.10.8
+  - @graphql-mesh/types@0.104.10
+
+## 0.11.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0c18fe1`](https://github.com/ardatan/graphql-mesh/commit/0c18fe12b1d92af006e945b19e9207cb16a1ee7e)]:
+  - @graphql-mesh/types@0.104.9
+  - @graphql-mesh/transport-neo4j@0.10.7
+
+## 0.11.6
+
+### Patch Changes
+
+- [#8716](https://github.com/ardatan/graphql-mesh/pull/8716)
+  [`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - Accept and support the upcoming and improved
+  `HivePubSub` from `@graphql-hive/pubsub`
+
+- Updated dependencies
+  [[`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07),
+  [`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07),
+  [`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07)]:
+  - @graphql-mesh/types@0.104.8
+  - @graphql-mesh/transport-neo4j@0.10.6
+
+## 0.11.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/transport-neo4j@0.10.5
+
+## 0.11.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.10.4
+  - @graphql-mesh/types@0.104.6
+
+## 0.11.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.10.3
+  - @graphql-mesh/types@0.104.5
+
+## 0.11.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6b4c546`](https://github.com/ardatan/graphql-mesh/commit/6b4c5467285d502940316eb430c292e52fb928f2)]:
+  - @graphql-mesh/types@0.104.4
+  - @graphql-mesh/transport-neo4j@0.10.2
+
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.10.1
+  - @graphql-mesh/types@0.104.3
+
+## 0.11.0
+
+### Minor Changes
+
+- [#8598](https://github.com/ardatan/graphql-mesh/pull/8598)
+  [`e8f6253`](https://github.com/ardatan/graphql-mesh/commit/e8f6253dae4dd5b53fc62145bd27a3ed4f98c140)
+  Thanks [@renovate](https://github.com/apps/renovate)! - BREAKING: Underlying `@neo4j/graphql`
+  library got a major release. Please check the changelogs to see the breaking changes.
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e8f6253`](https://github.com/ardatan/graphql-mesh/commit/e8f6253dae4dd5b53fc62145bd27a3ed4f98c140),
+  [`e8f6253`](https://github.com/ardatan/graphql-mesh/commit/e8f6253dae4dd5b53fc62145bd27a3ed4f98c140)]:
+  - @graphql-mesh/transport-neo4j@0.10.0
+
+## 0.10.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.9.2
+  - @graphql-mesh/types@0.104.2
+
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.9.1
+  - @graphql-mesh/types@0.104.1
+
+## 0.10.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.9.0
+  - @graphql-mesh/types@0.104.0
+
+## 0.9.21
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.8.21
+  - @graphql-mesh/types@0.103.21
+
+## 0.9.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.8.20
+  - @graphql-mesh/types@0.103.20
+
+## 0.9.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d9cf1d3`](https://github.com/ardatan/graphql-mesh/commit/d9cf1d389c6d685a9d6cc50ff4be03380fd085f1)]:
+  - @graphql-mesh/types@0.103.19
+  - @graphql-mesh/transport-neo4j@0.8.19
+
+## 0.9.18
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.8.18
+  - @graphql-mesh/types@0.103.18
+
+## 0.9.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.8.17
+  - @graphql-mesh/types@0.103.17
+
+## 0.9.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b44f8b7`](https://github.com/ardatan/graphql-mesh/commit/b44f8b7a413c8adb213b22fb8a243ca6aa06d2bd)]:
+  - @graphql-mesh/types@0.103.16
+  - @graphql-mesh/transport-neo4j@0.8.16
+
+## 0.9.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b5c05c4`](https://github.com/ardatan/graphql-mesh/commit/b5c05c4c5862525c76d69e8c166e71378f69bda0)]:
+  - @graphql-mesh/types@0.103.15
+  - @graphql-mesh/transport-neo4j@0.8.15
+
+## 0.9.14
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fc44a1e`](https://github.com/ardatan/graphql-mesh/commit/fc44a1e66c8bc8f27dc7e5e642031d17d75c0db8)]:
+  - @graphql-mesh/types@0.103.14
+  - @graphql-mesh/transport-neo4j@0.8.14
+
+## 0.9.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a)]:
+  - @graphql-mesh/transport-neo4j@0.8.13
+  - @graphql-mesh/types@0.103.13
+
+## 0.9.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c54e361`](https://github.com/ardatan/graphql-mesh/commit/c54e36110256541e03380b0d537085848169116b)]:
+  - @graphql-mesh/types@0.103.12
+  - @graphql-mesh/transport-neo4j@0.8.12
+
+## 0.9.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3fc1f3e`](https://github.com/ardatan/graphql-mesh/commit/3fc1f3e046c02107d7fecf367756c7196fbe6ce1)]:
+  - @graphql-mesh/types@0.103.11
+  - @graphql-mesh/transport-neo4j@0.8.11
+
+## 0.9.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.8.10
+  - @graphql-mesh/types@0.103.10
+
+## 0.9.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.8.9
+  - @graphql-mesh/types@0.103.9
+
+## 0.9.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.8.8
+  - @graphql-mesh/types@0.103.8
+
+## 0.9.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.103.7
+  - @graphql-mesh/transport-neo4j@0.8.7
+
+## 0.9.6
+
+### Patch Changes
+
+- [#8092](https://github.com/ardatan/graphql-mesh/pull/8092)
+  [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-mesh/types@^0.103.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.103.5)
+    (to `dependencies`)
+  - Added dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (to
+    `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/types@^0.103.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.103.5)
+    (from `peerDependencies`)
+  - Removed dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (from
+    `peerDependencies`)
+- Updated dependencies
+  [[`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9),
+  [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)]:
+  - @graphql-mesh/transport-neo4j@0.8.6
+  - @graphql-mesh/types@0.103.6
+
+## 0.9.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.8.5
+  - @graphql-mesh/types@0.103.5
+
+## 0.9.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8fcfe3f`](https://github.com/ardatan/graphql-mesh/commit/8fcfe3f78a0be53e3b474231bfe7ee0594e54f91)]:
+  - @graphql-mesh/types@0.103.4
+  - @graphql-mesh/transport-neo4j@0.8.4
+
+## 0.9.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.8.3
+  - @graphql-mesh/types@0.103.3
+
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.8.2
+  - @graphql-mesh/types@0.103.2
+
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`92d3ce1`](https://github.com/ardatan/graphql-mesh/commit/92d3ce10bcfdb1bbf63165f77bdb5acd713c88ac),
+  [`92d3ce1`](https://github.com/ardatan/graphql-mesh/commit/92d3ce10bcfdb1bbf63165f77bdb5acd713c88ac)]:
+  - @graphql-mesh/transport-neo4j@0.8.1
+  - @graphql-mesh/types@0.103.1
+
+## 0.9.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.8.0
+  - @graphql-mesh/types@0.103.0
+
+## 0.8.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.102.13
+  - @graphql-mesh/transport-neo4j@0.7.15
+
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.7.14
+  - @graphql-mesh/types@0.102.12
+
+## 0.8.0
+
+### Minor Changes
+
+- [#7866](https://github.com/ardatan/graphql-mesh/pull/7866)
+  [`0788b5d`](https://github.com/ardatan/graphql-mesh/commit/0788b5d76b7439af804781a33cb3c065c524dd63)
+  Thanks [@renovate](https://github.com/apps/renovate)! - Use shared TransportOptions scalar in all
+  transport directive definitions
+
+### Patch Changes
+
+- [#7866](https://github.com/ardatan/graphql-mesh/pull/7866)
+  [`0788b5d`](https://github.com/ardatan/graphql-mesh/commit/0788b5d76b7439af804781a33cb3c065c524dd63)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/introspector@^4.0.0` ↗︎](https://www.npmjs.com/package/@neo4j/introspector/v/4.0.0)
+    (from `^3.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`d8c0d29`](https://github.com/ardatan/graphql-mesh/commit/d8c0d292636d16f43513be7fe859a251c2ccd5e6)]:
+  - @graphql-mesh/transport-neo4j@0.7.13
+
+## 0.7.12
+
+### Patch Changes
+
+- [#7838](https://github.com/ardatan/graphql-mesh/pull/7838)
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.28` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.28)
+    (from `^10.0.27`, in `dependencies`)
+- Updated dependencies
+  [[`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)]:
+  - @graphql-mesh/transport-neo4j@0.7.12
+  - @graphql-mesh/types@0.102.11
+
+## 0.7.11
+
+### Patch Changes
+
+- [#7828](https://github.com/ardatan/graphql-mesh/pull/7828)
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.27` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.27)
+    (from `^10.0.26`, in `dependencies`)
+- Updated dependencies
+  [[`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)]:
+  - @graphql-mesh/transport-neo4j@0.7.11
+  - @graphql-mesh/types@0.102.10
+
+## 0.7.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e5af4f9`](https://github.com/ardatan/graphql-mesh/commit/e5af4f9d46530777733bc956c7166c23206182ce)]:
+  - @graphql-mesh/transport-neo4j@0.7.10
+  - @graphql-mesh/types@0.102.9
+
+## 0.7.9
+
+### Patch Changes
+
+- [#7769](https://github.com/ardatan/graphql-mesh/pull/7769)
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.26` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.26)
+    (from `^10.0.23`, in `dependencies`)
+- Updated dependencies
+  [[`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)]:
+  - @graphql-mesh/transport-neo4j@0.7.9
+  - @graphql-mesh/types@0.102.8
+
+## 0.7.8
+
+### Patch Changes
+
+- [#7781](https://github.com/ardatan/graphql-mesh/pull/7781)
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.23` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.23)
+    (from `^10.0.21`, in `dependencies`)
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/transport-neo4j@0.7.8
+  - @graphql-mesh/types@0.102.7
+
+## 0.7.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.7.7
+  - @graphql-mesh/types@0.102.6
+
+## 0.7.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.7.6
+  - @graphql-mesh/types@0.102.5
+
+## 0.7.5
+
+### Patch Changes
+
+- [#7488](https://github.com/ardatan/graphql-mesh/pull/7488)
+  [`5146df0`](https://github.com/ardatan/graphql-mesh/commit/5146df0fd3313227d5d7df2beb726ca89e13923f)
+  Thanks [@ardatan](https://github.com/ardatan)! - Improve schema generation
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.7.5
+
+## 0.7.4
+
+### Patch Changes
+
+- [#7576](https://github.com/ardatan/graphql-mesh/pull/7576)
+  [`edbc074`](https://github.com/ardatan/graphql-mesh/commit/edbc074523ebc86114bb3342f86b7bcd9268d005)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.21` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.21)
+    (from `^10.0.20`, in `dependencies`)
+- Updated dependencies
+  [[`edbc074`](https://github.com/ardatan/graphql-mesh/commit/edbc074523ebc86114bb3342f86b7bcd9268d005),
+  [`edbc074`](https://github.com/ardatan/graphql-mesh/commit/edbc074523ebc86114bb3342f86b7bcd9268d005)]:
+  - @graphql-mesh/transport-neo4j@0.7.4
+  - @graphql-mesh/types@0.102.4
+
+## 0.7.3
+
+### Patch Changes
+
+- [#7572](https://github.com/ardatan/graphql-mesh/pull/7572)
+  [`14ec31f`](https://github.com/ardatan/graphql-mesh/commit/14ec31f95bc06e9a3d06fae387fc40cc534e01f4)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.20` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.20)
+    (from `^10.0.19`, in `dependencies`)
+- Updated dependencies
+  [[`14ec31f`](https://github.com/ardatan/graphql-mesh/commit/14ec31f95bc06e9a3d06fae387fc40cc534e01f4),
+  [`14ec31f`](https://github.com/ardatan/graphql-mesh/commit/14ec31f95bc06e9a3d06fae387fc40cc534e01f4)]:
+  - @graphql-mesh/transport-neo4j@0.7.3
+  - @graphql-mesh/types@0.102.3
+
+## 0.7.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.7.2
+  - @graphql-mesh/types@0.102.2
+
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.7.1
+  - @graphql-mesh/types@0.102.1
+
+## 0.7.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373)]:
+  - @graphql-mesh/types@0.102.0
+  - @graphql-mesh/transport-neo4j@0.7.0
+
+## 0.6.2
+
+### Patch Changes
+
+- [#7518](https://github.com/ardatan/graphql-mesh/pull/7518)
+  [`b0cdc83`](https://github.com/ardatan/graphql-mesh/commit/b0cdc839699a1dd90d125289b49b75f703cbb18e)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/transport-neo4j@^0.6.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-neo4j/v/0.6.1)
+    (from `^0.6.0`, in `dependencies`)
+- Updated dependencies
+  [[`b0cdc83`](https://github.com/ardatan/graphql-mesh/commit/b0cdc839699a1dd90d125289b49b75f703cbb18e)]:
+  - @graphql-mesh/transport-neo4j@0.6.2
+
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`67e1062`](https://github.com/ardatan/graphql-mesh/commit/67e10629c70ec553234c1ffc99af4b89ddb31985)]:
+  - @graphql-mesh/transport-neo4j@0.6.1
+
+## 0.6.0
+
+### Patch Changes
+
+- [#7497](https://github.com/ardatan/graphql-mesh/pull/7497)
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.5` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.5)
+    (from `^10.0.4`, in `dependencies`)
+
+- [#7512](https://github.com/ardatan/graphql-mesh/pull/7512)
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.19` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.19)
+    (from `^10.0.18`, in `dependencies`)
+- Updated dependencies
+  [[`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6),
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6)]:
+  - @graphql-mesh/transport-neo4j@0.6.0
+  - @graphql-mesh/types@0.101.0
+
+## 0.5.0
+
+### Patch Changes
+
+- [#7477](https://github.com/ardatan/graphql-mesh/pull/7477)
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.18` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.18)
+    (from `^10.0.17`, in `dependencies`)
+- Updated dependencies
+  [[`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`6361414`](https://github.com/ardatan/graphql-mesh/commit/6361414fe326ef72640069bdcfb846f4d367e31b)]:
+  - @graphql-mesh/transport-neo4j@0.5.0
+  - @graphql-mesh/types@0.100.0
+
+## 0.4.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a1bfc49`](https://github.com/ardatan/graphql-mesh/commit/a1bfc492ac3378f22b79a51824407e776b496a84)]:
+  - @graphql-mesh/types@0.99.7
+  - @graphql-mesh/transport-neo4j@0.4.7
+
+## 0.4.6
+
+### Patch Changes
+
+- [#7447](https://github.com/ardatan/graphql-mesh/pull/7447)
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.17` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.17)
+    (from `^10.0.16`, in `dependencies`)
+- Updated dependencies
+  [[`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb)]:
+  - @graphql-mesh/transport-neo4j@0.4.6
+  - @graphql-mesh/types@0.99.6
+
+## 0.4.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.4.5
+  - @graphql-mesh/types@0.99.5
+
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.4.4
+  - @graphql-mesh/types@0.99.4
+
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.4.3
+  - @graphql-mesh/types@0.99.3
+
+## 0.4.2
+
+### Patch Changes
+
+- [#7352](https://github.com/ardatan/graphql-mesh/pull/7352)
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.16` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.16)
+    (from `^10.0.14`, in `dependencies`)
+- Updated dependencies
+  [[`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)]:
+  - @graphql-mesh/transport-neo4j@0.4.2
+  - @graphql-mesh/types@0.99.2
+
+## 0.4.1
+
+### Patch Changes
+
+- [#7316](https://github.com/ardatan/graphql-mesh/pull/7316)
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.14` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.14)
+    (from `^10.0.12`, in `dependencies`)
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/transport-neo4j@0.4.1
+  - @graphql-mesh/types@0.99.1
+
+## 0.4.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/transport-neo4j@0.4.0
+  - @graphql-mesh/types@0.99.0
+
+## 0.3.1
+
+### Patch Changes
+
+- [#7185](https://github.com/ardatan/graphql-mesh/pull/7185)
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.12)
+    (from `^10.0.11`, in `dependencies`)
+- Updated dependencies
+  [[`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`8a04cf7`](https://github.com/ardatan/graphql-mesh/commit/8a04cf7abff41122d5268c57acfb26e97712730b)]:
+  - @graphql-mesh/transport-neo4j@0.3.1
+  - @graphql-mesh/types@0.98.10
+
+## 0.3.0
+
+### Patch Changes
+
+- [#7145](https://github.com/ardatan/graphql-mesh/pull/7145)
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)
+  Thanks [@Author](https://github.com/Author), [@User](https://github.com/User)! - New Federation
+  Composition Approach for the new Mesh v1 alpha; (If you are using Mesh v0 legacy, ignore this
+  changelog)
+
+  Now Mesh Compose produces a superset of Federated Supergraph.
+  - Drop any options and implementation related to the old `fusiongraph`
+  - - The output is a valid supergraph that can be consumed by any Federation router. But if it is
+      not Mesh Serve, the subgraph should still be served via Mesh Serve then consumed by that
+      Federation router. If it is Mesh Serve, no additional server is needed because Mesh Serve
+      already knows the additional directives etc of the transports
+  - Compose the subgraphs using `@theguild/federation-composition` package
+  - - So benefit from the validation rules of Federation in Mesh Compose
+  - Ability to consume existing federated subgraphs
+  - - Since the composition is now Federation, we can accept any federated subgraph
+  - Implement Federation transform to transform any subgraph to a federated subgraph by adding
+    Federation directives (v2 only) . This is on user's own because they add the directives
+    manually. And for `__resolveReference`, we use `@merge` directive to mark a root field as an
+    entity resolver for Federation
+  - Use additional `@source` directive to consume transforms on the subgraph execution (field
+    renames etc)
+  - Use additional `@resolveTo` directive to consume additional stitched resolvers
+  - Use additional `@transport` directive to choose and configure a specific transport for subgraphs
+  - Handle unsupported additional directives with another set of additional directives on `Query`
+    for example directives on unions, schema definitions, enum values etc and then
+    `@extraUnionDirective` added with missing directives for unions then on the runtime these
+    directives are added back to the union for the subgraph execution of the transports.
+
+  Basically Mesh Compose uses Federation spec for composition, validation and runtime BUT the output
+  is a superset with these additional directives imported via `@composeDirective`;
+  - `@merge` (Taken from Stitching Directives) If a custom entity resolver is defined for a root
+    field like below, the gateway will pick it up as an entity resolver;
+
+  ```graphql
+  type Query {
+     fooById(id: ID!): Foo @merge(keyField: 'id', keyArg: 'id', subgraph: Foo)
+  }
+  ```
+
+  - `@resolveTo` (Taken from v0) This allows to delegate to a field in any subgraph just like Schema
+    Extensions in old Schema Stitching approach;
+
+  ```graphql
+      extend type Book {
+
+          @resolveTo(
+            sourceName: "authors"
+            sourceTypeName: "Query"
+            sourceFieldName: "authors"
+            keyField: "authorId"
+            keysArg: "ids"
+          )
+      }
+  ```
+
+  - `@source` Taken from Fusion This allows us to know how the original definition is in the
+    subgraph. If this directive exists, the runtime applies the transforms from Schema Stitching
+    during the subgraph execution. This directive can exist in arguments, fields, types etc.
+
+  ```graphql
+  type Query {
+   @source(type: "MyUser") # This means `User` is actually `MyUser` in the actual subgraph
+  }
+
+  type User @source(name: "MyUser") {
+    id: ID
+    name: String
+  }
+  ```
+
+  - `@transport` Taken from Fusion This allows us to choose a specific transport (rest, mysql,
+    graphql-ws, graphql-http etc) for the subgraph execution with some configuration. In the
+    runtime, the gateway loads the transports and passes the subgraph schema with annotations if
+    needed to get an executor to execute queries against that subgraph.
+
+  ```graphql
+  schema @transport(subgraph: "API", kind: "rest", location: "http://0.0.0.0:<api_port>") {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
+  }
+  ```
+
+  - `@extraSchemaDefinitionDirective` By default, it is not possible to add directives from subgraph
+    to the supergraph but it is possible to do the same thing on types or fields. So we add this
+    directive to `Query` for the directives we want to add to the schema. Then the runtime picks
+    those per `subgraph` to put the directives back to their original places;
+
+  ```graphql
+  type Query @extraSchemaDefinitionDirective(
+    directives: {transport: [{subgraph: "petstore", kind: "rest", location: "http://0.0.0.0:<petstore_port>/api/v3"}]}
+  )  {
+  ```
+
+  - `@extraEnumValueDirective` and `@extraTypeDirective` Same for enum values and unions etc that
+    are not supported by the composition library
+
+  > Thanks to these directives, subgraphs can be published individually to Hive for example then the
+  > supergraph stored there can be handled by Mesh Gateway since the composition is the same. All
+  > the additions etc are done on the subgraph level. For the Fed gateways except Mesh Serve,
+  > subgraphs can be served individually by Mesh Serve again while they are consumed by any gw like
+  > Apollo Router Shareable is enabled by default for non-federated subgraphs
+
+  Documentation PR has details for users; https://github.com/ardatan/graphql-mesh/pull/7109
+
+- Updated dependencies
+  [[`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)]:
+  - @graphql-mesh/transport-neo4j@0.3.0
+  - @graphql-mesh/types@0.98.9
+
+## 0.2.8
+
+### Patch Changes
+
+- [#7054](https://github.com/ardatan/graphql-mesh/pull/7054)
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207)
+  Thanks [@ardatan](https://github.com/ardatan)! - Use `Disposable` pattern for plugins and
+  transports
+
+- Updated dependencies
+  [[`4c75671`](https://github.com/ardatan/graphql-mesh/commit/4c756717247eb0a8f3431e31e6c86fc97297bd32),
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207)]:
+  - @graphql-mesh/types@0.98.8
+  - @graphql-mesh/transport-neo4j@0.2.8
+
+## 0.2.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.98.7
+  - @graphql-mesh/transport-neo4j@0.2.7
+
+## 0.2.6
+
+### Patch Changes
+
+- [#7030](https://github.com/ardatan/graphql-mesh/pull/7030)
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.11` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.11)
+    (from `^10.0.10`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-tools/schema@^10.0.4` ↗︎](https://www.npmjs.com/package/@graphql-tools/schema/v/10.0.4)
+    (from `^10.0.2`, in `dependencies`)
+- Updated dependencies
+  [[`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)]:
+  - @graphql-mesh/transport-neo4j@0.2.6
+  - @graphql-mesh/types@0.98.6
+
+## 0.2.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.98.5
+  - @graphql-mesh/transport-neo4j@0.2.5
+
+## 0.2.4
+
+### Patch Changes
+
+- [`fb59244`](https://github.com/ardatan/graphql-mesh/commit/fb592447c12950582881b24c0ca035a34d2ca48c)
+  Thanks [@ardatan](https://github.com/ardatan)! - Update GraphQL Tools packages
+
+- Updated dependencies
+  [[`fb59244`](https://github.com/ardatan/graphql-mesh/commit/fb592447c12950582881b24c0ca035a34d2ca48c)]:
+  - @graphql-mesh/transport-neo4j@0.2.4
+  - @graphql-mesh/types@0.98.4
+
+## 0.2.3
+
+### Patch Changes
+
+- [`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)
+  Thanks [@ardatan](https://github.com/ardatan)! - Bump GraphQL Tools versions
+
+- Updated dependencies
+  [[`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)]:
+  - @graphql-mesh/transport-neo4j@0.2.3
+  - @graphql-mesh/types@0.98.3
+
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/transport-neo4j@0.2.2
+  - @graphql-mesh/types@0.98.2
+
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/types@0.98.1
+  - @graphql-mesh/transport-neo4j@0.2.1
+
+## 0.2.0
+
+### Patch Changes
+
+- [#6872](https://github.com/ardatan/graphql-mesh/pull/6872)
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-tools/delegate@^10.0.6` ↗︎](https://www.npmjs.com/package/@graphql-tools/delegate/v/10.0.6)
+    (from `^10.0.3`, in `dependencies`)
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5)]:
+  - @graphql-mesh/transport-neo4j@0.2.0
+  - @graphql-mesh/types@0.98.0
+
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)]:
+  - @graphql-mesh/types@0.97.5
+  - @graphql-mesh/transport-neo4j@0.1.5
+
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)]:
+  - @graphql-mesh/types@0.97.4
+  - @graphql-mesh/transport-neo4j@0.1.4
+
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`57f4a60`](https://github.com/ardatan/graphql-mesh/commit/57f4a601c1f9819937c784ab9aae68f3368cbefd)]:
+  - @graphql-mesh/types@0.97.3
+  - @graphql-mesh/transport-neo4j@0.1.3
+
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)]:
+  - @graphql-mesh/types@0.97.2
+  - @graphql-mesh/transport-neo4j@0.1.2
+
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`dbaf72c`](https://github.com/ardatan/graphql-mesh/commit/dbaf72c4520f64524dce14b798019639c4d57020)]:
+  - @graphql-mesh/types@0.97.1
+  - @graphql-mesh/transport-neo4j@0.1.1
+
+## 0.1.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`92dce67`](https://github.com/ardatan/graphql-mesh/commit/92dce67df35d70001ca9c818870a85256175279a)]:
+  - @graphql-mesh/types@0.97.0
+  - @graphql-mesh/transport-neo4j@0.1.0
+
+## 0.0.5
+
+### Patch Changes
+
+- [#6581](https://github.com/ardatan/graphql-mesh/pull/6581)
+  [`893c814`](https://github.com/ardatan/graphql-mesh/commit/893c814659f347a59a029bce3a437fb5ca79b23c)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@neo4j/introspector@^3.0.0` ↗︎](https://www.npmjs.com/package/@neo4j/introspector/v/3.0.0)
+    (from `^2.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`893c814`](https://github.com/ardatan/graphql-mesh/commit/893c814659f347a59a029bce3a437fb5ca79b23c)]:
+  - @graphql-mesh/transport-neo4j@0.0.2
+  - @graphql-mesh/types@0.96.6
+
+## 0.0.4
+
+### Patch Changes
+
+- [#6551](https://github.com/ardatan/graphql-mesh/pull/6551)
+  [`7c18a3f`](https://github.com/ardatan/graphql-mesh/commit/7c18a3f9163f5156758b8cdf0292b28a3bb6046b)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Added dependency
+    [`@graphql-mesh/transport-neo4j@^0.0.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/transport-neo4j/v/0.0.0)
+    (to `dependencies`)
+  - Removed dependency
+    [`@graphql-tools/utils@^10.0.12` ↗︎](https://www.npmjs.com/package/@graphql-tools/utils/v/10.0.12)
+    (from `dependencies`)
+  - Removed dependency
+    [`@neo4j/graphql@^4.0.0` ↗︎](https://www.npmjs.com/package/@neo4j/graphql/v/4.0.0) (from
+    `dependencies`)
+  - Removed dependency
+    [`graphql-scalars@^1.22.4` ↗︎](https://www.npmjs.com/package/graphql-scalars/v/1.22.4) (from
+    `dependencies`)
+
+- [#6551](https://github.com/ardatan/graphql-mesh/pull/6551)
+  [`7c18a3f`](https://github.com/ardatan/graphql-mesh/commit/7c18a3f9163f5156758b8cdf0292b28a3bb6046b)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - New Neo4J transport
+
+- Updated dependencies
+  [[`7c18a3f`](https://github.com/ardatan/graphql-mesh/commit/7c18a3f9163f5156758b8cdf0292b28a3bb6046b),
+  [`4b3ea1d`](https://github.com/ardatan/graphql-mesh/commit/4b3ea1d4ac804341d8dcae289ec1eac37026b908)]:
+  - @graphql-mesh/transport-neo4j@0.0.1
+  - @graphql-mesh/types@0.96.5
+
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ae7b085`](https://github.com/ardatan/graphql-mesh/commit/ae7b085e93ba911f03bbfd2a15ff9ca8be9f4de8)]:
+  - @graphql-mesh/types@0.96.4
+
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ac26793`](https://github.com/ardatan/graphql-mesh/commit/ac26793e59f76f0839b61a8030e0eefc7383e640)]:
+  - @graphql-mesh/types@0.96.3
+
+## 0.0.1
+
+### Patch Changes
+
+- [#6414](https://github.com/ardatan/graphql-mesh/pull/6414)
+  [`209709c`](https://github.com/ardatan/graphql-mesh/commit/209709c04b6f219f2405603aee095744a2c92ad1)
+  Thanks [@ardatan](https://github.com/ardatan)! - New Neo4j Loader

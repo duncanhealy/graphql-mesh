@@ -1,0 +1,70 @@
+{
+  "name": "@graphql-mesh/migrate-config-cli",
+  "version": "1.10.4",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-mesh",
+    "directory": "packages/legacy/migrate-config-cli"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "bin": {
+    "mesh-migrate-config": "dist/cjs/bin.js"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "graphql": "^16.0.0 || ^17.0.0"
+  },
+  "dependencies": {
+    "@graphql-mesh/cli": "^0.103.4",
+    "@graphql-mesh/compose-cli": "^1.8.4",
+    "@graphql-mesh/config": "^0.111.3",
+    "@graphql-mesh/types": "^0.107.3",
+    "@graphql-mesh/utils": "^0.107.3",
+    "lodash.kebabcase": "^4.1.1",
+    "prettier": "^3.9.10",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/lodash.kebabcase": "^4.1.9",
+    "graphql": "16.14.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "buildOptions": {
+    "bin": {
+      "mesh-migrate-config": {
+        "input": "src/bin.ts"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
+}

@@ -1,10 +1,10 @@
 query ListQuestions {
-  listQuestions(site: "stackoverflow") {
+  listUnansweredQuestions(site: "stackoverflow") {
     items {
       title
       tags
-      isAnswered
-      answerCount
+      is_answered
+      answer_count
       link
     }
   }

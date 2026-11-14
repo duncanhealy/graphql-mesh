@@ -1,31 +1,53 @@
 {
   "name": "json-machete",
-  "version": "0.0.11",
-  "license": "MIT",
-  "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "typings": "dist/index.d.ts",
-  "typescript": {
-    "definition": "dist/index.d.ts"
+  "version": "0.97.8",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-mesh",
+    "directory": "packages/json-machete"
   },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
     },
-    "./*": {
-      "require": "./dist/*.js",
-      "import": "./dist/*.mjs"
-    }
+    "./package.json": "./package.json"
   },
+  "typings": "dist/typings/index.d.ts",
   "dependencies": {
-    "@json-schema-tools/meta-schema": "1.6.19",
-    "json-ptr": "2.2.0",
-    "@graphql-mesh/utils": "0.16.0"
+    "@json-schema-tools/meta-schema": "^1.7.5",
+    "cross-inspect": "^1.0.1",
+    "json-pointer": "^0.6.2",
+    "to-json-schema": "^0.2.5",
+    "tslib": "^2.4.0",
+    "url-join": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/json-pointer": "1.0.34"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
   }
 }

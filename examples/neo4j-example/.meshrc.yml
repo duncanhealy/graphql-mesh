@@ -2,10 +2,10 @@ sources:
   - name: Neo4j
     handler:
       neo4j:
-        url: bolt+s://demo.neo4jlabs.com:7687
-        username: movies
-        password: movies
-        database: movies
+        endpoint: neo4j+s://demo.neo4jlabs.com
+        username: recommendations
+        password: recommendations
+        database: recommendations
 
 documents:
   - ./example-query.graphql

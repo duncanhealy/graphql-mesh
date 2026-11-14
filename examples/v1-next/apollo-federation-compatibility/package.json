@@ -1,0 +1,35 @@
+{
+  "name": "example-apollo-federation-compatibility",
+  "version": "1.11.4",
+  "description": "Apollo Federation implemented with GraphQL Mesh",
+  "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "node scripts/bundle.js",
+    "check": "tsc --pretty --noEmit",
+    "mesh:compose": "mesh-compose --subgraph products > schema.graphql",
+    "mesh:serve": "mesh-serve --subgraph schema.graphql --host 0.0.0.0 --port 4001",
+    "service:codegen": "graphql-codegen",
+    "service:start": "tsx src/index.ts",
+    "start": "node bundle.js"
+  },
+  "dependencies": {
+    "@graphql-hive/gateway": "^2.15.4",
+    "@graphql-yoga/plugin-apollo-inline-trace": "4.0.1",
+    "concurrently": "10.0.6",
+    "graphql": "16.14.0",
+    "graphql-yoga": "^6.0.1",
+    "tslib": "2.8.1",
+    "tsx": "^4.23.15"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "7.2.0",
+    "@graphql-codegen/typescript": "7.0.0",
+    "@graphql-codegen/typescript-resolvers": "6.1.0",
+    "@graphql-mesh/compose-cli": "1.8.4",
+    "@types/node": "^26.2.0",
+    "esbuild": "^0.28.2",
+    "lru-cache": "patch:lru-cache@npm%3A11.2.6#~/.yarn/patches/lru-cache-npm-11.2.6-acb7d4323e.patch"
+  }
+}

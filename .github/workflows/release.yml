@@ -1,76 +1,63 @@
-name: Release
+name: release
+
 on:
   push:
     branches:
       - master
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Master
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Configure Git Credentials
-        run: |
-          git config --global user.email "theguild-bot@users.noreply.github.com"
-          git config --global user.name "theguild-bot"
-          echo "machine github.com login theguild-bot password ${{secrets.GH_API_TOKEN}}" > ~/.netrc
-      - name: Add origin remote and refetch master
-        run: |
-          git remote rm origin
-          git remote add origin "https://github.com/${{github.repository}}"
-          git fetch
-          git checkout master
-          git reset --hard
-      - name: Use Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16.x'
-      - name: Setup NPM credentials
-        run: echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
-      - name: Cache Yarn
-        uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-16-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-16-yarn-${{ hashFiles('yarn.lock') }}
+  pull_request:
 
-      - name: Install Dependencies using Yarn
-        run: yarn install && git checkout yarn.lock && yarn patch-package
-      - name: Create Release Pull Request or Publish to npm
-        id: changesets
-        uses: changesets/action@master
-        with:
-          publish: yarn release
-          commit: 'chore(release): update monorepo packages versions'
-          title: 'Upcoming Release Changes'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Set up QEMU
-        if: steps.changesets.outputs.published == 'true'
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        if: steps.changesets.outputs.published == 'true'
-        uses: docker/setup-buildx-action@v1
-      - name: Login to DockerHub
-        if: steps.changesets.outputs.published == 'true'
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build & Publish Docker Image
-        if: steps.changesets.outputs.published == 'true'
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: |
-            theguild/graphql-mesh:latest
-            theguild/graphql-mesh:${{ github.sha }}
-          context: ./packages/container
-          file: ./packages/container/Dockerfile
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  YARN_ENABLE_HARDENED_MODE: 0
+  NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
+permissions: write-all
+
+jobs:
+  dependencies:
+    if:
+      ${{ github.event.pull_request.title != 'Upcoming Release Changes' && github.base_ref ==
+      'master' }}
+    uses: the-guild-org/shared-config/.github/workflows/changesets-dependencies.yml@v1
+    with:
+      node-version-file: .node-version
+    secrets:
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+  alpha:
+    # Skip for forks, release PR and dependabot PRs
+    if:
+      ${{ github.event.pull_request.head.repo.fork != true && github.event.pull_request.title !=
+      'Upcoming Release Changes' && github.actor != 'dependabot[bot]' }}
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
+    uses: the-guild-org/shared-config/.github/workflows/release-snapshot.yml@v1
+    with:
+      node-version-file: .node-version
+      npmTag: alpha
+      buildScript: build
+    secrets:
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
+      npmToken: ${{ secrets.NODE_AUTH_TOKEN }}
+
+  stable:
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
+    if: github.ref == 'refs/heads/master'
+    uses: the-guild-org/shared-config/.github/workflows/release-stable.yml@v1
+    with:
+      releaseScript: release
+      versionScript: 'changeset-version'
+      node-version-file: .node-version
+    secrets:
+      githubToken: ${{ secrets.GITHUB_TOKEN }}
+      npmToken: ${{ secrets.NODE_AUTH_TOKEN }}

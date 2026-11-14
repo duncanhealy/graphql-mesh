@@ -1,11 +1,75 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
-  "postUpdateOptions": ["yarnDedupeFewer"],
+  "extends": ["github>the-guild-org/shared-config:renovate"],
   "automerge": true,
+  "rebaseWhen": "conflicted",
+  "prConcurrentLimit": 2,
+  "branchConcurrentLimit": 2,
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/__tests__/**",
+    "**/test/**",
+    "**/tests/**",
+    "**/__fixtures__/**",
+    "examples/**",
+    "e2e/**"
+  ],
+  "toolSettings": {
+    "nodeMaxMemory": 1024
+  },
   "major": {
     "automerge": false
   },
-  "labels": ["dependencies"],
-  "ignoreDeps": ["typedoc-plugin-markdown"]
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "matchPackageNames": [
+        "!/@changesets/*/",
+        "!/typescript/",
+        "!/typedoc*/",
+        "!/^@theguild//",
+        "!/@graphql-inspector/core/",
+        "!/next/",
+        "!/tailwindcss/",
+        "!/@whatwg-node/*/",
+        "!/graphql-jit/",
+        "!/husky/",
+        "!/@opentelemetry/*/",
+        "!/@graphql-hive/*/",
+        "!/@graphql-mesh/*/",
+        "!/@graphql-tools/*/",
+        "!/@neo4j/*/",
+        "!/newrelic/",
+        "!/@newrelic/*/",
+        "!/graphql-yoga/",
+        "!/@graphql-yoga/*/",
+        "!/@envelop/*/"
+      ]
+    },
+    {
+      "groupName": "hive dependencies",
+      "groupSlug": "all-hive",
+      "matchPackageNames": [
+        "/@whatwg-node/*/",
+        "/@graphql-hive/*/",
+        "/@graphql-mesh/*/",
+        "/@graphql-tools/*/",
+        "/@graphql-yoga/*/",
+        "/@envelop/*/",
+        "/graphql-yoga/"
+      ]
+    },
+    {
+      "groupName": "newrelic dependencies",
+      "groupSlug": "all-newrelic",
+      "matchPackageNames": ["/@newrelic/*/", "/newrelic/"],
+      "enabled": false
+    }
+  ]
 }

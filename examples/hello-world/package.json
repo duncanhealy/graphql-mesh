@@ -1,18 +1,20 @@
 {
-  "name": "json-schema-hello-world",
-  "version": "0.0.58",
+  "name": "@examples/hello-world",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "mesh dev"
+    "start": "mesh dev",
+    "test": "jest"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.38.0",
-    "@graphql-mesh/json-schema": "0.18.3",
-    "@graphql-mesh/transform-mock": "0.10.11",
-    "graphql": "15.4.0"
+    "@graphql-mesh/cli": "0.103.4",
+    "@graphql-mesh/json-schema": "0.112.6",
+    "@graphql-mesh/plugin-mock": "0.108.3",
+    "@graphql-yoga/plugin-sofa": "4.0.1",
+    "graphql": "16.14.0",
+    "graphql-yoga": "^6.0.1"
   },
   "devDependencies": {
-    "jest": "26.6.3"
+    "jest": "30.4.2"
   }
 }

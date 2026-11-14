@@ -2,7 +2,7 @@ sources:
   - name: OpenBrewery
     handler:
       jsonSchema:
-        baseUrl: https://api.openbrewerydb.org
+        endpoint: https://api.openbrewerydb.org
         operations:
           - type: Query
             field: breweries
@@ -10,6 +10,3 @@ sources:
             method: GET
             requestSample: ./json-samples/breweriesInput.json
             responseSample: ./json-samples/breweries.json
-
-documents:
-  - example-queries/*.graphql

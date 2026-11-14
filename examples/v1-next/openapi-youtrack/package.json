@@ -1,0 +1,15 @@
+{
+  "name": "@examples-v1-next/openapi-youtrack",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "compose": "node ../../packages/compose-cli/dist/esm/bin.js > supergraph.graphql",
+    "start": "npx hive-gateway"
+  },
+  "dependencies": {
+    "@graphql-hive/gateway": "^2.15.4",
+    "@graphql-mesh/compose-cli": "workspace:^",
+    "@omnigraph/openapi": "workspace:^",
+    "graphql": "^16.14.0"
+  }
+}

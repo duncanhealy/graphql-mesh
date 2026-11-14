@@ -1,35 +1,35 @@
 import moment from 'moment';
-import { Access5, Agent3, Granularity22, Resolvers } from './.mesh';
+import type { Resolvers } from './.mesh';
 
 export const resolvers: Resolvers = {
   Query: {
     async viewsInPastMonth(root, { project }, context, info) {
-      const result = await context.Wiki.Query.getMetricsPageviewsAggregateProjectAccessAgentGranularityStartEnd({
-        root,
-        args: {
-          access: Access5.ALL_ACCESS,
-          agent: Agent3.USER,
-          end: moment().format('YYYYMMDD'),
-          start: moment().startOf('month').subtract(1, 'month').format('YYYYMMDD'),
-          project,
-          granularity: Granularity22.DAILY,
-        },
-        context,
-        info,
-        selectionSet: /* GraphQL */ `
+      const result =
+        await context.Wiki.Query.metrics_pageviews_aggregate_by_project_by_access_by_agent_by_granularity_by_start_by_end(
           {
-            items {
-              views
-            }
-          }
-        `,
-      });
+            root,
+            args: {
+              access: 'all_access',
+              agent: 'user',
+              // Wikimedia pageview data usually lags; avoid requesting "today".
+              end: moment().subtract(2, 'days').format('YYYYMMDD'),
+              start: moment().startOf('month').subtract(1, 'month').format('YYYYMMDD'),
+              project,
+              granularity: 'daily',
+            },
+            context,
+            info,
+            autoSelectionSetWithDepth: 2,
+          },
+        );
 
-      if (!result?.items || result?.items.length === 0) {
-        return 0;
+      if (result == null || !('items' in result)) {
+        return null;
       }
 
-      return result?.items[0].views;
+      if (result != null && 'items' in result) {
+        return result?.items?.[0]?.views || 0;
+      }
     },
   },
 };

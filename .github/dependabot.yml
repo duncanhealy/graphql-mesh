@@ -1,0 +1,54 @@
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+    groups:
+      actions-deps:
+        patterns:
+          - '*'
+
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+    # Large Yarn monorepo (~210 package.json). The previous catch-all
+    # `all-minor-patch` group forced Dependabot to apply every eligible update
+    # in one ~55m Actions job, which always hit the runner timeout before
+    # opening a PR. Without that group, Dependabot can open PRs incrementally.
+    open-pull-requests-limit: 10
+    groups:
+      hive:
+        patterns:
+          - '@whatwg-node/*'
+          - '@graphql-hive/*'
+          - '@graphql-mesh/*'
+          - '@graphql-tools/*'
+          - '@envelop/*'
+          - 'graphql-yoga'
+          - '@graphql-yoga/*'
+        update-types:
+          - 'major'
+          - 'minor'
+          - 'patch'
+      neo4j:
+        patterns:
+          - '@neo4j/*'
+        update-types:
+          - 'major'
+          - 'minor'
+          - 'patch'
+      jest-babel:
+        patterns:
+          - '@jest/*'
+          - 'jest'
+          - 'ts-jest'
+          - 'babel-jest'
+          - '@babel/*'
+        update-types:
+          - 'major'
+          - 'minor'
+          - 'patch'

@@ -1,0 +1,66 @@
+import type { Plugin } from '@envelop/core';
+import { useLiveQuery } from '@envelop/live-query';
+import type { PubSub } from '@graphql-hive/pubsub';
+import { process } from '@graphql-mesh/cross-helpers';
+import { stringInterpolator } from '@graphql-mesh/string-interpolation';
+import { type YamlConfig } from '@graphql-mesh/types';
+import {
+  defaultResourceIdentifierNormalizer,
+  InMemoryLiveQueryStore,
+} from '@n1ru4l/in-memory-live-query-store';
+import { fakePromise } from '@whatwg-node/promise-helpers';
+import { useInvalidateByResult } from './useInvalidateByResult.js';
+
+export default function useMeshLiveQuery(
+  options: YamlConfig.LiveQueryConfig & {
+    /**
+     * Init-time PubSub for invalidate subscriptions (Mesh plugin factory / Gateway `ctx`).
+     * Request-time invalidation prefers GraphQL `context.pubsub` when present.
+     */
+    pubsub?: PubSub;
+  },
+): Plugin {
+  const pubsub = options.pubsub;
+  if (!pubsub) {
+    throw new Error(
+      'Live Query plugin requires pubsub (Mesh plugin options / Hive Gateway ctx). Request context.pubsub alone is not enough for invalidate subscriptions.',
+    );
+  }
+  const liveQueryStore = new InMemoryLiveQueryStore({
+    buildResourceIdentifier:
+      options.resourceIdentifier != null
+        ? function resourceIdentifierFactory({ typename, id }) {
+            return stringInterpolator.parse(options.resourceIdentifier, {
+              typename,
+              id,
+              env: process.env,
+            });
+          }
+        : defaultResourceIdentifierNormalizer,
+    includeIdentifierExtension:
+      options.includeIdentifierExtension != null
+        ? options.includeIdentifierExtension
+        : process.env.DEBUG === '1',
+    idFieldName: options.idFieldName,
+    indexBy: options.indexBy,
+  });
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  fakePromise(
+    pubsub.subscribe('live-query:invalidate', (identifiers: string | string[]) =>
+      liveQueryStore.invalidate(identifiers),
+    ),
+  );
+  return {
+    onPluginInit({ addPlugin }) {
+      addPlugin(useLiveQuery({ liveQueryStore }));
+      if (options.invalidations?.length) {
+        addPlugin(
+          useInvalidateByResult({
+            pubsub,
+            invalidations: options.invalidations,
+          }),
+        );
+      }
+    },
+  };
+}

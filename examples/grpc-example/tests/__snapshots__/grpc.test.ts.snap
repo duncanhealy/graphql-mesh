@@ -1,0 +1,257 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-stream-0 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": [],
+  },
+  "hasNext": true,
+}
+`;
+
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-stream-1 1`] = `
+{
+  "hasNext": true,
+  "incremental": [
+    {
+      "items": [
+        {
+          "cast": [
+            "Tom Cruise",
+            "Simon Pegg",
+            "Jeremy Renner",
+          ],
+          "name": "Mission: Impossible Rogue Nation",
+          "rating": 0.9700000286102295,
+          "year": 2015,
+        },
+      ],
+      "path": [
+        "exampleSearchMoviesByCast",
+        0,
+      ],
+    },
+  ],
+}
+`;
+
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-stream-2 1`] = `
+{
+  "hasNext": true,
+  "incremental": [
+    {
+      "items": [
+        {
+          "cast": [
+            "Tom Cruise",
+            "Simon Pegg",
+            "Henry Cavill",
+          ],
+          "name": "Mission: Impossible - Fallout",
+          "rating": 0.9300000071525574,
+          "year": 2018,
+        },
+      ],
+      "path": [
+        "exampleSearchMoviesByCast",
+        1,
+      ],
+    },
+  ],
+}
+`;
+
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-stream-3 1`] = `
+{
+  "hasNext": true,
+  "incremental": [
+    {
+      "items": [
+        null,
+      ],
+      "path": [
+        "exampleSearchMoviesByCast",
+        2,
+      ],
+    },
+  ],
+}
+`;
+
+exports[`gRPC Example should fetch movies by cast as a stream correctly: movies-by-cast-grpc-example-result-stream-4 1`] = `
+{
+  "hasNext": false,
+}
+`;
+
+exports[`gRPC Example should fetch movies by cast as a subscription correctly: movies-by-cast-grpc-example-result-subscription-0 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": {
+      "cast": [
+        "Tom Cruise",
+        "Simon Pegg",
+        "Jeremy Renner",
+      ],
+      "name": "Mission: Impossible Rogue Nation",
+      "rating": 0.9700000286102295,
+      "year": 2015,
+    },
+  },
+}
+`;
+
+exports[`gRPC Example should fetch movies by cast as a subscription correctly: movies-by-cast-grpc-example-result-subscription-1 1`] = `
+{
+  "data": {
+    "exampleSearchMoviesByCast": {
+      "cast": [
+        "Tom Cruise",
+        "Simon Pegg",
+        "Henry Cavill",
+      ],
+      "name": "Mission: Impossible - Fallout",
+      "rating": 0.9300000071525574,
+      "year": 2018,
+    },
+  },
+}
+`;
+
+exports[`gRPC Example should generate correct schema: grpc-schema 1`] = `
+"schema @transport(subgraph: "Example", kind: "grpc", location: "localhost:50051", options: {requestTimeout: 200000, metaData: [["someKey", "someValue"], ["connection_type", "{context.headers.connection}"]], roots: [{name: "Root0", rootJson: "{\\"nested\\":{\\"EmptyRequest\\":{\\"fields\\":{},\\"comment\\":null},\\"MovieRequest\\":{\\"fields\\":{\\"movie\\":{\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"SearchByCastRequest\\":{\\"fields\\":{\\"castName\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null}},\\"comment\\":null},\\"MoviesResult\\":{\\"fields\\":{\\"result\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"Movie\\",\\"id\\":1,\\"comment\\":\\"list of movies\\"}},\\"comment\\":\\"movie result message, contains list of movies\\"},\\"Example\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"AnotherExample\\":{\\"methods\\":{\\"GetMovies\\":{\\"requestType\\":\\"MovieRequest\\",\\"responseType\\":\\"MoviesResult\\",\\"comment\\":\\"get all movies\\"},\\"SearchMoviesByCast\\":{\\"requestType\\":\\"SearchByCastRequest\\",\\"responseType\\":\\"Movie\\",\\"responseStream\\":true,\\"comment\\":\\"search movies by the name of the cast\\"}},\\"comment\\":null},\\"Genre\\":{\\"values\\":{\\"UNSPECIFIED\\":0,\\"ACTION\\":1,\\"DRAMA\\":2},\\"comment\\":null,\\"comments\\":{\\"UNSPECIFIED\\":null,\\"ACTION\\":null,\\"DRAMA\\":null}},\\"Movie\\":{\\"fields\\":{\\"name\\":{\\"type\\":\\"string\\",\\"id\\":1,\\"comment\\":null},\\"year\\":{\\"type\\":\\"int64\\",\\"id\\":2,\\"comment\\":null},\\"rating\\":{\\"type\\":\\"float\\",\\"id\\":3,\\"comment\\":null},\\"cast\\":{\\"rule\\":\\"repeated\\",\\"type\\":\\"string\\",\\"id\\":4,\\"comment\\":\\"list of cast\\"},\\"time\\":{\\"type\\":\\"google.protobuf.Timestamp\\",\\"id\\":5,\\"comment\\":null},\\"genre\\":{\\"type\\":\\"Genre\\",\\"id\\":6,\\"comment\\":null}},\\"comment\\":\\"movie message payload\\"},\\"google\\":{\\"nested\\":{\\"protobuf\\":{\\"nested\\":{\\"Timestamp\\":{\\"fields\\":{\\"seconds\\":{\\"type\\":\\"int64\\",\\"id\\":1},\\"nanos\\":{\\"type\\":\\"int32\\",\\"id\\":2}},\\"comment\\":null}}}}}}}"}]}) {
+  query: Query
+  subscription: Subscription
+}
+
+directive @grpcMethod(subgraph: String, rootJsonName: String, objPath: String, methodName: String, responseStream: Boolean) on FIELD_DEFINITION
+
+directive @grpcConnectivityState(subgraph: String, rootJsonName: String, objPath: String) on FIELD_DEFINITION
+
+directive @enum(subgraph: String, value: String) on ENUM_VALUE
+
+"""
+Directs the executor to stream plural fields when the \`if\` argument is true or undefined.
+"""
+directive @stream(
+  """Stream when true or undefined."""
+  if: Boolean! = true
+  """Unique name"""
+  label: String
+  """Number of items to return immediately"""
+  initialCount: Int = 0
+) on FIELD
+
+directive @transport(subgraph: String!, kind: String!, location: String, headers: [[String]], options: TransportOptions) repeatable on SCHEMA
+
+type Query {
+  """get all movies"""
+  exampleGetMovies(input: MovieRequest_Input): MoviesResult @grpcMethod(subgraph: "Example", rootJsonName: "Root0", objPath: "Example", methodName: "GetMovies", responseStream: false)
+  """search movies by the name of the cast"""
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie] @grpcMethod(subgraph: "Example", rootJsonName: "Root0", objPath: "Example", methodName: "SearchMoviesByCast", responseStream: true)
+  exampleConnectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "Example", rootJsonName: "Root0", objPath: "Example")
+  """get all movies"""
+  anotherExampleGetMovies(input: MovieRequest_Input): MoviesResult @grpcMethod(subgraph: "Example", rootJsonName: "Root0", objPath: "AnotherExample", methodName: "GetMovies", responseStream: false)
+  """search movies by the name of the cast"""
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie] @grpcMethod(subgraph: "Example", rootJsonName: "Root0", objPath: "AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+  anotherExampleConnectivityState(tryToConnect: Boolean): ConnectivityState @grpcConnectivityState(subgraph: "Example", rootJsonName: "Root0", objPath: "AnotherExample")
+}
+
+"""movie result message, contains list of movies"""
+type MoviesResult {
+  """list of movies"""
+  result: [Movie]
+}
+
+"""movie message payload"""
+type Movie {
+  name: String
+  year: BigInt
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp
+  genre: Genre
+}
+
+"""
+The \`BigInt\` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
+type google__protobuf__Timestamp {
+  seconds: BigInt
+  nanos: Int
+}
+
+enum Genre {
+  UNSPECIFIED @enum(subgraph: "Example", value: "0")
+  ACTION @enum(subgraph: "Example", value: "1")
+  DRAMA @enum(subgraph: "Example", value: "2")
+}
+
+input MovieRequest_Input {
+  movie: Movie_Input
+}
+
+"""movie message payload"""
+input Movie_Input {
+  name: String
+  year: BigInt
+  rating: Float
+  """list of cast"""
+  cast: [String]
+  time: google__protobuf__Timestamp_Input
+  genre: Genre
+}
+
+input google__protobuf__Timestamp_Input {
+  seconds: BigInt
+  nanos: Int
+}
+
+input SearchByCastRequest_Input {
+  castName: String
+}
+
+enum ConnectivityState {
+  IDLE
+  CONNECTING
+  READY
+  TRANSIENT_FAILURE
+  SHUTDOWN
+}
+
+type Subscription {
+  """search movies by the name of the cast"""
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie @grpcMethod(subgraph: "Example", rootJsonName: "Root0", objPath: "Example", methodName: "SearchMoviesByCast", responseStream: true)
+  """search movies by the name of the cast"""
+  anotherExampleSearchMoviesByCast(input: SearchByCastRequest_Input): Movie @grpcMethod(subgraph: "Example", rootJsonName: "Root0", objPath: "AnotherExample", methodName: "SearchMoviesByCast", responseStream: true)
+}
+
+scalar TransportOptions"
+`;
+
+exports[`gRPC Example should get movies correctly: get-movies-grpc-example-result 1`] = `
+{
+  "data": {
+    "exampleGetMovies": {
+      "result": [
+        {
+          "cast": [
+            "Leonardo DiCaprio",
+            "Jonah Hill",
+            "Margot Robbie",
+          ],
+          "name": "The Wolf of Wall Street",
+          "rating": 0.7799999713897705,
+          "time": {
+            "seconds": 1608422400000,
+          },
+          "year": 2013,
+        },
+      ],
+    },
+  },
+}
+`;

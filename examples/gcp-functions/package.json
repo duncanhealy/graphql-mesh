@@ -1,0 +1,21 @@
+{
+  "name": "@examples/gcp-functions",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "npm run build:mesh && npm run build:ts",
+    "build:mesh": "mesh build",
+    "build:ts": "tsc",
+    "check": "exit 0",
+    "prestart": "npm run build",
+    "start": "functions-framework --target=mesh"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "5.0.5",
+    "@graphql-mesh/cli": "0.103.4",
+    "@graphql-mesh/json-schema": "0.112.6",
+    "@types/node": "^26.2.0",
+    "graphql": "16.14.0",
+    "typescript": "^6.0.3"
+  }
+}

@@ -2,10 +2,7 @@ sources:
   - name: gRPC Example
     handler:
       grpc:
-        endpoint: localhost:50051
-        useReflection: true
+        endpoint: localhost:50052
 
 documents:
   - example-queries/*.graphql
-
-skipSSLValidation: true

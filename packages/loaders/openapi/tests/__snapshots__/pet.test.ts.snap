@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Pet should generate the correct schema: schema 1`] = `
+"schema @source(name: "Pet", http: {baseURL: "http://example.com"}) @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"]) {
+  query: Query
+}
+
+directive @connect(source: String, http: ConnectHTTP, selection: String!, entity: Boolean, errors: ConnectorErrors, isSuccess: String) repeatable on FIELD_DEFINITION | OBJECT
+
+directive @source(name: String!, http: SourceHTTP!, errors: ConnectorErrors, isSuccess: String) repeatable on SCHEMA
+
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+
+type Dog implements Pet {
+  dog_exclusive: String
+  name: String!
+  petType: String
+}
+
+interface Pet {
+  name: String!
+  petType: String
+}
+
+type Cat implements Pet {
+  cat_exclusive: String
+  name: String!
+  petType: String
+}
+
+type Query {
+  pets_by_id(id: String!): Pet @connect(source: "Pet", http: {GET: "/pets/{$args.id}", headers: [{name: "accept", value: "application/json"}]}, selection: "name petType ... $.petType->match([\\"Dog\\", { __typename: \\"Dog\\", dog_exclusive }], [\\"Cat\\", { __typename: \\"Cat\\", cat_exclusive }])")
+}
+
+input ConnectHTTP {
+  GET: String
+  HEAD: String
+  POST: String
+  PUT: String
+  PATCH: String
+  DELETE: String
+  headers: [HTTPHeaderMapping!]
+  body: String
+  queryParams: String
+}
+
+input HTTPHeaderMapping {
+  name: String!
+  value: String
+  from: String
+}
+
+input ConnectorErrors {
+  message: String
+  extensions: String
+}
+
+input SourceHTTP {
+  baseURL: String!
+  headers: [HTTPHeaderMapping!]
+  queryParams: String
+  errors: ConnectorErrors
+  isSuccess: String
+}"
+`;

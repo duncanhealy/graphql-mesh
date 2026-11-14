@@ -1,0 +1,73 @@
+import type { CORSOptions } from 'graphql-yoga';
+import { createYoga } from 'graphql-yoga';
+import type { MeshInstance } from '@graphql-mesh/runtime';
+import { memoize1 } from '@graphql-tools/utils';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+
+export const graphqlHandler = ({
+  getBuiltMesh,
+  playgroundTitle,
+  playgroundEnabled,
+  playgroundOffline,
+  graphqlEndpoint,
+  corsConfig,
+  batchingLimit,
+  healthCheckEndpoint = '/healthcheck',
+  extraParamNames,
+  renderGraphiQL: renderGraphiQLFn,
+}: {
+  getBuiltMesh: () => Promise<MeshInstance>;
+  playgroundTitle: string;
+  playgroundEnabled: boolean;
+  playgroundOffline?: boolean;
+  graphqlEndpoint: string;
+  corsConfig: CORSOptions;
+  batchingLimit?: number;
+  healthCheckEndpoint?: string;
+  extraParamNames?: string[];
+  renderGraphiQL?: (options?: any) => string | Promise<string>;
+}) => {
+  const getYogaForMesh = memoize1(function getYogaForMesh(mesh: MeshInstance) {
+    const yogaOptions: Parameters<typeof createYoga>[0] = {
+      plugins: [...mesh.plugins],
+      extraParamNames,
+      logging: mesh.log,
+      // whatwg-node fetch no longer re-exports `crypto`; platform crypto is required
+      // for request-id generation and digest helpers still reading `fetchAPI.crypto`.
+      fetchAPI: {
+        crypto: globalThis.crypto,
+      } as any,
+      maskedErrors: false,
+      graphiql: playgroundEnabled && {
+        title: playgroundTitle,
+      },
+      cors: corsConfig,
+      graphqlEndpoint,
+      landingPage: false,
+      batching: batchingLimit ? { limit: batchingLimit } : false,
+      healthCheckEndpoint,
+      disposeOnProcessTerminate: true,
+    };
+
+    if (playgroundEnabled && playgroundOffline) {
+      if (!renderGraphiQLFn) {
+        throw new Error(
+          'serve.playground.offline is enabled but renderGraphiQL was not provided. Import `renderGraphiQL` from `@graphql-yoga/render-graphiql` and pass it to createMeshHTTPHandler (generated Mesh artifacts do this automatically).',
+        );
+      }
+      yogaOptions.renderGraphiQL = renderGraphiQLFn;
+    }
+
+    const yoga = createYoga(yogaOptions);
+    // Dispose Yoga instance when the Mesh instance is destroyed
+    mesh.deferDispose(() =>
+      handleMaybePromise(
+        () => yoga.dispose(),
+        () => undefined,
+      ),
+    );
+    return yoga;
+  });
+  return (request: Request, ctx: any) =>
+    getBuiltMesh().then(mesh => getYogaForMesh(mesh).handleRequest(request, ctx));
+};

@@ -1,0 +1,5 @@
+query GetGreeting {
+  helloworld_GreetingService_GetGreeting(input: { name: "World" }) {
+    greeting
+  }
+}

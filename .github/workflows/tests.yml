@@ -1,72 +1,118 @@
-name: Tests
-
+name: test
 on:
+  pull_request:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+  NODE_TLS_REJECT_UNAUTHORIZED: 0
+  GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+  NPM_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+  LC_ALL: en-US
+  REDIS_HOST: localhost
+  REDIS_PORT: 6379
+  APOLLO_ELV2_LICENSE: accept
+  NODE_NO_WARNINGS: 1
+  YARN_ENABLE_HARDENED_MODE: 0
 
 jobs:
-  lint:
-    name: Lint
+  check:
+    name: check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Master
-        uses: actions/checkout@v2
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          fetch-depth: 0
-      - name: Use Node
-        uses: actions/setup-node@master
-        with:
-          node-version: 16
-      - name: Cache Yarn
-        uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-16-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-16-yarn-${{ hashFiles('yarn.lock') }}
-
-      - name: Install Dependencies using Yarn
-        run: yarn install && git checkout yarn.lock
+          node-version-file: .node-version
+        env:
+          YARN_ENABLE_HARDENED_MODE: 1
+      - name: Prepare for build
+        run: yarn prebuild
+      - name: Format
+        run: yarn prettier:check
       - name: Lint
-        run: yarn lint
-  typecheck:
-    name: TypeScript Type Checking
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Master
-        uses: actions/checkout@v2
+        run: yarn ci:lint && yarn lint
+      - name: typecheck
+        run: yarn typecheck
+      - name: Build
+        run: yarn build
+      - name: Node.js integrity check
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         with:
-          fetch-depth: 0
-      - name: Use Node
-        uses: actions/setup-node@master
-        with:
-          node-version: 16
-      - name: Cache Yarn
-        uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-16-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-16-yarn-${{ hashFiles('yarn.lock') }}
+          timeout_minutes: 10
+          max_attempts: 3
+          command: yarn bob check
 
-      - name: Install Dependencies using Yarn
-        run: yarn install && git checkout yarn.lock
-      - name: Build Playground
-        run: yarn build:playground && yarn copy-playground
-      - name: Type Checking
-        run: yarn transpile-ts --noEmit # We need build for playground
-
-  test:
-    name: Testing on Node ${{matrix.node_version}}
+  unit:
+    name: unit / node ${{matrix.node-version}}
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        node_version: [12, 16]
+        node-version:
+          - 22
+          - 26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
+        with:
+          node-version: ${{matrix.node-version}}
+
+      - name: Cache Jest
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .cache/jest
+          key: jest-unit-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            jest-unit-${{runner.os}}-${{matrix.node-version}}-
+            jest-unit-${{runner.os}}-
+            jest-unit-
+            jest-
+
+      - name: Generate config schema
+        run: yarn generate-config-schema
+
+      - name: Prepare for build
+        run: yarn prebuild
+
+      - parallel:
+          - name: Run Tests
+            uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+            with:
+              timeout_minutes: 10
+              max_attempts: 3
+              command: yarn test
+
+          - name: Run Leak Tests
+            uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+            with:
+              timeout_minutes: 10
+              max_attempts: 3
+              command: yarn test:leak
+
+  integration:
+    name: integration / node ${{matrix.node-version}}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version:
+          - 22
+          - 26
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -78,10 +124,7 @@ jobs:
           POSTGRES_PASSWORD: docker
         # Set health checks to wait until postgres has started
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         ports:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
@@ -91,46 +134,144 @@ jobs:
           MYSQL_ROOT_PASSWORD: passwd
         ports:
           - 33306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options:
+          --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s
+          --health-retries=3
+      # Label used to access the service container
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
 
     steps:
-      - name: Checkout Master
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+
+      - uses: the-guild-org/shared-config/setup@v1
+        name: set up env
         with:
-          fetch-depth: 0
-      - name: Use Node ${{matrix.node_version}}
-        uses: actions/setup-node@master
-        with:
-          node-version: ${{ matrix.node_version }}
-      - name: Cache Yarn
-        uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-${{matrix.node_version}}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{matrix.node_version}}-yarn-${{ hashFiles('yarn.lock') }}
-      - name: Install Dependencies using Yarn
-        run: yarn install && git checkout yarn.lock
+          node-version: ${{matrix.node-version}}
+
       - name: Cache Jest
-        uses: actions/cache@v2
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .cache/jest
-          key: ${{ runner.os }}-${{matrix.node_version}}-jest-${{ hashFiles('yarn.lock') }}
+          key:
+            jest-integration-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{matrix.node_version}}-jest-${{ hashFiles('yarn.lock') }}
+            jest-integration-${{runner.os}}-${{matrix.node-version}}-
+            jest-integration-${{runner.os}}-
+            jest-integration-
+            jest-
+
       - name: Download Postgres Dump
-        run: 'curl https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql -o /tmp/backup.sql'
+        run:
+          'curl
+          https://raw.githubusercontent.com/morenoh149/postgresDBSamples/master/worldDB-1.0/world.sql
+          -o /tmp/backup.sql'
       - name: Load Postgres Data
-        uses: tj-actions/pg-restore@v4.5
+        uses: tj-actions/pg-restore@7ac93da67774277a23b67c31b415760f5bee7441 # v6.0
         with:
           database_url: 'postgres://postgres:docker@localhost:5432/postgres'
           backup_file: '/tmp/backup.sql'
-      - name: Build Playground
-        run: yarn build:playground && yarn copy-playground
-      - name: Test
-        run: yarn test
-        env:
-          CI: true
-          NODE_TLS_REJECT_UNAUTHORIZED: 0
-          GH_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LC_ALL: en-US
+      - name: Build
+        run: yarn build
+      - name: Build Test Artifacts
+        run: yarn build-test-artifacts
+      - parallel:
+          - name: Run Integration Tests
+            uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+            with:
+              timeout_minutes: 10
+              max_attempts: 3
+              command: yarn test:integration
+          - name: Run Leak Tests
+            if: matrix.node-version == 18
+            uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+            with:
+              timeout_minutes: 10
+              max_attempts: 3
+              command: yarn test:integration:leak
+
+  e2e:
+    name: e2e / node v${{matrix.node-version}}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22, 26]
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+      - name: hash docker images
+        if: runner.os == 'Linux'
+        id: hash-docker-images
+        # get all "image: '" occurrences in the e2e tests and hash them
+        run: |
+          echo "result=$(grep -r -h "image: '" e2e | shasum | base64)" >> "$GITHUB_OUTPUT"
+        shell: bash
+      - name: cache docker images
+        if: runner.os == 'Linux'
+        uses: ScribeMD/docker-cache@fb28c93772363301b8d0a6072ce850224b73f74e # 0.5.0
+        continue-on-error: true
+        with:
+          key: docker-images-${{ runner.os }}-${{ steps.hash-docker-images.outputs.result }}
+      - name: set up env
+        uses: the-guild-org/shared-config/setup@v1
+        with:
+          node-version: ${{matrix.node-version}}
+      - name: Cache Jest
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .cache/jest
+          key: jest-e2e-${{ runner.os }}-${{matrix.node-version}}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            jest-e2e-${{runner.os}}-${{matrix.node-version}}-
+            jest-e2e-${{runner.os}}-
+            jest-e2e-
+            jest-
+
+      - name: build
+        run: yarn build
+      - name: relink
+        run: yarn install
+      - name: Run E2E Tests
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+        with:
+          timeout_minutes: 60
+          max_attempts: 5
+          command: yarn test:e2e
+
+  apollo-federation-compatibility:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+      - uses: the-guild-org/shared-config/setup@v1
+        name: setup env
+        with:
+          node-version-file: .node-version
+      - name: Install Rover
+        run: npm install -g @apollo/rover
+      - name: Build Packages
+        run: yarn build
+      - name: Run Mesh Compose
+        run: yarn workspace example-apollo-federation-compatibility mesh:compose
+      - name: Run Bundler
+        run: yarn workspace example-apollo-federation-compatibility build
+      - name: Apollo Federation Subgraph Compatibility
+        uses: apollographql/federation-subgraph-compatibility@f688595a4637f0307944672c49b1121618953f74 # v3.0.1
+        with:
+          workingDirectory: examples/v1-next/apollo-federation-compatibility
+          compose: docker-compose.yaml
+          schema: schema.graphql
+          path: /graphql
+          token: ${{ secrets.GITHUB_TOKEN }}
+          failOnWarning: true
+          failOnRequired: true
+          debug: true

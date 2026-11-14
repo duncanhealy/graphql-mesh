@@ -1,29 +1,35 @@
 {
-  "name": "federation-handler-example",
-  "version": "0.5.127",
+  "name": "@examples/federation-example",
   "license": "MIT",
   "private": true,
+  "workspaces": [
+    "gateway",
+    "services/*"
+  ],
   "scripts": {
     "start": "concurrently \"npm:start-services npm:start-gateway-delayed\"",
-    "start-gateway": "mesh dev",
+    "start-gateway": "mesh dev --dir gateway",
     "start-gateway-delayed": "delay 1 && npm run start-gateway",
-    "start-service-accounts": "nodemon services/accounts/index.js",
-    "start-service-reviews": "nodemon services/reviews/index.js",
-    "start-service-products": "nodemon services/products/index.js",
-    "start-service-inventory": "nodemon services/inventory/index.js",
-    "start-services": "concurrently \"npm:start-service-*\""
+    "start-gateway-supergraph": "npx mesh dev --dir gateway-supergraph",
+    "start-gateway-supergraph-delayed": "delay 1 && npm run start-gateway-supergraph",
+    "start-service-accounts": "ts-node services/accounts/index.ts",
+    "start-service-accounts-subgraph": "ts-node services/accounts-subgraph/index.ts",
+    "start-service-inventory": "ts-node services/inventory/index.ts",
+    "start-service-products": "ts-node services/products/index.ts",
+    "start-service-reviews": "ts-node services/reviews/index.ts",
+    "start-services": "concurrently \"npm:start-service-*\"",
+    "start-supergraph": "concurrently \"npm:start-services npm:start-gateway-supergraph-delayed\"",
+    "test": "jest"
   },
   "devDependencies": {
-    "concurrently": "5.3.0",
-    "nodemon": "2.0.6"
-  },
-  "dependencies": {
-    "@graphql-mesh/cli": "0.38.0",
-    "@graphql-mesh/graphql": "0.18.10",
-    "@graphql-mesh/merger-federation": "0.9.11",
-    "@graphql-mesh/transform-federation": "0.6.2",
-    "apollo-server": "2.21.0",
-    "delay-cli": "^1.1.0",
-    "graphql": "15.4.0"
+    "@apollo/server": "5.5.1",
+    "@types/node": "^26.2.0",
+    "apollo-server-caching": "3.3.0",
+    "concurrently": "10.0.6",
+    "delay-cli": "3.0.0",
+    "graphql": "^16.14.0",
+    "jest": "30.4.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
   }
 }

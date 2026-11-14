@@ -1,0 +1,2152 @@
+# @graphql-mesh/plugin-statsd
+
+## 0.107.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4b92af0`](https://github.com/ardatan/graphql-mesh/commit/4b92af01c10d1d746dfb1623491282c169e03248),
+  [`4b92af0`](https://github.com/ardatan/graphql-mesh/commit/4b92af01c10d1d746dfb1623491282c169e03248)]:
+  - @graphql-mesh/types@0.107.3
+  - @graphql-mesh/utils@0.107.3
+
+## 0.107.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c),
+  [`58d3ab4`](https://github.com/ardatan/graphql-mesh/commit/58d3ab475a455ba4c924e07add6859b388783474),
+  [`3bdb714`](https://github.com/ardatan/graphql-mesh/commit/3bdb7143f11aba6e2855d7c1cc479d8fe749798c)]:
+  - @graphql-mesh/types@0.107.2
+  - @graphql-mesh/utils@0.107.2
+
+## 0.107.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d),
+  [`c7f0f3f`](https://github.com/ardatan/graphql-mesh/commit/c7f0f3f264a2f50d2b949b1bff2c8af44b38465d)]:
+  - @graphql-mesh/types@0.107.1
+  - @graphql-mesh/utils@0.107.1
+
+## 0.107.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ab73b38`](https://github.com/ardatan/graphql-mesh/commit/ab73b383c4ef294891dda6c9c8598a9651494762),
+  [`51b15f4`](https://github.com/ardatan/graphql-mesh/commit/51b15f445e07c8f8d892e0a21f0ae5b638ada74e)]:
+  - @graphql-mesh/types@0.107.0
+  - @graphql-mesh/utils@0.107.0
+
+## 0.106.0
+
+### Patch Changes
+
+- [#9612](https://github.com/ardatan/graphql-mesh/pull/9612)
+  [`64edb30`](https://github.com/ardatan/graphql-mesh/commit/64edb30895577c4d4ef7a07ef8aea614bd71e1e3)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`hot-shots@^17.1.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/17.1.0)
+    (from `^16.0.0`, in `dependencies`)
+
+- [#9615](https://github.com/ardatan/graphql-mesh/pull/9615)
+  [`be76f44`](https://github.com/ardatan/graphql-mesh/commit/be76f44fb9354b7b1e3fe05872850eeea3012b47)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`hot-shots@^17.1.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/17.1.0)
+    (from `^16.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`a7cbeef`](https://github.com/ardatan/graphql-mesh/commit/a7cbeef58ddea00c8f55630f943bbe8ea19bba26),
+  [`e148b13`](https://github.com/ardatan/graphql-mesh/commit/e148b13d083683ed0f2589b23b8174b87a48d78e),
+  [`07c7b8e`](https://github.com/ardatan/graphql-mesh/commit/07c7b8eb16138131aaa08e56adf577528874cc40)]:
+  - @graphql-mesh/utils@0.106.0
+  - @graphql-mesh/types@0.106.0
+
+## 0.105.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08),
+  [`096ed33`](https://github.com/ardatan/graphql-mesh/commit/096ed338832c305aa88ccb2d154c1270d05e4b08)]:
+  - @graphql-mesh/types@0.105.1
+  - @graphql-mesh/utils@0.105.1
+
+## 0.105.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b7def27`](https://github.com/ardatan/graphql-mesh/commit/b7def2769c68ce62b3c54c1b7282c3941715f94f)]:
+  - @graphql-mesh/types@0.105.0
+  - @graphql-mesh/utils@0.105.0
+
+## 0.104.44
+
+### Patch Changes
+
+- [#9465](https://github.com/ardatan/graphql-mesh/pull/9465)
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9)
+  Thanks [@zcag](https://github.com/zcag)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/types@^0.104.29` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.104.29)
+    (from `^0.104.28`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/utils@^0.104.37` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.104.37)
+    (from `^0.104.36`, in `dependencies`)
+
+- [#9553](https://github.com/ardatan/graphql-mesh/pull/9553)
+  [`9b0be16`](https://github.com/ardatan/graphql-mesh/commit/9b0be16aa22e2d4ebfb9b903f2b58e5c73a84c0a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`hot-shots@^16.0.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/16.0.0)
+    (from `^14.3.1`, in `dependencies`)
+- Updated dependencies
+  [[`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`59a2e76`](https://github.com/ardatan/graphql-mesh/commit/59a2e76f34757a4688705bd63be59e2945b2c6ad),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a),
+  [`eece882`](https://github.com/ardatan/graphql-mesh/commit/eece8825bacc70210ca0b9d88b91da4ab7ae5cf9),
+  [`444fbbe`](https://github.com/ardatan/graphql-mesh/commit/444fbbe4c6d17a37d2f8eb0107408e508e86ac79),
+  [`6282a71`](https://github.com/ardatan/graphql-mesh/commit/6282a71a56fe3d640e8d84f3459ad2ad7ab1edad),
+  [`2c347d5`](https://github.com/ardatan/graphql-mesh/commit/2c347d50c64f76cc61ba8d70184b45f1c14ba809),
+  [`b28d9ec`](https://github.com/ardatan/graphql-mesh/commit/b28d9ec67ace89503fda762049b09111409b43bd),
+  [`1b0e3c4`](https://github.com/ardatan/graphql-mesh/commit/1b0e3c4dd5dcf46fa241f87322be368a9fba195a),
+  [`4c56adc`](https://github.com/ardatan/graphql-mesh/commit/4c56adc1bcc5d4179444b56d9ce2d46de6b81c91)]:
+  - @graphql-mesh/types@0.104.30
+  - @graphql-mesh/utils@0.104.38
+
+## 0.104.43
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`1da4b45`](https://github.com/ardatan/graphql-mesh/commit/1da4b4592fb8611c90004419a4362fefac51d63f),
+  [`fa18e2d`](https://github.com/ardatan/graphql-mesh/commit/fa18e2dcb672c844274c6a0bef62a2f548402cfa),
+  [`7cfc2a0`](https://github.com/ardatan/graphql-mesh/commit/7cfc2a0a04407313b464420851ebee0a40bbc2d3)]:
+  - @graphql-mesh/types@0.104.29
+  - @graphql-mesh/utils@0.104.37
+
+## 0.104.42
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`8c7b764`](https://github.com/ardatan/graphql-mesh/commit/8c7b764dbd84356244f6e84dc36b7a3c1fc37a71),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4),
+  [`6943e28`](https://github.com/ardatan/graphql-mesh/commit/6943e284f107bfb2f3cd958258a6f5402a366ab4)]:
+  - @graphql-mesh/types@0.104.28
+  - @graphql-mesh/utils@0.104.36
+
+## 0.104.41
+
+### Patch Changes
+
+- Updated dependencies
+  [[`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5),
+  [`af31a59`](https://github.com/ardatan/graphql-mesh/commit/af31a59b2aaa7aabda3ea566e0c0c063b98c87c5)]:
+  - @graphql-mesh/types@0.104.27
+  - @graphql-mesh/utils@0.104.35
+
+## 0.104.40
+
+### Patch Changes
+
+- [#9396](https://github.com/ardatan/graphql-mesh/pull/9396)
+  [`5904514`](https://github.com/ardatan/graphql-mesh/commit/5904514273b0d29fc4581bbddf082b392175640a)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`hot-shots@^14.3.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/14.3.0)
+    (from `^14.2.0`, in `dependencies`)
+
+- [#9399](https://github.com/ardatan/graphql-mesh/pull/9399)
+  [`bcdcb22`](https://github.com/ardatan/graphql-mesh/commit/bcdcb22a78969c4634dbac159896d4d4d9b3eef2)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`hot-shots@^14.3.1` ↗︎](https://www.npmjs.com/package/hot-shots/v/14.3.1)
+    (from `^14.3.0`, in `dependencies`)
+
+## 0.104.39
+
+### Patch Changes
+
+- Updated dependencies
+  [[`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2),
+  [`95a2d10`](https://github.com/ardatan/graphql-mesh/commit/95a2d10aa98bf5818debb7e1a21d493cea6dada2)]:
+  - @graphql-mesh/types@0.104.26
+  - @graphql-mesh/utils@0.104.34
+
+## 0.104.38
+
+### Patch Changes
+
+- Updated dependencies
+  [[`46d8eed`](https://github.com/ardatan/graphql-mesh/commit/46d8eed3af7a7531e744da1d6b3449c332e3abb1)]:
+  - @graphql-mesh/utils@0.104.33
+
+## 0.104.37
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.32
+
+## 0.104.36
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.31
+
+## 0.104.35
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.30
+
+## 0.104.34
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.29
+
+## 0.104.33
+
+### Patch Changes
+
+- Updated dependencies
+  [[`300aea0`](https://github.com/ardatan/graphql-mesh/commit/300aea0f32edb9da7a13562fbec35bf31fb40a91),
+  [`300aea0`](https://github.com/ardatan/graphql-mesh/commit/300aea0f32edb9da7a13562fbec35bf31fb40a91)]:
+  - @graphql-mesh/types@0.104.25
+  - @graphql-mesh/utils@0.104.28
+
+## 0.104.32
+
+### Patch Changes
+
+- [#9314](https://github.com/ardatan/graphql-mesh/pull/9314)
+  [`9a9aa8c`](https://github.com/ardatan/graphql-mesh/commit/9a9aa8cecfdb09c93ee1ee6540428c9c91d84b0c)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`hot-shots@^14.2.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/14.2.0)
+    (from `^14.1.1`, in `dependencies`)
+- Updated dependencies
+  [[`2c80833`](https://github.com/ardatan/graphql-mesh/commit/2c80833a1a11531aa37d35f9e64d9e97e1c6d728),
+  [`2c80833`](https://github.com/ardatan/graphql-mesh/commit/2c80833a1a11531aa37d35f9e64d9e97e1c6d728)]:
+  - @graphql-mesh/types@0.104.24
+  - @graphql-mesh/utils@0.104.27
+
+## 0.104.31
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.26
+
+## 0.104.30
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4f81520`](https://github.com/ardatan/graphql-mesh/commit/4f815200bde9abc509e6ce94a755b4eda333a112)]:
+  - @graphql-mesh/types@0.104.23
+  - @graphql-mesh/utils@0.104.25
+
+## 0.104.29
+
+### Patch Changes
+
+- [#9274](https://github.com/ardatan/graphql-mesh/pull/9274)
+  [`ace8c95`](https://github.com/ardatan/graphql-mesh/commit/ace8c958b407c95e2c836afe65cf68df178c0201)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`hot-shots@^14.1.1` ↗︎](https://www.npmjs.com/package/hot-shots/v/14.1.1)
+    (from `^14.0.0`, in `dependencies`)
+
+## 0.104.28
+
+### Patch Changes
+
+- [#9247](https://github.com/ardatan/graphql-mesh/pull/9247)
+  [`033a8dc`](https://github.com/ardatan/graphql-mesh/commit/033a8dc60442c482d8996315ba76557617f64d4b)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`hot-shots@^14.0.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/14.0.0)
+    (from `^13.2.0`, in `dependencies`)
+- Updated dependencies
+  [[`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`a442cbe`](https://github.com/ardatan/graphql-mesh/commit/a442cbe66898dcc5ddb2451e268176fa4cd97633),
+  [`080aca9`](https://github.com/ardatan/graphql-mesh/commit/080aca90b3d102791d01ee4d3a9405dacadb06da)]:
+  - @graphql-mesh/types@0.104.22
+  - @graphql-mesh/utils@0.104.24
+
+## 0.104.27
+
+### Patch Changes
+
+- [#9224](https://github.com/ardatan/graphql-mesh/pull/9224)
+  [`bf58d6d`](https://github.com/ardatan/graphql-mesh/commit/bf58d6d710f653baf621680e7e86b463a658fd28)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/core@^5.5.1` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.5.1) (from `^5.3.2`,
+    in `dependencies`)
+  - Updated dependency
+    [`@envelop/statsd@^8.1.1` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/8.1.1) (from
+    `^8.1.0`, in `dependencies`)
+- Updated dependencies
+  [[`d213cd9`](https://github.com/ardatan/graphql-mesh/commit/d213cd912412c65602120243094795c9a1b5a28e),
+  [`d213cd9`](https://github.com/ardatan/graphql-mesh/commit/d213cd912412c65602120243094795c9a1b5a28e)]:
+  - @graphql-mesh/types@0.104.21
+  - @graphql-mesh/utils@0.104.23
+
+## 0.104.26
+
+### Patch Changes
+
+- [#9168](https://github.com/ardatan/graphql-mesh/pull/9168)
+  [`816163f`](https://github.com/ardatan/graphql-mesh/commit/816163f09f555f0b680fdee54657ffed46861232)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`hot-shots@^13.0.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/13.0.0)
+    (from `^12.1.0`, in `dependencies`)
+
+- [#9176](https://github.com/ardatan/graphql-mesh/pull/9176)
+  [`0aee621`](https://github.com/ardatan/graphql-mesh/commit/0aee621b53bae3bec522c13e574e845181e8a7b8)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`hot-shots@^13.1.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/13.1.0)
+    (from `^13.0.0`, in `dependencies`)
+
+- [#9203](https://github.com/ardatan/graphql-mesh/pull/9203)
+  [`b25cc8e`](https://github.com/ardatan/graphql-mesh/commit/b25cc8e496bce38cb1e2d71c8445d7eafe738c89)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`hot-shots@^13.2.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/13.2.0)
+    (from `^13.1.0`, in `dependencies`)
+- Updated dependencies
+  [[`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909),
+  [`6c65df7`](https://github.com/ardatan/graphql-mesh/commit/6c65df7a99baf36f6c5d07d2bcd14fa2166b4909),
+  [`6e3779c`](https://github.com/ardatan/graphql-mesh/commit/6e3779c7672c582e7a53779669300d0f3c8c5d95)]:
+  - @graphql-mesh/types@0.104.20
+  - @graphql-mesh/utils@0.104.22
+
+## 0.104.25
+
+### Patch Changes
+
+- [#9157](https://github.com/ardatan/graphql-mesh/pull/9157)
+  [`03c4735`](https://github.com/ardatan/graphql-mesh/commit/03c4735aad653ebd43d67b592d335bcb4666fbb9)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@^8.1.0` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/8.1.0) (from
+    `^8.0.0`, in `dependencies`)
+
+## 0.104.24
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.21
+
+## 0.104.23
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c219668`](https://github.com/ardatan/graphql-mesh/commit/c219668be72a56f0400a3086fe5144604b7ae948),
+  [`3f91b5a`](https://github.com/ardatan/graphql-mesh/commit/3f91b5a5ca6dcb470e0e3897dd96c607f6e358c8),
+  [`c219668`](https://github.com/ardatan/graphql-mesh/commit/c219668be72a56f0400a3086fe5144604b7ae948),
+  [`3f91b5a`](https://github.com/ardatan/graphql-mesh/commit/3f91b5a5ca6dcb470e0e3897dd96c607f6e358c8)]:
+  - @graphql-mesh/types@0.104.19
+  - @graphql-mesh/utils@0.104.20
+
+## 0.104.22
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.104.19
+
+## 0.104.21
+
+### Patch Changes
+
+- [#9051](https://github.com/ardatan/graphql-mesh/pull/9051)
+  [`d8590d2`](https://github.com/ardatan/graphql-mesh/commit/d8590d2b0fe49090870daa9bc6a0e68ddc1db401)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`hot-shots@^11.4.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/11.4.0)
+    (from `^11.3.0`, in `dependencies`)
+
+## 0.104.20
+
+### Patch Changes
+
+- [#9037](https://github.com/ardatan/graphql-mesh/pull/9037)
+  [`7c0b01e`](https://github.com/ardatan/graphql-mesh/commit/7c0b01e01b61853feb95ae5b5c4045507c5def1c)
+  Thanks [@dependabot](https://github.com/apps/dependabot)! - dependencies updates:
+  - Updated dependency [`hot-shots@^11.3.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/11.3.0)
+    (from `^11.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2),
+  [`72c443c`](https://github.com/ardatan/graphql-mesh/commit/72c443c0a2246c1573c72522d5ee7b6955f515d2)]:
+  - @graphql-mesh/types@0.104.18
+  - @graphql-mesh/utils@0.104.18
+
+## 0.104.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6),
+  [`3987b80`](https://github.com/ardatan/graphql-mesh/commit/3987b80a7e8bbeb3fc65360ac6d4a96587cdb4e6)]:
+  - @graphql-mesh/types@0.104.17
+  - @graphql-mesh/utils@0.104.17
+
+## 0.104.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`bb42d37`](https://github.com/ardatan/graphql-mesh/commit/bb42d37196e37c18289699db1a57aa3efd9a8a88),
+  [`bb42d37`](https://github.com/ardatan/graphql-mesh/commit/bb42d37196e37c18289699db1a57aa3efd9a8a88)]:
+  - @graphql-mesh/types@0.104.16
+  - @graphql-mesh/utils@0.104.16
+
+## 0.104.17
+
+### Patch Changes
+
+- [#8932](https://github.com/ardatan/graphql-mesh/pull/8932)
+  [`322cebf`](https://github.com/ardatan/graphql-mesh/commit/322cebfb87f7cd8b8d0cd2e92fcf87f80d5ddd84)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@^8.0.0` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/8.0.0) (from
+    `^7.0.0`, in `dependencies`)
+
+## 0.104.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b077f20`](https://github.com/ardatan/graphql-mesh/commit/b077f2014379934deee9803adbed754926550098)]:
+  - @graphql-mesh/types@0.104.15
+  - @graphql-mesh/utils@0.104.15
+
+## 0.104.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1db3c6b`](https://github.com/ardatan/graphql-mesh/commit/1db3c6bc7e1b88e246b4e27562072312ea2bd266)]:
+  - @graphql-mesh/types@0.104.14
+  - @graphql-mesh/utils@0.104.14
+
+## 0.104.14
+
+### Patch Changes
+
+- [#8685](https://github.com/ardatan/graphql-mesh/pull/8685)
+  [`7be5852`](https://github.com/ardatan/graphql-mesh/commit/7be58526f521cc26c6befed188f60cf8fb6e70a9)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency [`hot-shots@^11.0.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/11.0.0)
+    (from `^10.2.1`, in `dependencies`)
+
+- [#8776](https://github.com/ardatan/graphql-mesh/pull/8776)
+  [`e4204ad`](https://github.com/ardatan/graphql-mesh/commit/e4204ad7ac39a247ee5ae0da18f2051e543ba1fb)
+  Thanks [@enisdenjo](https://github.com/enisdenjo)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/core@^5.3.2` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.3.2) (from `^5.1.0`,
+    in `dependencies`)
+- Updated dependencies
+  [[`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`dfc6bc1`](https://github.com/ardatan/graphql-mesh/commit/dfc6bc10769092e6e44bf93a516f8d4e3dd1c681),
+  [`865b000`](https://github.com/ardatan/graphql-mesh/commit/865b000024850b1d98fe39244e8eb432e4c04d38)]:
+  - @graphql-mesh/types@0.104.13
+  - @graphql-mesh/utils@0.104.13
+
+## 0.104.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ffec6e7`](https://github.com/ardatan/graphql-mesh/commit/ffec6e7ae007b7019a895d4dbee79177a4a0a13e)]:
+  - @graphql-mesh/utils@0.104.12
+  - @graphql-mesh/types@0.104.12
+
+## 0.104.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d61faf0`](https://github.com/ardatan/graphql-mesh/commit/d61faf0370969cbd83acf04f4ca2f1c9253cc0e7)]:
+  - @graphql-mesh/utils@0.104.11
+  - @graphql-mesh/types@0.104.11
+
+## 0.104.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7852ccd`](https://github.com/ardatan/graphql-mesh/commit/7852ccde178e590740d533fcfc29dd1f74a91859),
+  [`7852ccd`](https://github.com/ardatan/graphql-mesh/commit/7852ccde178e590740d533fcfc29dd1f74a91859)]:
+  - @graphql-mesh/utils@0.104.10
+  - @graphql-mesh/types@0.104.10
+
+## 0.104.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0c18fe1`](https://github.com/ardatan/graphql-mesh/commit/0c18fe12b1d92af006e945b19e9207cb16a1ee7e)]:
+  - @graphql-mesh/types@0.104.9
+  - @graphql-mesh/utils@0.104.9
+
+## 0.104.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07),
+  [`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07),
+  [`fb6e935`](https://github.com/ardatan/graphql-mesh/commit/fb6e935c059d1508f60c7e1105df865a76aeec07)]:
+  - @graphql-mesh/types@0.104.8
+  - @graphql-mesh/utils@0.104.8
+
+## 0.104.8
+
+### Patch Changes
+
+- [#8668](https://github.com/ardatan/graphql-mesh/pull/8668)
+  [`f76c07f`](https://github.com/ardatan/graphql-mesh/commit/f76c07f2bdd47f8a2593eb74b77a9e1a518afeb0)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@^7.0.0` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/7.0.0) (from
+    `^6.0.0`, in `dependencies`)
+- Updated dependencies
+  [[`c37c23b`](https://github.com/ardatan/graphql-mesh/commit/c37c23bae7f95ea4580b66c57c7e160a485614cf)]:
+  - @graphql-mesh/types@0.104.7
+  - @graphql-mesh/utils@0.104.7
+
+## 0.104.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2666bc`](https://github.com/ardatan/graphql-mesh/commit/e2666bc151e63f319fe65d2f3e18bdfe1e305b2a)]:
+  - @graphql-mesh/utils@0.104.6
+  - @graphql-mesh/types@0.104.6
+
+## 0.104.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9d61d75`](https://github.com/ardatan/graphql-mesh/commit/9d61d75c462a577b5fa4fe3285370abb6ea064c8)]:
+  - @graphql-mesh/utils@0.104.5
+  - @graphql-mesh/types@0.104.5
+
+## 0.104.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6b4c546`](https://github.com/ardatan/graphql-mesh/commit/6b4c5467285d502940316eb430c292e52fb928f2)]:
+  - @graphql-mesh/types@0.104.4
+  - @graphql-mesh/utils@0.104.4
+
+## 0.104.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c),
+  [`0af3d0c`](https://github.com/ardatan/graphql-mesh/commit/0af3d0c77a0226b4f2339ba46012b3e00c13e65c)]:
+  - @graphql-mesh/utils@0.104.3
+  - @graphql-mesh/types@0.104.3
+
+## 0.104.3
+
+### Patch Changes
+
+- [`3d4dc41`](https://github.com/ardatan/graphql-mesh/commit/3d4dc41b9bb0c43b66ccb680f721e1584cd27b33)
+  Thanks [@ardatan](https://github.com/ardatan)! - Relax typings for Hive Gateway
+
+## 0.104.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`1b5d072`](https://github.com/ardatan/graphql-mesh/commit/1b5d07211e2e67bc939f1def3d19c45a7a4eb28b)]:
+  - @graphql-mesh/utils@0.104.2
+  - @graphql-mesh/types@0.104.2
+
+## 0.104.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b6c083c`](https://github.com/ardatan/graphql-mesh/commit/b6c083ce9e9305874cf847246fefda3fe068e8b4),
+  [`f416982`](https://github.com/ardatan/graphql-mesh/commit/f4169823bce2abf093bd53249d1d1208ea459a5d)]:
+  - @graphql-mesh/utils@0.104.1
+  - @graphql-mesh/types@0.104.1
+
+## 0.104.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4528794`](https://github.com/ardatan/graphql-mesh/commit/45287948dbfbe07c3f60f9c36253099c549207d9),
+  [`4528794`](https://github.com/ardatan/graphql-mesh/commit/45287948dbfbe07c3f60f9c36253099c549207d9)]:
+  - @graphql-mesh/utils@0.104.0
+  - @graphql-mesh/types@0.104.0
+
+## 0.103.22
+
+### Patch Changes
+
+- Updated dependencies
+  [[`903124f`](https://github.com/ardatan/graphql-mesh/commit/903124f8245a518aac50ef8d0eff2fef01a206f2)]:
+  - @graphql-mesh/utils@0.103.21
+  - @graphql-mesh/types@0.103.21
+
+## 0.103.21
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3f5e0a1`](https://github.com/ardatan/graphql-mesh/commit/3f5e0a13c8a07bd68ec19e4da94f34030cc7d3dc)]:
+  - @graphql-mesh/utils@0.103.20
+  - @graphql-mesh/types@0.103.20
+
+## 0.103.20
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d9cf1d3`](https://github.com/ardatan/graphql-mesh/commit/d9cf1d389c6d685a9d6cc50ff4be03380fd085f1)]:
+  - @graphql-mesh/types@0.103.19
+  - @graphql-mesh/utils@0.103.19
+
+## 0.103.19
+
+### Patch Changes
+
+- [#8409](https://github.com/ardatan/graphql-mesh/pull/8409)
+  [`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@^6.0.0` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/6.0.0) (from
+    `6.0.0`, in `dependencies`)
+  - Added dependency [`@envelop/core@^5.1.0` ↗︎](https://www.npmjs.com/package/@envelop/core/v/5.1.0)
+    (to `dependencies`)
+- Updated dependencies
+  [[`ab0863b`](https://github.com/ardatan/graphql-mesh/commit/ab0863ba367552e4b1ced1063ae7cb3a5f81b3b2)]:
+  - @graphql-mesh/utils@0.103.18
+  - @graphql-mesh/types@0.103.18
+
+## 0.103.18
+
+### Patch Changes
+
+- [#8399](https://github.com/ardatan/graphql-mesh/pull/8399)
+  [`acde564`](https://github.com/ardatan/graphql-mesh/commit/acde564bdc697115a3f5fe672eabeb38701af79d)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@6.0.0` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/6.0.0) (from
+    `5.0.1`, in `dependencies`)
+
+## 0.103.17
+
+### Patch Changes
+
+- Updated dependencies
+  [[`eee582a`](https://github.com/ardatan/graphql-mesh/commit/eee582a4cf78d8f7b0e303b522e6a97bd0ad4f2a)]:
+  - @graphql-mesh/utils@0.103.17
+  - @graphql-mesh/types@0.103.17
+
+## 0.103.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b44f8b7`](https://github.com/ardatan/graphql-mesh/commit/b44f8b7a413c8adb213b22fb8a243ca6aa06d2bd)]:
+  - @graphql-mesh/types@0.103.16
+  - @graphql-mesh/utils@0.103.16
+
+## 0.103.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b5c05c4`](https://github.com/ardatan/graphql-mesh/commit/b5c05c4c5862525c76d69e8c166e71378f69bda0)]:
+  - @graphql-mesh/types@0.103.15
+  - @graphql-mesh/utils@0.103.15
+
+## 0.103.14
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fc44a1e`](https://github.com/ardatan/graphql-mesh/commit/fc44a1e66c8bc8f27dc7e5e642031d17d75c0db8)]:
+  - @graphql-mesh/types@0.103.14
+  - @graphql-mesh/utils@0.103.14
+
+## 0.103.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a),
+  [`ce5e094`](https://github.com/ardatan/graphql-mesh/commit/ce5e0941e5a9445a0844d7225cf950a813011e9a)]:
+  - @graphql-mesh/types@0.103.13
+  - @graphql-mesh/utils@0.103.13
+
+## 0.103.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5180b06`](https://github.com/ardatan/graphql-mesh/commit/5180b068568042e764558a19194b8bae69354fe2),
+  [`c54e361`](https://github.com/ardatan/graphql-mesh/commit/c54e36110256541e03380b0d537085848169116b)]:
+  - @graphql-mesh/utils@0.103.12
+  - @graphql-mesh/types@0.103.12
+
+## 0.103.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3fc1f3e`](https://github.com/ardatan/graphql-mesh/commit/3fc1f3e046c02107d7fecf367756c7196fbe6ce1),
+  [`4011203`](https://github.com/ardatan/graphql-mesh/commit/40112034a2e248eda94883a39a3f8682189f4288)]:
+  - @graphql-mesh/types@0.103.11
+  - @graphql-mesh/utils@0.103.11
+
+## 0.103.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b750a41`](https://github.com/ardatan/graphql-mesh/commit/b750a410c082d64a04f21023790f2ff2c46f5eb9)]:
+  - @graphql-mesh/utils@0.103.10
+  - @graphql-mesh/types@0.103.10
+
+## 0.103.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`10ba2c4`](https://github.com/ardatan/graphql-mesh/commit/10ba2c42549dacff9c4e6be87ee50b608be62ddc)]:
+  - @graphql-mesh/utils@0.103.9
+  - @graphql-mesh/types@0.103.9
+
+## 0.103.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`93fb364`](https://github.com/ardatan/graphql-mesh/commit/93fb3643d90c52084725d79b586ace8ecd570911)]:
+  - @graphql-mesh/utils@0.103.8
+  - @graphql-mesh/types@0.103.8
+
+## 0.103.7
+
+### Patch Changes
+
+- [#8123](https://github.com/ardatan/graphql-mesh/pull/8123)
+  [`e5e9370`](https://github.com/ardatan/graphql-mesh/commit/e5e9370ce8d2daf3f27fd19bc301d1fe684fd590)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@^5.0.1` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/5.0.1) (from
+    `5.0.0`, in `dependencies`)
+  - Added dependency [`hot-shots@^10.2.1` ↗︎](https://www.npmjs.com/package/hot-shots/v/10.2.1) (to
+    `dependencies`)
+  - Removed dependency
+    [`hot-shots@^8.0.0 || ^9.0.0 || ^10.0.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/8.0.0)
+    (from `peerDependencies`)
+
+- [#8124](https://github.com/ardatan/graphql-mesh/pull/8124)
+  [`60621bb`](https://github.com/ardatan/graphql-mesh/commit/60621bb8933d21776b690836b4068ea6fc14c870)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@5.0.1` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/5.0.1) (from
+    `^5.0.1`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/types@0.103.7
+  - @graphql-mesh/utils@0.103.7
+
+## 0.103.6
+
+### Patch Changes
+
+- [#8092](https://github.com/ardatan/graphql-mesh/pull/8092)
+  [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Added dependency
+    [`@graphql-mesh/types@^0.103.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.103.5)
+    (to `dependencies`)
+  - Added dependency
+    [`@graphql-mesh/utils@^0.103.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.103.5)
+    (to `dependencies`)
+  - Added dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (to
+    `dependencies`)
+  - Removed dependency
+    [`@graphql-mesh/types@^0.103.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.103.5)
+    (from `peerDependencies`)
+  - Removed dependency
+    [`@graphql-mesh/utils@^0.103.5` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.103.5)
+    (from `peerDependencies`)
+  - Removed dependency [`tslib@^2.4.0` ↗︎](https://www.npmjs.com/package/tslib/v/2.4.0) (from
+    `peerDependencies`)
+- Updated dependencies
+  [[`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9),
+  [`2ef651a`](https://github.com/ardatan/graphql-mesh/commit/2ef651a8356b560478f1847399bad975a0c3f0b9)]:
+  - @graphql-mesh/types@0.103.6
+  - @graphql-mesh/utils@0.103.6
+
+## 0.103.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9f9f6fe`](https://github.com/ardatan/graphql-mesh/commit/9f9f6fe61c74eaa6572866eddd97c348307107a8)]:
+  - @graphql-mesh/utils@0.103.5
+  - @graphql-mesh/types@0.103.5
+
+## 0.103.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8fcfe3f`](https://github.com/ardatan/graphql-mesh/commit/8fcfe3f78a0be53e3b474231bfe7ee0594e54f91)]:
+  - @graphql-mesh/types@0.103.4
+  - @graphql-mesh/utils@0.103.4
+
+## 0.103.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6360755`](https://github.com/ardatan/graphql-mesh/commit/63607552017ed462c0555ad2e2ec6466c10d7ae4)]:
+  - @graphql-mesh/utils@0.103.3
+  - @graphql-mesh/types@0.103.3
+
+## 0.103.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`bfd8929`](https://github.com/ardatan/graphql-mesh/commit/bfd89297b0fe4dbdd0fecff8c35c316e874b9a56)]:
+  - @graphql-mesh/utils@0.103.2
+  - @graphql-mesh/types@0.103.2
+
+## 0.103.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`92d3ce1`](https://github.com/ardatan/graphql-mesh/commit/92d3ce10bcfdb1bbf63165f77bdb5acd713c88ac),
+  [`92d3ce1`](https://github.com/ardatan/graphql-mesh/commit/92d3ce10bcfdb1bbf63165f77bdb5acd713c88ac)]:
+  - @graphql-mesh/types@0.103.1
+  - @graphql-mesh/utils@0.103.1
+
+## 0.103.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0e49907`](https://github.com/ardatan/graphql-mesh/commit/0e49907cf19d91fe40c28237aa79bd55742b371f),
+  [`9873b33`](https://github.com/ardatan/graphql-mesh/commit/9873b33f0cc6c3b3a3c3dc1a0a1cb18c827b8722)]:
+  - @graphql-mesh/utils@0.103.0
+  - @graphql-mesh/types@0.103.0
+
+## 0.102.13
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.102.13
+  - @graphql-mesh/utils@0.102.13
+
+## 0.102.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`eee53b9`](https://github.com/ardatan/graphql-mesh/commit/eee53b9f455653166c39bca627b3261fbefe4eb7)]:
+  - @graphql-mesh/utils@0.102.12
+  - @graphql-mesh/types@0.102.12
+
+## 0.102.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af),
+  [`de41fc2`](https://github.com/ardatan/graphql-mesh/commit/de41fc2932433f8da35b9de9492720e6c8c100af)]:
+  - @graphql-mesh/types@0.102.11
+  - @graphql-mesh/utils@0.102.11
+
+## 0.102.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71),
+  [`997b81c`](https://github.com/ardatan/graphql-mesh/commit/997b81c8a5d28508057806b4f16eecc5b713cf71)]:
+  - @graphql-mesh/types@0.102.10
+  - @graphql-mesh/utils@0.102.10
+
+## 0.102.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fad4d27`](https://github.com/ardatan/graphql-mesh/commit/fad4d27bfebb80a374c2041b86ffab509845effe)]:
+  - @graphql-mesh/utils@0.102.9
+  - @graphql-mesh/types@0.102.9
+
+## 0.102.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c),
+  [`518c42c`](https://github.com/ardatan/graphql-mesh/commit/518c42c5a2bee00e224df95c2beb758a28d1323c)]:
+  - @graphql-mesh/types@0.102.8
+  - @graphql-mesh/utils@0.102.8
+
+## 0.102.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be),
+  [`50bf472`](https://github.com/ardatan/graphql-mesh/commit/50bf4723657d27dc196d80407bda40c93aa5c9be)]:
+  - @graphql-mesh/types@0.102.7
+  - @graphql-mesh/utils@0.102.7
+
+## 0.102.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`bf588d3`](https://github.com/ardatan/graphql-mesh/commit/bf588d372c0078378aaa24beea2da794af7949e6)]:
+  - @graphql-mesh/utils@0.102.6
+  - @graphql-mesh/types@0.102.6
+
+## 0.102.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3bf14b3`](https://github.com/ardatan/graphql-mesh/commit/3bf14b33ee621cce004a329928b8a04a68218016),
+  [`b7f6ebf`](https://github.com/ardatan/graphql-mesh/commit/b7f6ebfa077957c3a1ecad1fed449e972cb09ae0),
+  [`0a3e52c`](https://github.com/ardatan/graphql-mesh/commit/0a3e52c2ad2941e7c48f0e80706db41644797c2d)]:
+  - @graphql-mesh/utils@0.102.5
+  - @graphql-mesh/types@0.102.5
+
+## 0.102.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`edbc074`](https://github.com/ardatan/graphql-mesh/commit/edbc074523ebc86114bb3342f86b7bcd9268d005),
+  [`edbc074`](https://github.com/ardatan/graphql-mesh/commit/edbc074523ebc86114bb3342f86b7bcd9268d005)]:
+  - @graphql-mesh/types@0.102.4
+  - @graphql-mesh/utils@0.102.4
+
+## 0.102.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`14ec31f`](https://github.com/ardatan/graphql-mesh/commit/14ec31f95bc06e9a3d06fae387fc40cc534e01f4),
+  [`14ec31f`](https://github.com/ardatan/graphql-mesh/commit/14ec31f95bc06e9a3d06fae387fc40cc534e01f4)]:
+  - @graphql-mesh/types@0.102.3
+  - @graphql-mesh/utils@0.102.3
+
+## 0.102.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5d95aad`](https://github.com/ardatan/graphql-mesh/commit/5d95aad185448e8e3a004a08e364f98ee9bbee2a)]:
+  - @graphql-mesh/utils@0.102.2
+  - @graphql-mesh/types@0.102.2
+
+## 0.102.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e49a7e6`](https://github.com/ardatan/graphql-mesh/commit/e49a7e69475b652a53a0f289a44247e8b7ea96de)]:
+  - @graphql-mesh/utils@0.102.1
+  - @graphql-mesh/types@0.102.1
+
+## 0.102.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`db41f96`](https://github.com/ardatan/graphql-mesh/commit/db41f96b392de95d5f3aff958df399bf58575373)]:
+  - @graphql-mesh/types@0.102.0
+  - @graphql-mesh/utils@0.102.0
+
+## 0.101.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6),
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e),
+  [`190e9ec`](https://github.com/ardatan/graphql-mesh/commit/190e9ece9bc050a0564f3b5292ab5229e63d40a6),
+  [`d784488`](https://github.com/ardatan/graphql-mesh/commit/d784488dcf04b3b0bf32f386baf8b48e1f20d27e)]:
+  - @graphql-mesh/types@0.101.0
+  - @graphql-mesh/utils@0.101.0
+
+## 0.100.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`c06a048`](https://github.com/ardatan/graphql-mesh/commit/c06a0482e7431683f0b75fde3aebbb97aca00c4c),
+  [`a324c5e`](https://github.com/ardatan/graphql-mesh/commit/a324c5ef300c25dcfa265f3457453b50af0b83e7),
+  [`4d1eb28`](https://github.com/ardatan/graphql-mesh/commit/4d1eb285c2b703c5f80473ad0f316004306fac7f),
+  [`a324c5e`](https://github.com/ardatan/graphql-mesh/commit/a324c5ef300c25dcfa265f3457453b50af0b83e7)]:
+  - @graphql-mesh/types@0.100.0
+  - @graphql-mesh/utils@0.100.0
+
+## 0.99.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a1bfc49`](https://github.com/ardatan/graphql-mesh/commit/a1bfc492ac3378f22b79a51824407e776b496a84)]:
+  - @graphql-mesh/types@0.99.7
+  - @graphql-mesh/utils@0.99.7
+
+## 0.99.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb),
+  [`6c67e77`](https://github.com/ardatan/graphql-mesh/commit/6c67e77d3c308615a733577293ecb6dd55793aeb)]:
+  - @graphql-mesh/types@0.99.6
+  - @graphql-mesh/utils@0.99.6
+
+## 0.99.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`33c23e8`](https://github.com/ardatan/graphql-mesh/commit/33c23e83a60328df806a8adc8d262a0c6de7e5a4)]:
+  - @graphql-mesh/utils@0.99.5
+  - @graphql-mesh/types@0.99.5
+
+## 0.99.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b),
+  [`597e790`](https://github.com/ardatan/graphql-mesh/commit/597e7905e542be06e7f576d8ffde3f94d7b0630b)]:
+  - @graphql-mesh/utils@0.99.4
+  - @graphql-mesh/types@0.99.4
+
+## 0.99.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e),
+  [`5e5dec5`](https://github.com/ardatan/graphql-mesh/commit/5e5dec51b571df8d23a4379f61fd7fbd7a3df58e)]:
+  - @graphql-mesh/utils@0.99.3
+  - @graphql-mesh/types@0.99.3
+
+## 0.99.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e),
+  [`4bc495c`](https://github.com/ardatan/graphql-mesh/commit/4bc495c03493f18c85e11f3f5fb54b3c35d16d8e)]:
+  - @graphql-mesh/types@0.99.2
+  - @graphql-mesh/utils@0.99.2
+
+## 0.99.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3),
+  [`7800514`](https://github.com/ardatan/graphql-mesh/commit/780051468203f3e82e7fee4ac40ce8b8a2cb10a3)]:
+  - @graphql-mesh/types@0.99.1
+  - @graphql-mesh/utils@0.99.1
+
+## 0.99.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00),
+  [`a8e3f00`](https://github.com/ardatan/graphql-mesh/commit/a8e3f003264f2a4703a35a08667818fa8800dc00)]:
+  - @graphql-mesh/utils@0.99.0
+  - @graphql-mesh/types@0.99.0
+
+## 0.98.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`0d916a4`](https://github.com/ardatan/graphql-mesh/commit/0d916a4b4603ca57a383337f42c51ef8d5f4ae3d),
+  [`8a04cf7`](https://github.com/ardatan/graphql-mesh/commit/8a04cf7abff41122d5268c57acfb26e97712730b)]:
+  - @graphql-mesh/types@0.98.10
+  - @graphql-mesh/utils@0.98.10
+
+## 0.98.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f985978`](https://github.com/ardatan/graphql-mesh/commit/f9859784ad854207e4d32bda11c904b5301610ee),
+  [`7544594`](https://github.com/ardatan/graphql-mesh/commit/75445949f91f225ffed15491b8040b61ec4cf3ae)]:
+  - @graphql-mesh/utils@0.98.9
+  - @graphql-mesh/types@0.98.9
+
+## 0.98.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207),
+  [`b5bf97c`](https://github.com/ardatan/graphql-mesh/commit/b5bf97c6fd92dbfa9ed88e03003910a1247149a0),
+  [`4c75671`](https://github.com/ardatan/graphql-mesh/commit/4c756717247eb0a8f3431e31e6c86fc97297bd32),
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207),
+  [`88d6232`](https://github.com/ardatan/graphql-mesh/commit/88d623289e187435ddc88bbe3f4623a727101207)]:
+  - @graphql-mesh/utils@0.98.8
+  - @graphql-mesh/types@0.98.8
+
+## 0.98.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.98.7
+  - @graphql-mesh/utils@0.98.7
+
+## 0.98.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c),
+  [`270679b`](https://github.com/ardatan/graphql-mesh/commit/270679bb81046727ffe417800cbaa9924fb1bf5c)]:
+  - @graphql-mesh/types@0.98.6
+  - @graphql-mesh/utils@0.98.6
+
+## 0.98.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c4d2249`](https://github.com/ardatan/graphql-mesh/commit/c4d22497b4249f9a0969e1d01efbe0721774ce73)]:
+  - @graphql-mesh/utils@0.98.5
+  - @graphql-mesh/types@0.98.5
+
+## 0.98.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fb59244`](https://github.com/ardatan/graphql-mesh/commit/fb592447c12950582881b24c0ca035a34d2ca48c)]:
+  - @graphql-mesh/types@0.98.4
+  - @graphql-mesh/utils@0.98.4
+
+## 0.98.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`c47b2aa`](https://github.com/ardatan/graphql-mesh/commit/c47b2aa8c225f04157c1391c638f866bb01edffa)]:
+  - @graphql-mesh/types@0.98.3
+  - @graphql-mesh/utils@0.98.3
+
+## 0.98.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`96dd11d`](https://github.com/ardatan/graphql-mesh/commit/96dd11d3c5b70a4971e56d47c8b200d4dc980f38)]:
+  - @graphql-mesh/types@0.98.2
+  - @graphql-mesh/utils@0.98.2
+
+## 0.98.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6044b7f`](https://github.com/ardatan/graphql-mesh/commit/6044b7f8bd72ee3d4460d9f09f303ea6fc4e007b)]:
+  - @graphql-mesh/types@0.98.1
+  - @graphql-mesh/utils@0.98.1
+
+## 0.98.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`2fcadce`](https://github.com/ardatan/graphql-mesh/commit/2fcadce67b9acbcab2a14aa9ea57dbb84101f0b5),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84),
+  [`6399add`](https://github.com/ardatan/graphql-mesh/commit/6399addeeca2d5cf0bf545c537d01c784de65e84)]:
+  - @graphql-mesh/types@0.98.0
+  - @graphql-mesh/utils@0.98.0
+
+## 0.97.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`52f74e7`](https://github.com/ardatan/graphql-mesh/commit/52f74e75219a32d30dea693a571c64c9c7519eb6)]:
+  - @graphql-mesh/types@0.97.5
+  - @graphql-mesh/utils@0.97.5
+
+## 0.97.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`e2fb7ed`](https://github.com/ardatan/graphql-mesh/commit/e2fb7edb8b02a53fa6f1b1f1fba629ea7c84488f),
+  [`ff33394`](https://github.com/ardatan/graphql-mesh/commit/ff3339451d8911f9b9265e158ad86844648ee12f)]:
+  - @graphql-mesh/utils@0.97.4
+  - @graphql-mesh/types@0.97.4
+
+## 0.97.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`57f4a60`](https://github.com/ardatan/graphql-mesh/commit/57f4a601c1f9819937c784ab9aae68f3368cbefd)]:
+  - @graphql-mesh/types@0.97.3
+  - @graphql-mesh/utils@0.97.3
+
+## 0.97.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7a712ab`](https://github.com/ardatan/graphql-mesh/commit/7a712ab915ac3216765951080e689d510b5682a6)]:
+  - @graphql-mesh/types@0.97.2
+  - @graphql-mesh/utils@0.97.2
+
+## 0.97.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`dbaf72c`](https://github.com/ardatan/graphql-mesh/commit/dbaf72c4520f64524dce14b798019639c4d57020)]:
+  - @graphql-mesh/types@0.97.1
+  - @graphql-mesh/utils@0.97.1
+
+## 0.97.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`92dce67`](https://github.com/ardatan/graphql-mesh/commit/92dce67df35d70001ca9c818870a85256175279a),
+  [`70b05a2`](https://github.com/ardatan/graphql-mesh/commit/70b05a20a948b5ebed5306c14710c8839225cdad)]:
+  - @graphql-mesh/types@0.97.0
+  - @graphql-mesh/utils@0.97.0
+
+## 0.96.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0f274ef`](https://github.com/ardatan/graphql-mesh/commit/0f274ef8177068da65e50e08607998d0ed63e8b9)]:
+  - @graphql-mesh/utils@0.96.6
+  - @graphql-mesh/types@0.96.6
+
+## 0.96.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`4b3ea1d`](https://github.com/ardatan/graphql-mesh/commit/4b3ea1d4ac804341d8dcae289ec1eac37026b908)]:
+  - @graphql-mesh/types@0.96.5
+  - @graphql-mesh/utils@0.96.5
+
+## 0.96.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ae7b085`](https://github.com/ardatan/graphql-mesh/commit/ae7b085e93ba911f03bbfd2a15ff9ca8be9f4de8)]:
+  - @graphql-mesh/types@0.96.4
+  - @graphql-mesh/utils@0.96.4
+
+## 0.96.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ac26793`](https://github.com/ardatan/graphql-mesh/commit/ac26793e59f76f0839b61a8030e0eefc7383e640)]:
+  - @graphql-mesh/types@0.96.3
+  - @graphql-mesh/utils@0.96.3
+
+## 0.96.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d758afa`](https://github.com/ardatan/graphql-mesh/commit/d758afa7da55cf3ed6b4ed9e8cccfd0ed67fe658),
+  [`4fac014`](https://github.com/ardatan/graphql-mesh/commit/4fac01400544bc6e8b2a4ae55f1a4dd4771bbc5c)]:
+  - @graphql-mesh/types@0.96.2
+  - @graphql-mesh/utils@0.96.2
+
+## 0.96.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.96.1
+  - @graphql-mesh/utils@0.96.1
+
+## 0.96.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c6a8f784`](https://github.com/ardatan/graphql-mesh/commit/5c6a8f784a787641b90349e584b49de629cc41ff)]:
+  - @graphql-mesh/types@0.96.0
+  - @graphql-mesh/utils@0.96.0
+
+## 0.95.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.95.8
+  - @graphql-mesh/types@0.95.8
+
+## 0.95.9
+
+### Patch Changes
+
+- [#6103](https://github.com/Urigo/graphql-mesh/pull/6103)
+  [`c859f220b`](https://github.com/Urigo/graphql-mesh/commit/c859f220bc3f7db125511a7b655c8688efe2b14b)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@5.0.0` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/5.0.0) (from
+    `4.0.3`, in `dependencies`)
+
+## 0.95.8
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a13969c77`](https://github.com/Urigo/graphql-mesh/commit/a13969c77794c44493d7a9426be7e38a6d673c88)]:
+  - @graphql-mesh/types@0.95.7
+  - @graphql-mesh/utils@0.95.7
+
+## 0.95.7
+
+### Patch Changes
+
+- [#6013](https://github.com/Urigo/graphql-mesh/pull/6013)
+  [`498e357c8`](https://github.com/Urigo/graphql-mesh/commit/498e357c81f3b4b1799cb7c3a68cf8aeed8268fa)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@4.0.3` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/4.0.3) (from
+    `4.0.1`, in `dependencies`)
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.95.6
+  - @graphql-mesh/types@0.95.6
+
+## 0.95.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b8f16a42b`](https://github.com/Urigo/graphql-mesh/commit/b8f16a42bf599723c2e311c47e74f812c6d1b781)]:
+  - @graphql-mesh/types@0.95.5
+  - @graphql-mesh/utils@0.95.5
+
+## 0.95.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`625e5d787`](https://github.com/Urigo/graphql-mesh/commit/625e5d7878d44abd7c9d1542bf5cdcd4e37e2411)]:
+  - @graphql-mesh/types@0.95.4
+  - @graphql-mesh/utils@0.95.4
+
+## 0.95.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`33ae7a89a`](https://github.com/Urigo/graphql-mesh/commit/33ae7a89a13f40ebbe0a01620e378fe4a914df7f)]:
+  - @graphql-mesh/types@0.95.3
+  - @graphql-mesh/utils@0.95.3
+
+## 0.95.3
+
+### Patch Changes
+
+- [#5894](https://github.com/Urigo/graphql-mesh/pull/5894)
+  [`2b5b1185d`](https://github.com/Urigo/graphql-mesh/commit/2b5b1185df8d50ac99b3f35df2a24ff1d8ed2746)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@4.0.1` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/4.0.1) (from
+    `4.0.0`, in `dependencies`)
+
+## 0.95.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d8da4b282`](https://github.com/Urigo/graphql-mesh/commit/d8da4b282ab15ab6d0ea24c78c172e31fa1170ea)]:
+  - @graphql-mesh/types@0.95.2
+  - @graphql-mesh/utils@0.95.2
+
+## 0.95.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7cdc69e04`](https://github.com/Urigo/graphql-mesh/commit/7cdc69e0454ab99ea5c3b8072ac28da8f81a8796)]:
+  - @graphql-mesh/types@0.95.1
+  - @graphql-mesh/utils@0.95.1
+
+## 0.95.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`bb50c4f94`](https://github.com/Urigo/graphql-mesh/commit/bb50c4f941caa59d69186d1415dce5773596e8bc)]:
+  - @graphql-mesh/types@0.95.0
+  - @graphql-mesh/utils@0.95.0
+
+## 0.94.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d1310cdff`](https://github.com/Urigo/graphql-mesh/commit/d1310cdff53c53d5342e28b7c0c1af1dd25c6c75)]:
+  - @graphql-mesh/utils@0.94.6
+  - @graphql-mesh/types@0.94.6
+
+## 0.94.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f11e9b307`](https://github.com/Urigo/graphql-mesh/commit/f11e9b307f1336d5ead9a75befdb61de963c6c5b)]:
+  - @graphql-mesh/utils@0.94.5
+  - @graphql-mesh/types@0.94.5
+
+## 0.94.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ff1678eea`](https://github.com/Urigo/graphql-mesh/commit/ff1678eeabec67edaa4991b938ef81437cd9361e)]:
+  - @graphql-mesh/types@0.94.4
+  - @graphql-mesh/utils@0.94.4
+
+## 0.94.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/utils@0.94.3
+  - @graphql-mesh/types@0.94.3
+
+## 0.94.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d0d4917f4`](https://github.com/Urigo/graphql-mesh/commit/d0d4917f405d7d6acfba62abef38909e1398ce7c)]:
+  - @graphql-mesh/types@0.94.2
+  - @graphql-mesh/utils@0.94.2
+
+## 0.94.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.94.1
+  - @graphql-mesh/utils@0.94.1
+
+## 0.94.0
+
+### Minor Changes
+
+- [#5449](https://github.com/Urigo/graphql-mesh/pull/5449)
+  [`ef520d91e`](https://github.com/Urigo/graphql-mesh/commit/ef520d91e6d1800ed63ef016ed74084261788371)
+  Thanks [@ardatan](https://github.com/ardatan)! - Drop Node 14 support and require Node 16 or
+  higher
+
+### Patch Changes
+
+- [#5421](https://github.com/Urigo/graphql-mesh/pull/5421)
+  [`7fcc4e566`](https://github.com/Urigo/graphql-mesh/commit/7fcc4e566a4fbba5dd6ecb248ddfb95e4c270417)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/4.0.0) (from
+    `3.0.6`, in `dependencies`)
+
+- [#5456](https://github.com/Urigo/graphql-mesh/pull/5456)
+  [`b52b4c7c1`](https://github.com/Urigo/graphql-mesh/commit/b52b4c7c1133a9904080c344dcb5140c1af67f2a)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@4.0.0` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/4.0.0) (from
+    `3.0.6`, in `dependencies`)
+- Updated dependencies
+  [[`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
+  [`4296a55f4`](https://github.com/Urigo/graphql-mesh/commit/4296a55f4a6fb1c8e1701403cfe88067255ae9b7),
+  [`e881ea609`](https://github.com/Urigo/graphql-mesh/commit/e881ea609a1d355356c1dc04c7a42b00b6e86e0d),
+  [`01fb0cc85`](https://github.com/Urigo/graphql-mesh/commit/01fb0cc858dfbf2cd931d1b08b0749a0b82b232c),
+  [`ef520d91e`](https://github.com/Urigo/graphql-mesh/commit/ef520d91e6d1800ed63ef016ed74084261788371)]:
+  - @graphql-mesh/types@0.94.0
+  - @graphql-mesh/utils@0.94.0
+
+## 0.93.1
+
+### Patch Changes
+
+- [#5365](https://github.com/Urigo/graphql-mesh/pull/5365)
+  [`1dd9a6940`](https://github.com/Urigo/graphql-mesh/commit/1dd9a694092094c7f00c6ca53686becadee62cb8)
+  Thanks [@ardatan](https://github.com/ardatan)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/types@^0.93.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.93.0)
+    (from `^1.0.0`, in `peerDependencies`)
+  - Updated dependency
+    [`@graphql-mesh/utils@^0.93.0` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.93.0)
+    (from `^1.0.0`, in `peerDependencies`)
+- Updated dependencies
+  [[`1dd9a6940`](https://github.com/Urigo/graphql-mesh/commit/1dd9a694092094c7f00c6ca53686becadee62cb8),
+  [`1dd9a6940`](https://github.com/Urigo/graphql-mesh/commit/1dd9a694092094c7f00c6ca53686becadee62cb8)]:
+  - @graphql-mesh/types@0.93.1
+  - @graphql-mesh/utils@0.93.1
+
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies
+  [[`cff645677`](https://github.com/Urigo/graphql-mesh/commit/cff645677c680e248ed718e5bb98ece5a41f9c0f),
+  [`cff645677`](https://github.com/Urigo/graphql-mesh/commit/cff645677c680e248ed718e5bb98ece5a41f9c0f),
+  [`72fe781c1`](https://github.com/Urigo/graphql-mesh/commit/72fe781c15f20ad2af792b8245aedfdcc742e048),
+  [`a597261db`](https://github.com/Urigo/graphql-mesh/commit/a597261dbb4f18c47bf7323695e853950ae500df)]:
+  - @graphql-mesh/types@1.0.0
+  - @graphql-mesh/utils@1.0.0
+
+## 0.1.20
+
+### Patch Changes
+
+- [#5252](https://github.com/Urigo/graphql-mesh/pull/5252)
+  [`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)
+  Thanks [@ardatan](https://github.com/ardatan)! - Make shared packages peer dependency
+
+- Updated dependencies
+  [[`c90eb5ac6`](https://github.com/Urigo/graphql-mesh/commit/c90eb5ac631507de1f49db68ca681193cc5a20b5)]:
+  - @graphql-mesh/types@0.91.12
+  - @graphql-mesh/utils@0.43.20
+
+## 0.1.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`7e7096695`](https://github.com/Urigo/graphql-mesh/commit/7e709669564fa427332b8af00bc66234485f3d54)]:
+  - @graphql-mesh/types@0.91.11
+  - @graphql-mesh/utils@0.43.19
+
+## 0.1.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3f658a771`](https://github.com/Urigo/graphql-mesh/commit/3f658a7711cd68bc7451c1494699c5ffb8e919ce)]:
+  - @graphql-mesh/utils@0.43.18
+  - @graphql-mesh/types@0.91.10
+
+## 0.1.17
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a272fdbca`](https://github.com/Urigo/graphql-mesh/commit/a272fdbca655b17119fb1dcb1c44498f387b1edc)]:
+  - @graphql-mesh/types@0.91.9
+  - @graphql-mesh/utils@0.43.17
+
+## 0.1.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.91.8
+  - @graphql-mesh/utils@0.43.16
+
+## 0.1.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`fa2c010c1`](https://github.com/Urigo/graphql-mesh/commit/fa2c010c13f95ce401c345a1330d8fddabeebc17)]:
+  - @graphql-mesh/utils@0.43.15
+  - @graphql-mesh/types@0.91.7
+
+## 0.1.14
+
+### Patch Changes
+
+- [#5160](https://github.com/Urigo/graphql-mesh/pull/5160)
+  [`7def5adae`](https://github.com/Urigo/graphql-mesh/commit/7def5adae9e1cab3597320731ca6767bde5c04a1)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@3.0.5` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/3.0.5) (from
+    `3.0.4`, in `dependencies`)
+
+- [#5167](https://github.com/Urigo/graphql-mesh/pull/5167)
+  [`ab08c2af5`](https://github.com/Urigo/graphql-mesh/commit/ab08c2af559aee4ee009c1bafceab7f5d1e87321)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@3.0.6` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/3.0.6) (from
+    `3.0.5`, in `dependencies`)
+- Updated dependencies
+  [[`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391),
+  [`0b438c329`](https://github.com/Urigo/graphql-mesh/commit/0b438c32950f524db65163d67f6a64f451214391)]:
+  - @graphql-mesh/types@0.91.6
+  - @graphql-mesh/utils@0.43.14
+
+## 0.1.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5c19f8d6f`](https://github.com/Urigo/graphql-mesh/commit/5c19f8d6f79f2d9bfbeb6458c8dc7a1729c37db9)]:
+  - @graphql-mesh/types@0.91.5
+  - @graphql-mesh/utils@0.43.13
+
+## 0.1.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`63ab17f0b`](https://github.com/Urigo/graphql-mesh/commit/63ab17f0bd402b5a3923d752ba715f556f3beadd)]:
+  - @graphql-mesh/types@0.91.4
+  - @graphql-mesh/utils@0.43.12
+
+## 0.1.11
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8c9c39cf5`](https://github.com/Urigo/graphql-mesh/commit/8c9c39cf56c0cd0e3e3908b5c54cb4c1bca4151e),
+  [`8c9c39cf5`](https://github.com/Urigo/graphql-mesh/commit/8c9c39cf56c0cd0e3e3908b5c54cb4c1bca4151e)]:
+  - @graphql-mesh/types@0.91.3
+  - @graphql-mesh/utils@0.43.11
+
+## 0.1.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`989a47802`](https://github.com/Urigo/graphql-mesh/commit/989a478027b703ab969d529f09bc83071fe4f96f)]:
+  - @graphql-mesh/types@0.91.2
+  - @graphql-mesh/utils@0.43.10
+
+## 0.1.9
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d694ccc1f`](https://github.com/Urigo/graphql-mesh/commit/d694ccc1f5a2cbc3ed97778a3210594005f2830b)]:
+  - @graphql-mesh/utils@0.43.9
+  - @graphql-mesh/types@0.91.1
+
+## 0.1.8
+
+### Patch Changes
+
+- [#5104](https://github.com/Urigo/graphql-mesh/pull/5104)
+  [`3d733e484`](https://github.com/Urigo/graphql-mesh/commit/3d733e4840cc16d5de063fb3f4dafa17ea8cbb04)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`hot-shots@^8.0.0 || ^9.0.0 || ^10.0.0` ↗︎](https://www.npmjs.com/package/hot-shots/v/8.0.0)
+    (from `^8.0.0 || ^9.0.0`, in `peerDependencies`)
+- Updated dependencies
+  [[`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`89bb72165`](https://github.com/Urigo/graphql-mesh/commit/89bb7216580a05740a377962ae988a3674b6282e),
+  [`7e8bb87dd`](https://github.com/Urigo/graphql-mesh/commit/7e8bb87ddf4cb1210db6873334bdd18007cc0552)]:
+  - @graphql-mesh/types@0.91.0
+  - @graphql-mesh/utils@0.43.8
+
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`2005d2b28`](https://github.com/Urigo/graphql-mesh/commit/2005d2b2864b13ae163e86b9ea6627f2a4b2ff72),
+  [`bcf29dfd0`](https://github.com/Urigo/graphql-mesh/commit/bcf29dfd02d19cf5c770b83fc627f059569a0fac)]:
+  - @graphql-mesh/types@0.90.0
+  - @graphql-mesh/utils@0.43.7
+
+## 0.1.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ed5843d8a`](https://github.com/Urigo/graphql-mesh/commit/ed5843d8a771045eed61cdad33b72734666577d5),
+  [`ed5843d8a`](https://github.com/Urigo/graphql-mesh/commit/ed5843d8a771045eed61cdad33b72734666577d5)]:
+  - @graphql-mesh/types@0.89.5
+  - @graphql-mesh/utils@0.43.6
+
+## 0.1.5
+
+### Patch Changes
+
+- [#4930](https://github.com/Urigo/graphql-mesh/pull/4930)
+  [`c015b02a1`](https://github.com/Urigo/graphql-mesh/commit/c015b02a1aa50e4d760c3fd59f76dc5dfe587664)
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - Prettier fixes
+
+- Updated dependencies
+  [[`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`994813331`](https://github.com/Urigo/graphql-mesh/commit/99481333186e8471207e21ad14c7883f7215ce1c),
+  [`c015b02a1`](https://github.com/Urigo/graphql-mesh/commit/c015b02a1aa50e4d760c3fd59f76dc5dfe587664),
+  [`d573d203f`](https://github.com/Urigo/graphql-mesh/commit/d573d203f8bb04ff75cb4d83ba0deaa2bf9818a7)]:
+  - @graphql-mesh/types@0.89.4
+  - @graphql-mesh/utils@0.43.5
+
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`99f4c84e6`](https://github.com/Urigo/graphql-mesh/commit/99f4c84e619996bc4f392bc81c33022b8678e0d9),
+  [`99f4c84e6`](https://github.com/Urigo/graphql-mesh/commit/99f4c84e619996bc4f392bc81c33022b8678e0d9)]:
+  - @graphql-mesh/types@0.89.3
+  - @graphql-mesh/utils@0.43.4
+
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`deb9912e0`](https://github.com/Urigo/graphql-mesh/commit/deb9912e0bc2ae782c9570b60a7224b47af341eb)]:
+  - @graphql-mesh/types@0.89.2
+  - @graphql-mesh/utils@0.43.3
+
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43),
+  [`f1c2e20e5`](https://github.com/Urigo/graphql-mesh/commit/f1c2e20e5228425dc220986d85653fc7f3811e43)]:
+  - @graphql-mesh/types@0.89.1
+  - @graphql-mesh/utils@0.43.2
+
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies
+  [[`3edaa00ac`](https://github.com/Urigo/graphql-mesh/commit/3edaa00ac772d519e351e620bfa670514db886e5)]:
+  - @graphql-mesh/types@0.89.0
+  - @graphql-mesh/utils@0.43.1
+
+## 0.1.0
+
+### Minor Changes
+
+- [#4821](https://github.com/Urigo/graphql-mesh/pull/4821)
+  [`1a28c92c2`](https://github.com/Urigo/graphql-mesh/commit/1a28c92c2d67b89b48581b7bb1414d1404428cdb)
+  Thanks [@ardatan](https://github.com/ardatan)! - Update build flow to fully support both CommonJS
+  and ESM
+
+### Patch Changes
+
+- Updated dependencies
+  [[`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`500a4504c`](https://github.com/Urigo/graphql-mesh/commit/500a4504c734ee1eaf55daa2296789096034513f),
+  [`1a28c92c2`](https://github.com/Urigo/graphql-mesh/commit/1a28c92c2d67b89b48581b7bb1414d1404428cdb)]:
+  - @graphql-mesh/types@0.88.0
+  - @graphql-mesh/utils@0.43.0
+
+## 0.0.33
+
+### Patch Changes
+
+- Updated dependencies
+  [[`eba73c626`](https://github.com/Urigo/graphql-mesh/commit/eba73c6261a2fdde8ece31915202203b70ff0e5f)]:
+  - @graphql-mesh/utils@0.42.9
+  - @graphql-mesh/types@0.87.1
+
+## 0.0.32
+
+### Patch Changes
+
+- Updated dependencies
+  [[`0d9771428`](https://github.com/Urigo/graphql-mesh/commit/0d97714284a6eea31c2c9420addd4a1518584924),
+  [`686b3301b`](https://github.com/Urigo/graphql-mesh/commit/686b3301b2441bc095a379d95e77686b4f5ceb70)]:
+  - @graphql-mesh/types@0.87.0
+  - @graphql-mesh/utils@0.42.8
+
+## 0.0.31
+
+### Patch Changes
+
+- [#4850](https://github.com/Urigo/graphql-mesh/pull/4850)
+  [`7df7c644d`](https://github.com/Urigo/graphql-mesh/commit/7df7c644d85c00c0c0c3f8907854bbef50d298eb)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@3.0.4` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/3.0.4) (from
+    `3.0.3`, in `dependencies`)
+
+## 0.0.30
+
+### Patch Changes
+
+- Updated dependencies
+  [[`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65),
+  [`990f649ef`](https://github.com/Urigo/graphql-mesh/commit/990f649ef8832bc786b89b0c15744d49a422bb03),
+  [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33),
+  [`8c7d96cff`](https://github.com/Urigo/graphql-mesh/commit/8c7d96cff868095216520bafebe989ec94a9df65),
+  [`990f649ef`](https://github.com/Urigo/graphql-mesh/commit/990f649ef8832bc786b89b0c15744d49a422bb03),
+  [`db95881b5`](https://github.com/Urigo/graphql-mesh/commit/db95881b530053064425f476ccac7d552d44af33),
+  [`76deb32d1`](https://github.com/Urigo/graphql-mesh/commit/76deb32d1c036bc8da171be55582ec3f7b9c5015),
+  [`baa4fbf82`](https://github.com/Urigo/graphql-mesh/commit/baa4fbf82af4a8787b9cab8c99e9177e3491ecf8),
+  [`cf9c6d5e0`](https://github.com/Urigo/graphql-mesh/commit/cf9c6d5e00e41f2403bcb9ad1a6e403390ff3ec6)]:
+  - @graphql-mesh/types@0.86.0
+  - @graphql-mesh/utils@0.42.7
+
+## 0.0.29
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005),
+  [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a),
+  [`85e5071d0`](https://github.com/Urigo/graphql-mesh/commit/85e5071d084d5372830213511f55f4a30a17bb33),
+  [`d9c5c1195`](https://github.com/Urigo/graphql-mesh/commit/d9c5c119522a1c4cad455d62818e07a2b8f41005),
+  [`a764fe0d3`](https://github.com/Urigo/graphql-mesh/commit/a764fe0d36928cd830e79942f8ab57cd70d2602a),
+  [`85e5071d0`](https://github.com/Urigo/graphql-mesh/commit/85e5071d084d5372830213511f55f4a30a17bb33),
+  [`c55e68381`](https://github.com/Urigo/graphql-mesh/commit/c55e683816bd5668fa9e520e6e434363a2a78425)]:
+  - @graphql-mesh/types@0.85.7
+  - @graphql-mesh/utils@0.42.6
+
+## 0.0.28
+
+### Patch Changes
+
+- Updated dependencies
+  [[`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a),
+  [`f26714af8`](https://github.com/Urigo/graphql-mesh/commit/f26714af8afff2eb5384f7294f5d8856eb5cf20a)]:
+  - @graphql-mesh/types@0.85.6
+  - @graphql-mesh/utils@0.42.5
+
+## 0.0.27
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d5f2d950e`](https://github.com/Urigo/graphql-mesh/commit/d5f2d950e6318a74c062c9dbc436d5e9c0e8d59d)]:
+  - @graphql-mesh/utils@0.42.4
+  - @graphql-mesh/types@0.85.5
+
+## 0.0.26
+
+### Patch Changes
+
+- [#4748](https://github.com/Urigo/graphql-mesh/pull/4748)
+  [`305dd2262`](https://github.com/Urigo/graphql-mesh/commit/305dd2262054f4173384c0af8f90e8879411bbe0)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@3.0.3` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/3.0.3) (from
+    `3.0.2`, in `dependencies`)
+- Updated dependencies
+  [[`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd),
+  [`bfedc23d9`](https://github.com/Urigo/graphql-mesh/commit/bfedc23d978089d15d9b67320fde0e6f5ac762fd)]:
+  - @graphql-mesh/types@0.85.4
+  - @graphql-mesh/utils@0.42.3
+
+## 0.0.25
+
+### Patch Changes
+
+- [#4732](https://github.com/Urigo/graphql-mesh/pull/4732)
+  [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56)
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/utils@0.42.1` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.42.1)
+    (from `0.42.0`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/types@0.85.2` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.85.2)
+    (from `0.85.1`, in `dependencies`)
+- Updated dependencies
+  [[`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56),
+  [`704a0bd6e`](https://github.com/Urigo/graphql-mesh/commit/704a0bd6e904b4f46a24f8844834adb3bd501e56)]:
+  - @graphql-mesh/types@0.85.3
+  - @graphql-mesh/utils@0.42.2
+
+## 0.0.24
+
+### Patch Changes
+
+- Updated dependencies
+  [[`09c286994`](https://github.com/Urigo/graphql-mesh/commit/09c28699441cda92f79e4e9b8464e7be5f46a786)]:
+  - @graphql-mesh/types@0.85.2
+  - @graphql-mesh/utils@0.42.1
+
+## 0.0.23
+
+### Patch Changes
+
+- Updated dependencies
+  [[`398af2bf6`](https://github.com/Urigo/graphql-mesh/commit/398af2bf602182ca315bc8d99d2237ad1a16ee48),
+  [`1d61fbcec`](https://github.com/Urigo/graphql-mesh/commit/1d61fbcecb8d5b286bb1c2e727bdf7d233c566da)]:
+  - @graphql-mesh/types@0.85.1
+  - @graphql-mesh/utils@0.42.0
+
+## 0.0.22
+
+### Patch Changes
+
+- [#4296](https://github.com/Urigo/graphql-mesh/pull/4296)
+  [`a863ea13f`](https://github.com/Urigo/graphql-mesh/commit/a863ea13f0ce679c511a3646b158690cf35d6714)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@3.0.2` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/3.0.2) (from
+    `2.6.0`, in `dependencies`)
+
+- [#4691](https://github.com/Urigo/graphql-mesh/pull/4691)
+  [`8710a44f0`](https://github.com/Urigo/graphql-mesh/commit/8710a44f0cf62427f4e2f4e36d1477271c78160e)
+  Thanks [@renovate](https://github.com/apps/renovate)! - dependencies updates:
+  - Updated dependency
+    [`@envelop/statsd@3.0.2` ↗︎](https://www.npmjs.com/package/@envelop/statsd/v/3.0.2) (from
+    `2.6.0`, in `dependencies`)
+
+## 0.0.21
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6fb57d3ba`](https://github.com/Urigo/graphql-mesh/commit/6fb57d3ba6ce68e47d9f5dbf54e57d178441fa18),
+  [`814f2d516`](https://github.com/Urigo/graphql-mesh/commit/814f2d51692df593fcf368765e9c8a0ce99f46bd)]:
+  - @graphql-mesh/types@0.85.0
+  - @graphql-mesh/utils@0.41.22
+
+## 0.0.20
+
+### Patch Changes
+
+- Updated dependencies
+  [[`637e9e9d8`](https://github.com/Urigo/graphql-mesh/commit/637e9e9d8a702cf28cde48137a0f73bab7628f6d)]:
+  - @graphql-mesh/types@0.84.10
+  - @graphql-mesh/utils@0.41.21
+
+## 0.0.19
+
+### Patch Changes
+
+- Updated dependencies
+  [[`dd831a7d1`](https://github.com/Urigo/graphql-mesh/commit/dd831a7d1256400d1b7441cfb99b517cf856ce5b)]:
+  - @graphql-mesh/types@0.84.9
+  - @graphql-mesh/utils@0.41.20
+
+## 0.0.18
+
+### Patch Changes
+
+- Updated dependencies
+  [[`5b44abcd2`](https://github.com/Urigo/graphql-mesh/commit/5b44abcd2aaa765ee329539112d9dface063efa6)]:
+  - @graphql-mesh/utils@0.41.19
+  - @graphql-mesh/types@0.84.8
+
+## 0.0.17
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f),
+  [`ffb301435`](https://github.com/Urigo/graphql-mesh/commit/ffb3014353c17d23a03cf8001eba606c85c2043f)]:
+  - @graphql-mesh/types@0.84.7
+  - @graphql-mesh/utils@0.41.18
+
+## 0.0.16
+
+### Patch Changes
+
+- Updated dependencies
+  [[`31a64714a`](https://github.com/Urigo/graphql-mesh/commit/31a64714a3e47dc41b950b3e1cfd1a49e7ff2d8a),
+  [`31a64714a`](https://github.com/Urigo/graphql-mesh/commit/31a64714a3e47dc41b950b3e1cfd1a49e7ff2d8a)]:
+  - @graphql-mesh/types@0.84.6
+  - @graphql-mesh/utils@0.41.17
+
+## 0.0.15
+
+### Patch Changes
+
+- Updated dependencies
+  [[`88ab8f9ae`](https://github.com/Urigo/graphql-mesh/commit/88ab8f9ae32a4d0f52c978d625082abe075bebe4)]:
+  - @graphql-mesh/utils@0.41.16
+  - @graphql-mesh/types@0.84.5
+
+## 0.0.14
+
+### Patch Changes
+
+- Updated dependencies
+  [[`186e37bcd`](https://github.com/Urigo/graphql-mesh/commit/186e37bcd94c6eae16b30abd2f4c8b04d2ef422e)]:
+  - @graphql-mesh/utils@0.41.15
+  - @graphql-mesh/types@0.84.4
+
+## 0.0.13
+
+### Patch Changes
+
+- Updated dependencies
+  [[`93f4ed55d`](https://github.com/Urigo/graphql-mesh/commit/93f4ed55de7b9f2a55e11bf1df4ab7b4c59b3825)]:
+  - @graphql-mesh/utils@0.41.14
+  - @graphql-mesh/types@0.84.3
+
+## 0.0.12
+
+### Patch Changes
+
+- Updated dependencies
+  [[`ff251e4c7`](https://github.com/Urigo/graphql-mesh/commit/ff251e4c7654306d3030774447c991788768e148)]:
+  - @graphql-mesh/types@0.84.2
+  - @graphql-mesh/utils@0.41.13
+
+## 0.0.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.84.1
+  - @graphql-mesh/utils@0.41.12
+
+## 0.0.10
+
+### Patch Changes
+
+- Updated dependencies
+  [[`077e65c18`](https://github.com/Urigo/graphql-mesh/commit/077e65c1857aaefa2689f33decc9e72ded281c94),
+  [`ee1cb6f76`](https://github.com/Urigo/graphql-mesh/commit/ee1cb6f7620f71fd824e69f4171cfef6c5d51794)]:
+  - @graphql-mesh/types@0.84.0
+  - @graphql-mesh/utils@0.41.11
+
+## 0.0.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @graphql-mesh/types@0.83.5
+  - @graphql-mesh/utils@0.41.10
+
+## 0.0.8
+
+### Patch Changes
+
+- [#4439](https://github.com/Urigo/graphql-mesh/pull/4439)
+  [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2)
+  Thanks [@gilgardosh](https://github.com/gilgardosh)! - dependencies updates:
+  - Updated dependency
+    [`@graphql-mesh/utils@0.41.8` ↗︎](https://www.npmjs.com/package/@graphql-mesh/utils/v/0.41.8)
+    (from `0.41.2`, in `dependencies`)
+  - Updated dependency
+    [`@graphql-mesh/types@0.83.3` ↗︎](https://www.npmjs.com/package/@graphql-mesh/types/v/0.83.3)
+    (from `0.82.1`, in `dependencies`)
+
+- Updated dependencies
+  [[`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2),
+  [`78599180d`](https://github.com/Urigo/graphql-mesh/commit/78599180d76f71e6d23114a0115e6338785a44d2)]:
+  - @graphql-mesh/types@0.83.4
+  - @graphql-mesh/utils@0.41.9
+
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies
+  [[`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f),
+  [`6f52af1c2`](https://github.com/Urigo/graphql-mesh/commit/6f52af1c2d6bf0a9de555a4d535b459ff2d8987f)]:
+  - @graphql-mesh/types@0.83.3
+  - @graphql-mesh/utils@0.41.8
+
+## 0.0.6
+
+### Patch Changes
+
+- Updated dependencies
+  [[`d84f81d94`](https://github.com/Urigo/graphql-mesh/commit/d84f81d9487ce228125863b8b283adab75daff19)]:
+  - @graphql-mesh/utils@0.41.7
+  - @graphql-mesh/types@0.83.2
+
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies
+  [[`2a3753b5a`](https://github.com/Urigo/graphql-mesh/commit/2a3753b5a4bd23c7c89f4f08a3e55093e24902a8)]:
+  - @graphql-mesh/utils@0.41.6
+  - @graphql-mesh/types@0.83.1
+
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies
+  [[`a56ebcec5`](https://github.com/Urigo/graphql-mesh/commit/a56ebcec503402fbdb3d4e3561fd2e38e4dd5c43),
+  [`24afabece`](https://github.com/Urigo/graphql-mesh/commit/24afabece51aee171f902776d3f59b4a17026c49),
+  [`44b868196`](https://github.com/Urigo/graphql-mesh/commit/44b86819695a298e60b1d7b6c54ae2772e8f1588)]:
+  - @graphql-mesh/types@0.83.0
+  - @graphql-mesh/utils@0.41.5
+
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies
+  [[`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53),
+  [`9dac0d835`](https://github.com/Urigo/graphql-mesh/commit/9dac0d8355148d86d75bceb4c4983960e8063c53)]:
+  - @graphql-mesh/types@0.82.3
+  - @graphql-mesh/utils@0.41.4
+
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies
+  [[`b9bb80094`](https://github.com/Urigo/graphql-mesh/commit/b9bb8009407d27440267a5e9a7ec5dbfecc9bf8f)]:
+  - @graphql-mesh/types@0.82.2
+  - @graphql-mesh/utils@0.41.3
+
+## 0.0.1
+
+### Patch Changes
+
+- [#4422](https://github.com/Urigo/graphql-mesh/pull/4422)
+  [`3165827f7`](https://github.com/Urigo/graphql-mesh/commit/3165827f74b48a914b9604b024cd1318c211aa14)
+  Thanks [@ardatan](https://github.com/ardatan)! - 🚀🚀🚀 **New StatsD plugin** 🚀🚀🚀
+
+  You can learn more about tracing and monitoring in GraphQL with different plugins (StatsD,
+  Prometheus, NewRelic and more) in our documentation.
+  [Tracing and Monitoring in GraphQL Mesh](http://www.graphql-mesh.com/docs/guides/monitoring-and-tracing)
+
+- Updated dependencies
+  [[`3165827f7`](https://github.com/Urigo/graphql-mesh/commit/3165827f74b48a914b9604b024cd1318c211aa14)]:
+  - @graphql-mesh/types@0.82.1
+  - @graphql-mesh/utils@0.41.2

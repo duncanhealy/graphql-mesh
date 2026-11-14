@@ -1,12 +1,10 @@
 import * as React from 'react';
+import { DailyForecastFragment, getMeshSDK } from '../.mesh';
 import './App.css';
-import { useMeshSdk } from './useMeshSdk';
-import { getDailyForecastByCoordinatesQuery } from '../.mesh';
 
 function App() {
-  const [forecastData, setForecastData] = React.useState<getDailyForecastByCoordinatesQuery['forecastData']>();
-
-  const sdk = useMeshSdk();
+  const [forecastData, setForecastData] = React.useState<DailyForecastFragment>();
+  const sdk = getMeshSDK();
 
   React.useEffect(() => {
     sdk
@@ -16,14 +14,18 @@ function App() {
         apiKey: '88dcfb1c31054b3b8841d753f3245da9',
       })
       .then(({ forecastData }) => {
-        setForecastData(forecastData);
+        if (forecastData != null && 'city_name' in forecastData) {
+          setForecastData(forecastData);
+        } else {
+          console.error('No forecast data received', forecastData);
+        }
       });
-  }, [sdk]);
+  }, []);
 
   return (
     <div className="App">
       <header className="App-header">
-        <p>Daily Forecast for {forecastData?.cityName}</p>
+        <p>Daily Forecast for {forecastData?.city_name}</p>
         <table>
           <thead>
             <tr>
@@ -36,8 +38,8 @@ function App() {
             {forecastData?.data?.map(dailyData => (
               <tr key={dailyData?.datetime}>
                 <td>{dailyData?.datetime}</td>
-                <td>{dailyData?.minTemp}</td>
-                <td>{dailyData?.maxTemp}</td>
+                <td>{dailyData?.min_temp}</td>
+                <td>{dailyData?.max_temp}</td>
               </tr>
             ))}
           </tbody>

@@ -1,0 +1,6 @@
+sources:
+  - name: Swapi
+    handler:
+      openapi:
+        source: ./swagger/pets.json
+        endpoint: http://localhost:{context.headers['x-upstream-port']:4001}

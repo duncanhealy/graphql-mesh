@@ -2,9 +2,131 @@ type Cache {
   redis: RedisConfig
 }
 
-type RedisConfig @md {
-  host: String
-  port: Int
+union RedisConfig @md = RedisConfigSentinel | RedisConfigSingle | RedisConfigCluster
+
+"""
+AWS IAM authentication configuration for ElastiCache or MemoryDB.
+"""
+type RedisIamAuthConfig @md {
+  """
+  AWS region where the ElastiCache or MemoryDB cluster is deployed.
+  """
+  region: String!
+  """
+  The ElastiCache or MemoryDB cluster name (used as the host in the SigV4 presigned URL).
+  """
+  clusterName: String!
+  """
+  The IAM-enabled Redis username. Must match the ElastiCache or MemoryDB user id exactly.
+  """
+  userId: String!
+  """
+  The AWS service name to sign for. Use "elasticache" for ElastiCache, "memorydb" for MemoryDB.
+
+  @default: elasticache
+  """
+  serviceName: String
+  """
+  Token expiry in seconds. Maximum is 900 (15 minutes).
+
+  @default: 900
+  """
+  tokenExpirySeconds: Int
+}
+
+type RedisConfigCluster @md {
+  startupNodes: [RedisSentinelConfig!]!
+  username: String
   password: String
+  db: Int
+  """
+  Flag to indicate lazyConnect value for Redis client.
+
+  @default: true
+  """
+  lazyConnect: Boolean
+  """
+  Needed for TLS connections to Redis Cluster (especially when using AWS Elasticache Clusters with TLS).
+
+  @see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls
+  """
+  dnsLookupAsIs: Boolean
+  """
+  Enable TLS for Redis Cluster connections. Required for AWS Elasticache Clusters with TLS.
+
+  @see https://github.com/redis/ioredis?tab=readme-ov-file#special-note-aws-elasticache-clusters-with-tls
+  """
+  tls: Boolean
+  """
+  AWS IAM authentication for ElastiCache or MemoryDB. Requires Redis 7+ with an IAM-enabled user.
+  When configured, a short-lived SigV4 token is used as the Redis password and is automatically refreshed.
+  Requires `@smithy/signature-v4` and `@aws-sdk/credential-providers` to be installed.
+
+  @see https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/auth-iam.html
+  """
+  iamAuth: RedisIamAuthConfig
+}
+
+type RedisConfigSentinel @md {
+  """
+  identifies a group of Redis instances composed of a master and one or more slaves
+  """
+  name: String!
+  """
+  (optional) password for Sentinel instances.
+  """
+  sentinelPassword: String
+  """
+  A list of sentinels to connect to. The list does not need to enumerate all your sentinel instances, but a few so that if one is down the client will try the next one.
+  """
+  sentinels: [RedisSentinelConfig!]!
+  """
+  (optional) with a value of slave will return a random slave from the Sentinel group.
+  """
+  role: RedisSentinelRole
+  """
+  (optional) set to true if connecting to sentinel instances that are encrypted
+  """
+  enableTLSForSentinelMode: Boolean
+  """
+  Flag to indicate lazyConnect value for Redis client.
+
+  @default: true
+  """
+  lazyConnect: Boolean
+}
+
+enum RedisSentinelRole {
+  master
+  slave
+}
+
+type RedisSentinelConfig @md {
+  host: String!
+  port: String!
+  family: String
+}
+
+type RedisConfigSingle @md {
+  host: String
+  port: String
+  username: String
+  password: String
+  db: Int
   url: String
+  family: String
+  """
+  Flag to indicate lazyConnect value for Redis client.
+
+  @default: true
+  """
+  lazyConnect: Boolean
+  """
+  AWS IAM authentication for ElastiCache or MemoryDB. Requires Redis 7+ with an IAM-enabled user.
+  When configured, a short-lived SigV4 token is used as the Redis password and is automatically refreshed.
+  Requires `@smithy/signature-v4` and `@aws-sdk/credential-providers` to be installed.
+
+  @see https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/auth-iam.html
+  """
+  iamAuth: RedisIamAuthConfig
 }

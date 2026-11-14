@@ -1,55 +1,460 @@
-import RedisCache from '../src';
+/* eslint-disable no-new */
 import Redis from 'ioredis';
+import { dummyLogger as log } from '../../../testing/dummyLogger';
+import { buildIamRedisOptions, generateIamToken, setupIamAuthForCluster } from '../src/iam.js';
+import RedisCache from '../src/index.js';
 
-jest.mock('ioredis');
+jest.mock('ioredis', () => {
+  const actual = jest.requireActual<Redis>('ioredis');
+  const mockInstance = () => ({ disconnect: jest.fn(), on: jest.fn(), once: jest.fn() });
+  const MockRedis = jest.fn().mockImplementation(mockInstance);
+  (MockRedis as any).Cluster = jest.fn().mockImplementation(mockInstance);
+  return {
+    __esModule: true,
+    ...actual,
+    default: MockRedis,
+    Redis: MockRedis,
+  };
+});
+
+jest.mock('@smithy/signature-v4', () => ({
+  SignatureV4: jest.fn().mockImplementation(() => ({
+    presign: jest.fn().mockResolvedValue({
+      protocol: 'http:',
+      hostname: 'my-cluster',
+      path: '/',
+      query: {
+        Action: 'connect',
+        User: 'iam-user-01',
+        'X-Amz-Signature': 'abc123',
+      },
+    }),
+  })),
+}));
+
+jest.mock('@aws-sdk/credential-providers', () => ({
+  fromNodeProviderChain: jest
+    .fn()
+    .mockReturnValue(async () => ({ accessKeyId: 'AKIA_TEST', secretAccessKey: 'secret' })),
+}));
+
+jest.mock('@aws-crypto/sha256-js', () => ({
+  Sha256: jest.fn(),
+}));
+
+jest.mock('@aws-sdk/util-format-url', () => ({
+  formatUrl: jest
+    .fn()
+    .mockReturnValue('http://my-cluster/?Action=connect&User=iam-user-01&X-Amz-Signature=abc123'),
+}));
+
+jest.mock('@smithy/protocol-http', () => ({
+  HttpRequest: jest.fn().mockImplementation((opts: object) => opts),
+}));
 
 describe('redis', () => {
   beforeEach(() => jest.clearAllMocks());
 
   describe('constructor', () => {
-    it('passes configuration to redis client with default options, no config', async () => {
-      new RedisCache();
+    let redisUrlEnv: string;
+    let redisHostEnv: string;
+    let redisPortEnv: string;
+    let redisPasswordEnv: string;
+    beforeAll(() => {
+      redisUrlEnv = globalThis.process?.env?.REDIS_URL;
+      redisHostEnv = globalThis.process?.env?.REDIS_HOST;
+      redisPortEnv = globalThis.process?.env?.REDIS_PORT;
+      redisPasswordEnv = globalThis.process?.env?.REDIS_PASSWORD;
+      delete globalThis.process?.env?.REDIS_URL;
+      delete globalThis.process?.env?.REDIS_HOST;
+      delete globalThis.process?.env?.REDIS_PORT;
+      delete globalThis.process?.env?.REDIS_PASSWORD;
+    });
+    afterAll(() => {
+      globalThis.process!.env!.REDIS_URL = redisUrlEnv;
+      globalThis.process!.env!.REDIS_HOST = redisHostEnv;
+      globalThis.process!.env!.REDIS_PORT = redisPortEnv;
+      globalThis.process!.env!.REDIS_PASSWORD = redisPasswordEnv;
+    });
+    it('never call Redis constructor if no config is provided', async () => {
+      using redis = new RedisCache({ log });
 
-      expect(Redis).toHaveBeenCalledWith({
-        enableAutoPipelining: true,
-        lazyConnect: true,
-        password: undefined,
-        host: undefined,
-        port: undefined,
-      });
+      expect(Redis).toHaveBeenCalledTimes(0);
     });
 
     it('passes configuration to redis client with default options, url case', async () => {
-      new RedisCache({ url: 'redis://password@localhost:6379' });
+      using redis = new RedisCache({ url: 'redis://password@localhost:6379', log });
 
-      expect(Redis).toHaveBeenCalledWith('redis://password@localhost:6379?lazyConnect=true&enableAutoPipelining=true');
+      expect(Redis).toHaveBeenCalledWith(
+        'redis://password@localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
+      );
+    });
+
+    it('passes configuration to redis client with default options, url and lazyConnect (=false) case', async () => {
+      using redis = new RedisCache({
+        url: 'redis://password@localhost:6379',
+        lazyConnect: false,
+        log,
+      });
+
+      expect(Redis).toHaveBeenCalledWith(
+        'redis://password@localhost:6379?enableAutoPipelining=true&enableOfflineQueue=true',
+      );
+    });
+
+    it('passes configuration to redis client with default options, url and lazyConnect (=true) case', async () => {
+      using redis = new RedisCache({
+        url: 'redis://password@localhost:6379',
+        lazyConnect: true,
+        log,
+      });
+
+      expect(Redis).toHaveBeenCalledWith(
+        'redis://password@localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
+      );
     });
 
     it('passes configuration to redis client with default options, host, port & password case', async () => {
-      new RedisCache({ port: '6379', password: 'testpassword', host: 'localhost' });
+      using redis = new RedisCache({
+        port: '6379',
+        password: 'testpassword',
+        host: 'localhost',
+        log,
+      });
 
       expect(Redis).toHaveBeenCalledWith({
         enableAutoPipelining: true,
+        enableOfflineQueue: true,
         host: 'localhost',
         lazyConnect: true,
         password: 'testpassword',
+        port: 6379,
+      });
+    });
+
+    it('passes configuration to redis client with default options, host, port, password & lazyConnect (=false) case', async () => {
+      using redis = new RedisCache({
         port: '6379',
+        password: 'testpassword',
+        host: 'localhost',
+        lazyConnect: false,
+        log,
+      });
+
+      expect(Redis).toHaveBeenCalledWith({
+        enableAutoPipelining: true,
+        enableOfflineQueue: true,
+        host: 'localhost',
+        password: 'testpassword',
+        port: 6379,
       });
     });
 
     it('prefers url over specific properties if both given', () => {
-      new RedisCache({ url: 'redis://localhost:6379', host: 'ignoreme', port: '9999' });
+      using redis = new RedisCache({
+        url: 'redis://localhost:6379',
+        host: 'ignoreme',
+        port: '9999',
+        log,
+      });
 
-      expect(Redis).toHaveBeenCalledWith('redis://localhost:6379?lazyConnect=true&enableAutoPipelining=true');
+      expect(Redis).toHaveBeenCalledWith(
+        'redis://localhost:6379?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
+      );
     });
 
     it.each(['http://', 'https://', 'ftp://', null, undefined])(
       'throws an error if protocol does not match [%s]',
       protocol => {
         expect(() => {
-          new RedisCache({ url: `${protocol}localhost:6379` });
-        }).toThrowError('Redis URL must use either redis:// or rediss://');
-      }
+          using redis = new RedisCache({ url: `${protocol}localhost:6379`, log });
+        }).toThrow('Redis URL must use either redis:// or rediss://');
+      },
     );
+  });
+
+  describe('String interpolation', () => {
+    beforeAll(() => {
+      globalThis.process!.env!.REDIS_URL = 'redis://myredis.com:9876';
+      globalThis.process!.env!.REDIS_HOST = 'myredis.com';
+      globalThis.process!.env!.REDIS_PORT = '9876';
+      globalThis.process!.env!.REDIS_PASSWORD = 'myredispassword';
+    });
+    afterAll(() => {
+      delete globalThis.process?.env?.REDIS_URL;
+      delete globalThis.process?.env?.REDIS_HOST;
+      delete globalThis.process?.env?.REDIS_PORT;
+      delete globalThis.process?.env?.REDIS_PASSWORD;
+    });
+    it('supports string interpolation for url', async () => {
+      using redis = new RedisCache({
+        url: '{env.REDIS_URL}',
+        log,
+      });
+      expect(Redis).toHaveBeenCalledWith(
+        'redis://myredis.com:9876?lazyConnect=true&enableAutoPipelining=true&enableOfflineQueue=true',
+      );
+    });
+    it('supports string interpolation for host, port and password', async () => {
+      using redis = new RedisCache({
+        host: '{env.REDIS_HOST}',
+        port: '{env.REDIS_PORT}',
+        password: '{env.REDIS_PASSWORD}',
+        log,
+      });
+      expect(Redis).toHaveBeenCalledWith({
+        enableAutoPipelining: true,
+        enableOfflineQueue: true,
+        host: 'myredis.com',
+        lazyConnect: true,
+        password: 'myredispassword',
+        port: 9876,
+      });
+    });
+  });
+
+  describe('IAM authentication', () => {
+    it('passes Connector and tokenConnector to Redis when iamAuth is configured with host/port', async () => {
+      using _redis = new RedisCache({
+        host: 'my-cluster.abc123.use1.cache.amazonaws.com',
+        port: '6379',
+        username: 'iam-user-01',
+        log,
+        iamAuth: {
+          region: 'us-east-1',
+          clusterName: 'my-cluster',
+          userId: 'iam-user-01',
+        },
+      });
+
+      expect(Redis).toHaveBeenCalledTimes(1);
+      expect(Redis).toHaveBeenCalledWith(
+        expect.objectContaining({
+          host: 'my-cluster.abc123.use1.cache.amazonaws.com',
+          port: 6379,
+          username: 'iam-user-01',
+          Connector: expect.any(Function),
+          tokenConnector: expect.objectContaining({
+            getToken: expect.any(Function),
+            redisRef: expect.objectContaining({ current: expect.any(Object) }),
+          }),
+        }),
+      );
+    });
+
+    it('passes Connector and tokenConnector to Redis when iamAuth is configured with url', async () => {
+      using _redis = new RedisCache({
+        url: 'rediss://iam-user-01@my-cluster.abc123.use1.cache.amazonaws.com:6379',
+        log,
+        iamAuth: {
+          region: 'us-east-1',
+          clusterName: 'my-cluster',
+          userId: 'iam-user-01',
+        },
+      });
+
+      expect(Redis).toHaveBeenCalledTimes(1);
+      expect(Redis).toHaveBeenCalledWith(
+        expect.stringContaining('rediss://'),
+        expect.objectContaining({
+          Connector: expect.any(Function),
+          tokenConnector: expect.objectContaining({
+            getToken: expect.any(Function),
+            redisRef: expect.objectContaining({ current: expect.any(Object) }),
+          }),
+        }),
+      );
+    });
+
+    it('installs password getter on redisOptions for cluster iamAuth', async () => {
+      const redisOptions = { enableAutoPipelining: true };
+      const mockCluster = { nodes: () => [] } as any;
+      const cfg = {
+        region: 'us-east-1',
+        clusterName: 'my-cluster',
+        userId: 'iam-user-01',
+        tokenExpirySeconds: 900,
+      };
+
+      const timer = await setupIamAuthForCluster(mockCluster, redisOptions, cfg, undefined);
+
+      const descriptor = Object.getOwnPropertyDescriptor(redisOptions, 'password');
+      expect(typeof descriptor?.get).toBe('function');
+      expect(typeof descriptor?.set).toBe('function');
+
+      clearInterval(timer);
+    });
+
+    it('token is populated before setupIamAuthForCluster resolves', async () => {
+      // simulates a slow token generation - if the old fire-and-forget approach were used,
+      // the password getter would still return '' when the caller tries to connect
+      const tokenDelay = 50;
+      let generateIamTokenCallCount = 0;
+
+      const { SignatureV4 } = await import('@smithy/signature-v4');
+      (SignatureV4 as jest.Mock).mockImplementationOnce(() => ({
+        presign: jest.fn().mockImplementation(
+          () =>
+            new Promise(resolve =>
+              setTimeout(() => {
+                generateIamTokenCallCount++;
+                resolve({
+                  protocol: 'http:',
+                  hostname: 'my-cluster',
+                  path: '/',
+                  query: { Action: 'connect', User: 'redis', 'X-Amz-Signature': 'delayed123' },
+                });
+              }, tokenDelay),
+            ),
+        ),
+      }));
+
+      const { formatUrl } = await import('@aws-sdk/util-format-url');
+      (formatUrl as jest.Mock).mockReturnValueOnce(
+        'http://my-cluster/?Action=connect&User=redis&X-Amz-Signature=delayed123',
+      );
+
+      const redisOptions: Record<string, unknown> = { enableAutoPipelining: true };
+      const mockCluster = { nodes: () => [] } as any;
+      const cfg = {
+        region: 'us-east-1',
+        clusterName: 'my-cluster',
+        userId: 'redis',
+        tokenExpirySeconds: 900,
+      };
+
+      // await ensures the token is ready before this line returns
+      const timer = await setupIamAuthForCluster(mockCluster, redisOptions, cfg, 'redis');
+
+      // password getter must already return the generated token, not ''
+      expect(generateIamTokenCallCount).toBe(1);
+      expect(redisOptions['password']).toBe(
+        'my-cluster/?Action=connect&User=redis&X-Amz-Signature=delayed123',
+      );
+
+      clearInterval(timer);
+    });
+
+    it('updates cluster node options so reconnects use the refreshed token', async () => {
+      jest.useFakeTimers();
+      const { formatUrl } = await import('@aws-sdk/util-format-url');
+      (formatUrl as jest.Mock)
+        .mockReturnValueOnce('http://my-cluster/?token=initial')
+        .mockReturnValueOnce('http://my-cluster/?token=refreshed');
+      const node = {
+        options: { username: 'redis', password: 'old-token' },
+        condition: { auth: ['redis', 'old-token'] },
+      };
+      const mockCluster = { nodes: () => [node] } as any;
+
+      const timer = await setupIamAuthForCluster(
+        mockCluster,
+        {},
+        {
+          region: 'us-east-1',
+          clusterName: 'my-cluster',
+          userId: 'redis',
+          tokenExpirySeconds: 60,
+        },
+        'redis',
+      );
+
+      await jest.advanceTimersByTimeAsync(48_000);
+
+      expect(node.options.password).toBe('my-cluster/?token=refreshed');
+      expect(node.condition.auth).toEqual(['redis', 'my-cluster/?token=refreshed']);
+
+      // mirrors Redis._connect rebuilding condition.auth from node.options
+      node.condition.auth = [node.options.username, node.options.password];
+      expect(node.condition.auth).toEqual(['redis', 'my-cluster/?token=refreshed']);
+
+      clearInterval(timer);
+      jest.useRealTimers();
+    });
+
+    it('IamTokenConnector.connect injects token into condition.auth (password-only)', async () => {
+      const token = 'test-iam-token';
+      const mockRedis = { condition: { auth: undefined, select: 0, subscriber: false } } as any;
+      const redisRef = { current: mockRedis };
+      const mockStream = {} as any;
+      const mockEmitter = jest.fn();
+      const iamCfg = { region: 'us-east-1', clusterName: 'my-cluster', userId: 'iam-user-01' };
+
+      const opts = buildIamRedisOptions({ host: 'localhost', port: 6379 }, iamCfg, redisRef) as any;
+      const connector = new opts.Connector({
+        host: 'localhost',
+        port: 6379,
+        tokenConnector: {
+          redisRef,
+          getToken: async () => token,
+        },
+      });
+
+      // stub createStream so no real TCP connection is made
+      jest.spyOn(connector as any, 'createStream').mockResolvedValue(mockStream);
+
+      await connector.connect(mockEmitter);
+
+      expect(mockRedis.condition.auth).toBe(token);
+    });
+
+    it('IamTokenConnector.connect injects token into condition.auth (username+password)', async () => {
+      const token = 'test-iam-token';
+      const mockRedis = {
+        condition: { auth: ['iam-user-01', 'old-token'], select: 0, subscriber: false },
+      } as any;
+      const redisRef = { current: mockRedis };
+      const mockStream = {} as any;
+      const mockEmitter = jest.fn();
+      const iamCfg = { region: 'us-east-1', clusterName: 'my-cluster', userId: 'iam-user-01' };
+
+      const opts = buildIamRedisOptions({ host: 'localhost', port: 6379 }, iamCfg, redisRef) as any;
+      const connector = new opts.Connector({
+        host: 'localhost',
+        port: 6379,
+        tokenConnector: {
+          redisRef,
+          getToken: async () => token,
+        },
+      });
+
+      // stub createStream so no real TCP connection is made
+      jest.spyOn(connector as any, 'createStream').mockResolvedValue(mockStream);
+
+      await connector.connect(mockEmitter);
+
+      expect(mockRedis.condition.auth).toEqual(['iam-user-01', token]);
+    });
+
+    it('generateIamToken returns token without protocol prefix containing required query params', async () => {
+      const token = await generateIamToken({
+        region: 'us-east-1',
+        clusterName: 'my-cluster',
+        userId: 'iam-user-01',
+      });
+
+      expect(token).not.toMatch(/^https?:\/\//);
+      expect(token).toMatch(/^my-cluster/);
+      expect(token).toContain('Action=connect');
+      expect(token).toContain('User=iam-user-01');
+    });
+  });
+
+  describe('methods', () => {
+    it('get/set/delete', async () => {
+      using redis = new RedisCache({ log });
+      const key = 'key';
+      const value = 'value';
+      await redis.set(key, value);
+      await expect(redis.get(key)).resolves.toBe(value);
+      await redis.delete(key);
+      await expect(redis.get(key)).resolves.toBeUndefined();
+    });
+    it('getKeysByPrefix', async () => {
+      using redis = new RedisCache({ log });
+      const keys = ['foo1', 'foo2', 'foo3'];
+      await Promise.all(keys.map((key, i) => redis.set(key, `value${i}`)));
+      await expect(redis.getKeysByPrefix('foo')).resolves.toEqual(keys);
+    });
   });
 });

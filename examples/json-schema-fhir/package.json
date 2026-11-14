@@ -1,20 +1,23 @@
 {
-  "name": "json-schema-fhir",
-  "version": "0.0.108",
+  "name": "@examples/json-schema-fhir",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "download-fhir-schema": "node scripts/download-fhir-schema.js",
-    "prebuild": "yarn download-fhir-schema",
     "build": "mesh build",
-    "start": "mesh start",
-    "predev": "yarn download-fhir-schema",
-    "dev": "mesh dev"
+    "download-fhir-schema": "ts-node scripts/download-fhir-schema.ts",
+    "start": "mesh dev",
+    "start:prod": "mesh start"
   },
   "dependencies": {
-    "@graphql-mesh/cli": "0.38.0",
-    "@graphql-mesh/json-schema": "0.18.3",
-    "graphql": "15.5.0",
-    "unzip-stream": "0.3.1"
+    "@graphql-mesh/cli": "0.103.4",
+    "@graphql-mesh/json-schema": "0.112.6",
+    "graphql": "16.14.0",
+    "unzip-stream": "0.3.4"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "@types/unzip-stream": "0.3.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
   }
 }

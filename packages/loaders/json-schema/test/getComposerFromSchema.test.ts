@@ -1,0 +1,1736 @@
+import {
+  execute,
+  getNamedType,
+  GraphQLBoolean,
+  GraphQLFloat,
+  GraphQLInt,
+  GraphQLString,
+  isEnumType,
+  isListType,
+  isNonNullType,
+  isObjectType,
+  isScalarType,
+  parse,
+  printType,
+} from 'graphql';
+import {
+  EnumTypeComposer,
+  NonNullComposer,
+  ObjectTypeComposer,
+  SchemaComposer,
+  type InputTypeComposer,
+  type ListComposer,
+  type ScalarTypeComposer,
+  type UnionTypeComposer,
+} from 'graphql-compose';
+import {
+  GraphQLBigInt,
+  GraphQLDateTime,
+  GraphQLEmailAddress,
+  GraphQLIPv4,
+  GraphQLIPv6,
+  GraphQLJSON,
+  GraphQLTime,
+  GraphQLURL,
+  GraphQLUUID,
+} from 'graphql-scalars';
+import type { JSONSchemaObject } from 'json-machete';
+import { Logger } from '@graphql-hive/logger';
+import { MemPubSub, type PubSub } from '@graphql-hive/pubsub';
+import { processDirectives, processScalarType } from '@graphql-mesh/transport-rest';
+import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import type { JSONSchema } from '@json-schema-tools/meta-schema';
+import { fetch } from '@whatwg-node/fetch';
+import { dummyLogger as log } from '../../../testing/dummyLogger';
+import { getComposerFromJSONSchema } from '../src/getComposerFromJSONSchema.js';
+
+describe('getComposerFromJSONSchema', () => {
+  const pubsub = new MemPubSub() as PubSub;
+  it('should return JSON scalar if given schema is boolean true', async () => {
+    const result = await getComposerFromJSONSchema({ subgraphName: 'Test', schema: true, log });
+    expect(result.input.getType()).toBe(GraphQLJSON);
+    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLJSON);
+  });
+  it('should generate a new scalar type that validates the value against the given pattern in string schema', async () => {
+    const pattern = '^\\d{10}$';
+    const title = 'ExampleRegEx';
+    const inputSchema: JSONSchema = {
+      title,
+      type: 'string',
+      pattern,
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    // Scalar types are both input and output types
+    expect(result.input).toBe(result.output);
+    const outputComposer = result.output as ScalarTypeComposer;
+    const scalarType = outputComposer.getType();
+    expect(scalarType).toBeTruthy();
+    expect(scalarType.name).toBe(title);
+    const executableScalarType = processScalarType(scalarType);
+    expect(() => executableScalarType.serialize('not-valid-phone-number')).toThrow();
+    expect(executableScalarType.serialize('1231231234')).toBe('1231231234');
+  });
+  it('should generate a new scalar type that validates the value against the given const in string schema', async () => {
+    const constStr = 'FOO';
+    const title = 'ExampleConst';
+    const inputSchema: JSONSchema = {
+      title,
+      type: 'string',
+      const: constStr,
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    // Scalar types are both input and output types
+    expect(result.input).toBe(result.output);
+    const outputComposer = result.output as EnumTypeComposer;
+    const enumType = outputComposer.getType();
+    expect(isEnumType(enumType)).toBeTruthy();
+    expect(outputComposer.getTypeName()).toBe(title);
+    expect(() => enumType.parseValue('bar')).toThrow();
+    expect(enumType.parseValue(constStr)).toBe(constStr);
+  });
+  it('should generate a new enum type from enum schema', async () => {
+    const enumValues = ['foo', 'bar', 'qux'];
+    const title = 'ExampleEnum';
+    const inputSchema: JSONSchema = {
+      title,
+      type: 'string',
+      enum: enumValues,
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    // Enum types are both input and output types
+    expect(result.input).toBe(result.output);
+    const outputComposer = result.output as EnumTypeComposer;
+    expect(outputComposer.toSDL()).toBe(
+      /* GraphQL */ `
+enum ExampleEnum {
+  foo
+  bar
+  qux
+}`.trim(),
+    );
+  });
+  it('should generate a new enum type from enum schema by sanitizing enum keys', async () => {
+    const enumValues = ['0-foo', '1+bar', '2)qux'];
+    const title = 'ExampleEnum';
+    const inputSchema: JSONSchema = {
+      title,
+      type: 'string',
+      enum: enumValues,
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    // Enum types are both input and output types
+    expect(result.input).toBe(result.output);
+    const outputComposer = result.output as EnumTypeComposer;
+    expect(outputComposer.toSDL()).toMatchInlineSnapshot(`
+      "enum ExampleEnum {
+        _0_foo @enum(subgraph: "Test", value: "\\"0-foo\\"")
+        _1_PLUS_bar @enum(subgraph: "Test", value: "\\"1+bar\\"")
+        _2_RIGHT_PARENTHESIS_qux @enum(subgraph: "Test", value: "\\"2)qux\\"")
+      }"
+    `);
+  });
+  it('should generate union types from oneOf object types', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'User',
+      type: 'object',
+      oneOf: [
+        {
+          title: 'Writer',
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+            },
+            name: {
+              type: 'string',
+            },
+            posts: {
+              type: 'array',
+              items: {
+                title: 'Post',
+                type: 'object',
+                properties: {
+                  id: {
+                    type: 'string',
+                  },
+                  title: {
+                    type: 'string',
+                  },
+                  content: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          title: 'Admin',
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+            },
+            name: {
+              type: 'string',
+            },
+            permissions: {
+              type: 'array',
+              items: {
+                title: 'AdminPermission',
+                type: 'string',
+                enum: ['edit', 'delete'],
+              },
+            },
+          },
+        },
+      ],
+    };
+    const outputSchema = /* GraphQL */ `
+union User = Writer | Admin
+
+type Writer {
+  id: String
+  name: String
+  posts: [Post]
+}
+
+${printType(GraphQLString)}
+
+type Post {
+  id: String
+  title: String
+  content: String
+}
+
+type Admin {
+  id: String
+  name: String
+  permissions: [AdminPermission]
+}
+
+enum AdminPermission {
+  edit
+  delete
+}
+    `.trim();
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const unionComposer = result.output as UnionTypeComposer;
+    expect(
+      unionComposer.toSDL({
+        deep: true,
+      }),
+    ).toBe(outputSchema);
+  });
+  it('should generate an input union type for oneOf definitions that contain scalar types', async () => {
+    const title = 'ExampleOneOf';
+    const inputSchema: JSONSchema = {
+      title,
+      oneOf: [
+        {
+          type: 'string',
+        },
+        {
+          type: 'object',
+          title: 'ExampleObject',
+          properties: {
+            id: {
+              type: 'string',
+            },
+          },
+        },
+      ],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(
+      (result.input as InputTypeComposer).toSDL({
+        deep: true,
+      }),
+    ).toBe(
+      /* GraphQL */ `
+input ExampleOneOf_Input @oneOf(subgraph: "Test") {
+  String: String
+  ExampleObject_Input: ExampleObject_Input
+}
+
+${printType(GraphQLString)}
+
+input ExampleObject_Input {
+  id: String
+}
+    `.trim(),
+    );
+  });
+  it('should generate merged object types from allOf definitions', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'ExampleAllOf',
+      allOf: [
+        {
+          type: 'object',
+          title: 'Foo',
+          properties: {
+            id: {
+              type: 'string',
+            },
+          },
+          required: ['id'],
+        },
+        {
+          type: 'object',
+          title: 'Bar',
+          properties: {
+            name: {
+              type: 'string',
+            },
+          },
+          required: ['name'],
+        },
+      ],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect((result.input as InputTypeComposer).toSDL()).toBe(
+      /* GraphQL */ `
+input ExampleAllOf_Input {
+  id: String!
+  name: String!
+}
+    `.trim(),
+    );
+    expect((result.output as InputTypeComposer).toSDL()).toBe(
+      /* GraphQL */ `
+type ExampleAllOf {
+  id: String!
+  name: String!
+}
+    `.trim(),
+    );
+  });
+
+  it('should generate deeply-merged object types from allOf definitions', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'ExampleAllOf',
+      allOf: [
+        {
+          type: 'object',
+          title: 'Foo',
+          properties: {
+            attributes: {
+              type: 'object',
+              title: 'Attributes',
+              properties: {
+                id: {
+                  type: 'string',
+                },
+                age: {
+                  type: 'number',
+                },
+                address: {
+                  type: 'object',
+                  title: 'Address',
+                  properties: {
+                    street: {
+                      type: 'string',
+                    },
+                    number: {
+                      type: 'number',
+                    },
+                  },
+                },
+              },
+              required: ['id'],
+            },
+          },
+        },
+        {
+          type: 'object',
+          title: 'Bar',
+          properties: {
+            attributes: {
+              type: 'object',
+              title: 'Attributes',
+              properties: {
+                name: {
+                  type: 'string',
+                },
+                age: {
+                  type: 'string', // Overriding type
+                },
+                address: {
+                  type: 'object',
+                  title: 'Address',
+                  properties: {
+                    number: {
+                      type: 'string', // Overriding type
+                    },
+                    zipCode: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+              required: ['name'],
+            },
+          },
+        },
+      ],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(
+      (result.input as InputTypeComposer).toSDL({
+        deep: true,
+        omitDescriptions: true,
+        omitScalars: true,
+      }),
+    ).toContain(
+      /* GraphQL */ `
+input ExampleAllOf_Input {
+  attributes: Attributes_Input
+}
+
+input Attributes_Input {
+  id: String!
+  age: String
+  address: Address_Input
+  name: String!
+}
+
+input Address_Input {
+  street: String
+  number: String
+  zipCode: String
+}
+    `.trim(),
+    );
+    expect(
+      (result.output as InputTypeComposer).toSDL({
+        deep: true,
+        omitDescriptions: true,
+        omitScalars: true,
+      }),
+    ).toContain(
+      /* GraphQL */ `
+type ExampleAllOf {
+  attributes: Attributes
+}
+
+type Attributes {
+  id: String!
+  age: String
+  address: Address
+  name: String!
+}
+
+type Address {
+  street: String
+  number: String
+  zipCode: String
+}
+    `.trim(),
+    );
+  });
+
+  it('should generate container types and fields for allOf definitions that contain scalar types', async () => {
+    const title = 'ExampleAllOf';
+    const inputSchema: JSONSchema = {
+      title,
+      allOf: [
+        {
+          type: 'string',
+        },
+        {
+          type: 'object',
+          title: 'ExampleObject',
+          properties: {
+            id: {
+              type: 'string',
+            },
+          },
+        },
+      ],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const outputComposer = result.output as ObjectTypeComposer;
+    expect(isObjectType(outputComposer.getType())).toBeTruthy();
+    expect(outputComposer.getTypeName()).toBe(title);
+    expect(outputComposer.getFieldNames().includes('String')).toBeTruthy();
+    expect(outputComposer.getFieldNames().includes('id')).toBeTruthy();
+  });
+  it('should generate correct types for anyOf definitions', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'ExampleAnyOf',
+      anyOf: [
+        {
+          type: 'object',
+          title: 'Foo',
+          properties: {
+            id: {
+              type: 'string',
+            },
+          },
+          required: ['id'],
+        },
+        {
+          type: 'object',
+          title: 'Bar',
+          properties: {
+            name: {
+              type: 'string',
+            },
+          },
+          required: ['name'],
+        },
+      ],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect((result.input as InputTypeComposer).toSDL()).toBe(
+      /* GraphQL */ `
+input ExampleAnyOf_Input {
+  id: String!
+  name: String!
+}
+    `.trim(),
+    );
+    expect((result.output as InputTypeComposer).toSDL()).toBe(
+      /* GraphQL */ `
+type ExampleAnyOf {
+  id: String!
+  name: String!
+}
+    `.trim(),
+    );
+  });
+  it('should generate container types and fields for anyOf definitions that contain scalar types', async () => {
+    const title = 'ExampleAnyOf';
+    const inputSchema: JSONSchema = {
+      title,
+      allOf: [
+        {
+          type: 'string',
+        },
+        {
+          type: 'object',
+          title: 'ExampleObject',
+          properties: {
+            id: {
+              type: 'string',
+            },
+          },
+        },
+      ],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const outputComposer = result.output as ObjectTypeComposer;
+    expect(isObjectType(outputComposer.getType())).toBeTruthy();
+    expect(outputComposer.getTypeName()).toBe(title);
+    expect(outputComposer.getFieldNames().includes('String')).toBeTruthy();
+    expect(outputComposer.getFieldNames().includes('id')).toBeTruthy();
+  });
+  it('should return Boolean for boolean definition', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'boolean',
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+
+    expect(result.input.getType()).toBe(GraphQLBoolean);
+    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLBoolean);
+  });
+  it('should return Void for null definition', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'null',
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+
+    expect(result.input.getType().name).toBe('Void');
+    expect((result.output as ScalarTypeComposer).getType().name).toBe('Void');
+  });
+  it('should return BigInt for int64 definition', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'integer',
+      format: 'int64',
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+
+    expect(result.input.getType()).toBe(GraphQLBigInt);
+    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLBigInt);
+  });
+  it('should return Int for int32 definition', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'integer',
+      format: 'int32',
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+
+    expect(result.input.getType()).toBe(GraphQLInt);
+    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLInt);
+  });
+  it('should return Int for integer definitions without format', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'integer',
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+
+    expect(result.input.getType()).toBe(GraphQLInt);
+    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLInt);
+  });
+  it('should return Float for number definition', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'number',
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+
+    expect(result.input.getType()).toBe(GraphQLFloat);
+    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLFloat);
+  });
+  it('should generate scalar types for minLength definition', async () => {
+    const title = 'NonEmptyString';
+    const inputSchema: JSONSchema = {
+      title,
+      type: 'string',
+      minLength: 1,
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const inputComposer = result.input as ScalarTypeComposer;
+    expect(inputComposer).toBe(result.output);
+    expect(inputComposer.getTypeName()).toBe(title);
+    const serializeFn = inputComposer.getSerialize();
+    expect(() => serializeFn('')).toThrow();
+    expect(serializeFn('aa')).toBe('aa');
+  });
+  it('should generate scalar types for maxLength definition', async () => {
+    const title = 'Max2String';
+    const inputSchema: JSONSchema = {
+      title,
+      type: 'string',
+      maxLength: 2,
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const inputComposer = result.input as ScalarTypeComposer;
+    expect(inputComposer).toBe(result.output);
+    let scalarType = inputComposer.getType();
+    expect(scalarType.name).toBe(title);
+    scalarType = processScalarType(scalarType);
+    expect(() => scalarType.serialize('aaa')).toThrow();
+    expect(scalarType.serialize('a')).toBe('a');
+  });
+  it('should generate scalar types for both minLength and maxLength definition', async () => {
+    const title = 'NonEmptyString';
+    const inputSchema: JSONSchema = {
+      title,
+      type: 'string',
+      minLength: 1,
+      maxLength: 2,
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const inputComposer = result.input as ScalarTypeComposer;
+    expect(inputComposer).toBe(result.output);
+    expect(inputComposer.getTypeName()).toBe(title);
+    const scalarType = processScalarType(inputComposer.getType());
+    expect(() => scalarType.serialize('aaa')).toThrow();
+    expect(() => scalarType.serialize('')).toThrow();
+    expect(scalarType.serialize('a')).toBe('a');
+  });
+  it('should return DateTime scalar for date-time format', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'string',
+      format: 'date-time',
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(result.input.getType()).toBe(GraphQLDateTime);
+    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLDateTime);
+  });
+  it('should return Time scalar for time format', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'string',
+      format: 'time',
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(result.input.getType()).toBe(GraphQLTime);
+    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLTime);
+  });
+  it('should return EmailAddress scalar for email format', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'string',
+      format: 'email',
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(result.input.getType()).toBe(GraphQLEmailAddress);
+    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLEmailAddress);
+  });
+  it('should return IPv4 scalar for email format', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'string',
+      format: 'ipv4',
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(result.input.getType()).toBe(GraphQLIPv4);
+    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLIPv4);
+  });
+  it('should return IPv6 scalar for email format', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'string',
+      format: 'ipv6',
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(result.input.getType()).toBe(GraphQLIPv6);
+    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLIPv6);
+  });
+  it('should return URL scalar for uri format', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'string',
+      format: 'uri',
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(result.input.getType()).toBe(GraphQLURL);
+    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLURL);
+  });
+  it('should return String for string definitions without format', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'string',
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(result.input.getType()).toBe(GraphQLString);
+    expect((result.output as ScalarTypeComposer).getType()).toBe(GraphQLString);
+  });
+  it('should return list type for array definitions with items as object', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(isListType(result.input.getType())).toBeTruthy();
+    expect((result.input as ListComposer).ofType.getType()).toBe(GraphQLString);
+    expect(isListType((result.output as ListComposer).getType())).toBeTruthy();
+    expect((result.output as ListComposer).ofType.getType()).toBe(GraphQLString);
+  });
+  it('should return generic JSON type for array definitions with contains', async () => {
+    const title = 'ExampleArray';
+    const inputSchema: JSONSchema = {
+      title,
+      type: 'array',
+      contains: {
+        type: 'string',
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(result.input).toBe(result.output);
+    const outputComposer = result.output as ListComposer;
+    expect(isListType(outputComposer.getType())).toBeTruthy();
+    expect(isScalarType(outputComposer.ofType.getType())).toBeTruthy();
+    expect(outputComposer.ofType.getTypeName()).toBe('JSON');
+  });
+  // This is not valid and should be healed first
+  it.skip('should return union type inside a list type if array definition has items as an array', async () => {
+    const title = 'FooOrBar';
+    const inputSchema: JSONSchema = {
+      title: 'ExampleObject',
+      type: 'object',
+      properties: {
+        fooOrBar: {
+          title,
+          type: 'array',
+          items: [
+            {
+              title: 'Foo',
+              type: 'object',
+              properties: {
+                id: {
+                  type: 'string',
+                },
+              },
+            },
+            {
+              title: 'Bar',
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                },
+              },
+            },
+          ],
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(
+      (result.output as ObjectTypeComposer).toSDL({
+        deep: true,
+      }),
+    ).toBe(
+      /* GraphQL */ `
+type ExampleObject {
+  fooOrBar: [FooOrBar]
+}
+
+union FooOrBar = Foo | Bar
+
+type Foo {
+  id: String
+}
+
+${printType(GraphQLString)}
+
+type Bar {
+  name: String
+}
+`.trim(),
+    );
+  });
+  it('should create correct object types from object definition', async () => {
+    const title = 'ExampleObject';
+    const inputSchema: JSONSchema = {
+      title,
+      type: 'object',
+      properties: {
+        id: {
+          type: 'string',
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect((result.input as InputTypeComposer).toSDL()).toBe(
+      /* GraphQL */ `
+input ExampleObject_Input {
+  id: String
+}
+     `.trim(),
+    );
+    expect((result.output as InputTypeComposer).toSDL()).toBe(
+      /* GraphQL */ `
+type ExampleObject {
+  id: String
+}
+     `.trim(),
+    );
+  });
+  it('should return GraphQLSchema if object definition given with _schema title', async () => {
+    const inputSchema: JSONSchema = {
+      title: '_schema',
+      type: 'object',
+      properties: {
+        query: {
+          title: 'Query',
+          type: 'object',
+          properties: {
+            foo: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    };
+    const { output } = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(output instanceof SchemaComposer).toBeTruthy();
+    expect((output as SchemaComposer).toSDL()).toContain(
+      /* GraphQL */ `
+type Query {
+  foo: String
+}
+     `.trim(),
+    );
+  });
+  it('should return Query type if object definition given with Query title', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'Query',
+      type: 'object',
+      properties: {
+        foo: {
+          type: 'string',
+        },
+      },
+    };
+    const { output } = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(output instanceof ObjectTypeComposer).toBeTruthy();
+    expect((output as SchemaComposer).toSDL()).toContain(
+      /* GraphQL */ `
+type Query {
+  foo: String
+}
+     `.trim(),
+    );
+  });
+  it('should return Mutation type if object definition given with Query title', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'Mutation',
+      type: 'object',
+      properties: {
+        foo: {
+          type: 'string',
+        },
+      },
+    };
+    const { output } = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(output instanceof ObjectTypeComposer).toBeTruthy();
+    expect((output as SchemaComposer).toSDL()).toContain(
+      /* GraphQL */ `
+type Mutation {
+  foo: String
+}
+     `.trim(),
+    );
+  });
+  it('should return Subscription type if object definition given with Subscription title', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'Subscription',
+      type: 'object',
+      properties: {
+        foo: {
+          type: 'string',
+        },
+      },
+    };
+    const { output } = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(output instanceof ObjectTypeComposer).toBeTruthy();
+    expect((output as SchemaComposer).toSDL()).toContain(
+      /* GraphQL */ `
+type Subscription_ {
+  foo: String
+}
+     `.trim(),
+    );
+  });
+  it('should add arguments to Query fields with the object definition QueryTitle', async () => {
+    const inputSchema: JSONSchema = {
+      title: '_schema',
+      type: 'object',
+      properties: {
+        query: {
+          title: 'Query',
+          type: 'object',
+          properties: {
+            foo: {
+              type: 'string',
+            },
+          },
+        },
+        queryInput: {
+          title: 'QueryInput',
+          type: 'object',
+          properties: {
+            foo: {
+              title: 'Foo',
+              type: 'object',
+              properties: {
+                bar: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const { output } = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(output instanceof SchemaComposer).toBeTruthy();
+    expect((output as SchemaComposer).toSDL()).toBe(
+      /* GraphQL */ `
+type Query {
+  foo(bar: String): String
+}
+
+${printType(GraphQLString)}
+     `.trim(),
+    );
+  });
+  it('should choose correct type in union type generated from oneOf', async () => {
+    const FooOrBar = {
+      title: 'FooOrBar',
+      oneOf: [
+        {
+          title: 'Foo',
+          type: 'object',
+          properties: {
+            fooId: {
+              type: 'string',
+            },
+          },
+          required: ['fooId'],
+        },
+        {
+          title: 'Bar',
+          type: 'object',
+          properties: {
+            barId: {
+              type: 'string',
+            },
+          },
+        },
+      ],
+    };
+    const inputSchema: JSONSchema = {
+      title: '_schema',
+      type: 'object',
+      properties: {
+        query: {
+          title: 'Query',
+          type: 'object',
+          properties: {
+            fooOrBarButFoo: FooOrBar,
+            fooOrBarButBar: FooOrBar,
+          },
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+
+    const schemaComposer = result.output as SchemaComposer;
+    const fooId = 'FOO_ID';
+    const barId = 'BAR_ID';
+    schemaComposer.addResolveMethods({
+      Query: {
+        fooOrBarButFoo: () => ({
+          fooId: 'FOO_ID',
+        }),
+        fooOrBarButBar: () => ({
+          barId: 'BAR_ID',
+        }),
+      },
+    });
+    const schema = schemaComposer.buildSchema();
+    processDirectives(schema, {
+      log,
+      pubsub,
+      globalFetch: fetch,
+    });
+    const executionResponse: any = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        fragment FooOrBarFragment on FooOrBar {
+          __typename
+          ... on Foo {
+            fooId
+          }
+          ... on Bar {
+            barId
+          }
+        }
+        query TestQuery {
+          fooOrBarButFoo {
+            ...FooOrBarFragment
+          }
+          fooOrBarButBar {
+            ...FooOrBarFragment
+          }
+        }
+      `),
+    });
+    expect(executionResponse?.data?.fooOrBarButFoo?.__typename).toBe('Foo');
+    expect(executionResponse?.data?.fooOrBarButFoo?.fooId).toBe(fooId);
+    expect(executionResponse?.data?.fooOrBarButBar?.__typename).toBe('Bar');
+    expect(executionResponse?.data?.fooOrBarButBar?.barId).toBe(barId);
+  });
+  it('should handle non-string enum values', async () => {
+    const FooEnum = {
+      title: 'FooEnum',
+      type: 'string' as const,
+      enum: [-1, 1],
+    };
+    const { output } = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: FooEnum,
+      log,
+    });
+    expect(output instanceof EnumTypeComposer).toBeTruthy();
+    const enumTypeComposer = output as EnumTypeComposer;
+    const enumValuesMap = enumTypeComposer.getFields();
+    expect(enumValuesMap).toMatchInlineSnapshot(`
+{
+  "NEGATIVE_1": {
+    "deprecationReason": undefined,
+    "description": undefined,
+    "directives": [
+      {
+        "args": {
+          "subgraph": "Test",
+          "value": "-1",
+        },
+        "name": "enum",
+      },
+    ],
+    "extensions": {},
+    "value": "NEGATIVE_1",
+  },
+  "_1": {
+    "deprecationReason": undefined,
+    "description": undefined,
+    "directives": [
+      {
+        "args": {
+          "subgraph": "Test",
+          "value": "1",
+        },
+        "name": "enum",
+      },
+    ],
+    "extensions": {},
+    "value": "_1",
+  },
+}
+`);
+  });
+  it('should handle strings with non-latin characters', async () => {
+    const FooEnum = {
+      title: 'FooEnum',
+      type: 'string' as const,
+      enum: ['לא', 'כן'],
+    };
+
+    const { output } = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: FooEnum,
+      log,
+    });
+    expect(output instanceof EnumTypeComposer).toBeTruthy();
+    const enumTypeComposer = output as EnumTypeComposer;
+    const enumValuesMap = enumTypeComposer.getFields();
+    expect(enumValuesMap).toMatchInlineSnapshot(`
+{
+  "_1499__1503_": {
+    "deprecationReason": undefined,
+    "description": undefined,
+    "directives": [
+      {
+        "args": {
+          "subgraph": "Test",
+          "value": ""כן"",
+        },
+        "name": "enum",
+      },
+    ],
+    "extensions": {},
+    "value": "_1499__1503_",
+  },
+  "_1500__1488_": {
+    "deprecationReason": undefined,
+    "description": undefined,
+    "directives": [
+      {
+        "args": {
+          "subgraph": "Test",
+          "value": ""לא"",
+        },
+        "name": "enum",
+      },
+    ],
+    "extensions": {},
+    "value": "_1500__1488_",
+  },
+}
+`);
+  });
+  it('should handle invalid property names', async () => {
+    const jsonSchema: JSONSchemaObject = {
+      type: 'object',
+      title: '_schema',
+      properties: {
+        query: {
+          type: 'object',
+          title: 'Query',
+          properties: {
+            foo: {
+              type: 'object',
+              title: 'Foo',
+              properties: {
+                '0Bar': {
+                  type: 'object',
+                  title: 'Bar',
+                  properties: {
+                    barId: {
+                      type: 'string',
+                    },
+                  },
+                },
+                '1Baz': {
+                  type: 'object',
+                  title: 'Baz',
+                  properties: {
+                    bazId: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        queryInput: {
+          type: 'object',
+          title: 'QueryInput',
+          properties: {
+            foo: {
+              type: 'object',
+              title: 'Foo_Input',
+              properties: {
+                '0BarId': {
+                  type: 'string',
+                },
+                '1BazId': {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const { output } = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: jsonSchema,
+      log,
+    });
+    expect(output instanceof SchemaComposer).toBeTruthy();
+    const schema = (output as SchemaComposer).buildSchema();
+    expect(printSchemaWithDirectives(schema)).toMatchInlineSnapshot(`
+      "schema {
+        query: Query
+      }
+
+      directive @resolveRootField(subgraph: String, field: String) on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+      type Query {
+        foo(_0BarId: String @resolveRootField(subgraph: "Test", field: "0BarId"), _1BazId: String @resolveRootField(subgraph: "Test", field: "1BazId")): Foo
+      }
+
+      type Foo {
+        _0Bar: Bar @resolveRootField(subgraph: "Test", field: "0Bar")
+        _1Baz: Baz @resolveRootField(subgraph: "Test", field: "1Baz")
+      }
+
+      type Bar {
+        barId: String
+      }
+
+      type Baz {
+        bazId: String
+      }"
+    `);
+  });
+  it('should workaround GraphQLjs falsy enum values bug', async () => {
+    const values = [false, ''];
+    const FooEnum = {
+      title: 'FooEnum',
+      type: ['number', 'boolean', 'string'] as any,
+      enum: values,
+    };
+    const { output } = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: FooEnum,
+      log,
+    });
+    expect(output instanceof EnumTypeComposer).toBeTruthy();
+    const enumTypeComposer = output as EnumTypeComposer;
+    const enumValuesMap = enumTypeComposer.getFields();
+    // Enum `.value` matches the GraphQL name (Apollo wire); JSON remap is on `@enum`.
+    Object.entries(enumValuesMap).forEach(([name, valueConfig]) => {
+      expect(valueConfig.value).toBe(name);
+    });
+    expect.assertions(3);
+  });
+  it('should handle nested unions with primitive types', async () => {
+    const FacetFilterType: JSONSchema = {
+      title: 'FacetFilter',
+      description: 'Filter hits by facet value.',
+      oneOf: [
+        {
+          type: 'array',
+          items: {
+            title: 'FacetFilterItem',
+            oneOf: [
+              {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+              {
+                type: 'string',
+              },
+            ],
+          },
+        },
+        {
+          type: 'string',
+        },
+      ],
+    };
+    const { output } = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: FacetFilterType,
+      log,
+    });
+    expect((output as UnionTypeComposer).getType().toString()).toBe('[String]');
+  });
+  it('should handle objects with required but nullable fields as optional fields in GraphQL', async () => {
+    const schema: JSONSchema = {
+      title: 'Required Optional Test',
+      type: 'object',
+      required: ['bar'],
+      properties: {
+        bar: {
+          type: 'string',
+          nullable: true,
+        },
+      },
+    };
+    const { output } = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema,
+      log,
+    });
+    expect((output as ObjectTypeComposer).getField('bar').type.getTypeName()).toEqual('String');
+  });
+  it('should not throw when an array schema also has oneOf (getter-only input/output, Node 25+)', async () => {
+    // Regression test for:
+    //   TypeError: Cannot set property input of #<Object> which has only a getter
+    //   at getUnionTypeComposers (getUnionTypeComposers.ts)
+    //
+    // When a schema has type:'array' with items, the enter() visitor returns an object
+    // with getter-only `input` and `output` properties. If that same schema also has
+    // `oneOf`, getUnionTypeComposers() is called with the getter-only object as
+    // subSchemaAndTypeComposers. In strict mode (Node.js 25+) assigning to a getter-only
+    // property throws; in sloppy mode it silently fails, producing wrong nested-list types.
+    // The function must use local variables instead.
+    const schema: JSONSchema = {
+      title: 'ArrayWithOneOf',
+      type: 'array',
+      items: {
+        title: 'ArrayItem',
+        type: 'object',
+        properties: {
+          id: { type: 'string' },
+        },
+      },
+      oneOf: [
+        // Both oneOf variants resolve to the same input type (String scalar), which
+        // triggers the Object.keys(unionInputFields).length === 1 assignment path in getUnionTypeComposers.
+        { type: 'array', items: { type: 'string' } },
+        { type: 'string' },
+      ],
+    } as JSONSchema;
+
+    const result = await getComposerFromJSONSchema({ subgraphName: 'Test', schema, log });
+    // The resolved type must be a list of String, not a spurious double-nested list like
+    // [[ArrayItemInput]] that would result from the getter silently not being updated.
+    expect(result.input?.getType().toString()).toBe('[String]');
+    expect((result.output as ListComposer).getType().toString()).toBe('[String]');
+  });
+  it('should treat anyOf with a null type as a nullable version of the other type (issue #8719)', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'NullableString',
+      anyOf: [{ type: 'string' }, { type: 'null' }],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    // Should be a nullable String scalar, not an object type with String/Void fields
+    expect((result.output as ScalarTypeComposer<any>).getType()).toBe(GraphQLString);
+    expect(result.nullable).toBe(true);
+  });
+  it('should treat anyOf[X, null] as nullable X even for object types (issue #8719)', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'NullableObject',
+      anyOf: [
+        {
+          type: 'object',
+          title: 'MyObj',
+          properties: { id: { type: 'string' } },
+        },
+        { type: 'null' },
+      ],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect(result.nullable).toBe(true);
+    const output = result.output as ObjectTypeComposer;
+    expect(isObjectType(output.getType())).toBe(true);
+    expect(output.getFieldNames()).toContain('id');
+    // Must NOT have a "Void" field
+    expect(output.getFieldNames()).not.toContain('Void');
+    expect(output.getTypeName()).toBe('MyObj');
+  });
+  it('should not clone a shared object schema as Title2 when wrapping anyOf[X, null]', async () => {
+    const lightningObsGroup: JSONSchemaObject = {
+      type: 'object',
+      title: 'LightningObsGroup',
+      properties: {
+        count: { type: 'integer' },
+      },
+    };
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'Root',
+      properties: {
+        group: lightningObsGroup,
+        maybeGroup: {
+          title: 'current_lightning_response',
+          anyOf: [lightningObsGroup, { type: 'null' }],
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const output = result.output as ObjectTypeComposer;
+    const groupType = (output.getField('group').type as any).getUnwrappedTC() as ObjectTypeComposer;
+    const maybeGroupType = (
+      output.getField('maybeGroup').type as any
+    ).getUnwrappedTC() as ObjectTypeComposer;
+    expect(groupType.getTypeName()).toBe('LightningObsGroup');
+    expect(maybeGroupType.getTypeName()).toBe('LightningObsGroup');
+    expect(groupType).toBe(maybeGroupType);
+    expect(output.getFieldNames()).not.toContain('LightningObsGroup2');
+    expect(output.schemaComposer.has('LightningObsGroup2')).toBe(false);
+  });
+  it('should reuse one UUID scalar for a format+pattern $ref and a nullable anyOf of the same $ref (#9637)', async () => {
+    const uuidSchema: JSONSchemaObject = {
+      title: 'UUID',
+      type: 'string',
+      format: 'uuid',
+      pattern: '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}',
+      nullable: false,
+    };
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'Item',
+      required: ['id', 'parent_id'],
+      properties: {
+        id: uuidSchema,
+        parent_id: {
+          type: ['string', 'null'],
+          anyOf: [uuidSchema, { type: 'null' }],
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const output = result.output as ObjectTypeComposer;
+    const idField = output.getField('id');
+    const parentIdField = output.getField('parent_id');
+    expect(getNamedType(idField.type.getType())).toBe(GraphQLUUID);
+    expect(getNamedType(parentIdField.type.getType())).toBe(GraphQLUUID);
+    expect(idField.type.getTypeName()).toBe('UUID!');
+    expect(parentIdField.type.getTypeName()).toBe('UUID');
+    expect(isNonNullType(idField.type.getType())).toBe(true);
+    expect(isNonNullType(parentIdField.type.getType())).toBe(false);
+    expect(output.schemaComposer.has('UUID2')).toBe(false);
+  });
+  it('should keep a regexp scalar when format and pattern names do not collide', async () => {
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'Operation',
+      properties: {
+        endpoint: {
+          title: 'endpoint',
+          type: 'string',
+          format: 'uri-template',
+          pattern: '^/.*$',
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const output = result.output as ObjectTypeComposer;
+    expect(output.getField('endpoint').type.getTypeName()).toBe('endpoint');
+    expect(output.schemaComposer.has('UriTemplate')).toBe(false);
+  });
+  it('should treat oneOf[X, null] as nullable X (issue #8719)', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'NullableString',
+      oneOf: [{ type: 'string' }, { type: 'null' }],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    expect((result.output as ScalarTypeComposer<any>).getType()).toBe(GraphQLString);
+    expect(result.nullable).toBe(true);
+  });
+  it('should keep {type:null} arms in status-code response unions (issue #9641)', async () => {
+    const notFound: JSONSchemaObject = {
+      type: 'object',
+      title: 'NotFound',
+      properties: { message: { type: 'string' } },
+    };
+    const conflict: JSONSchemaObject = {
+      type: 'object',
+      title: 'Conflict',
+      properties: { reason: { type: 'string' } },
+    };
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'Mutation',
+      properties: {
+        deleteThing: {
+          $comment: 'statusCodeOneOfIndexMap:{"204":0,"404":1,"409":2}',
+          title: 'deleteThing_response',
+          oneOf: [{ type: 'null', title: 'deleteThing_204_response' }, notFound, conflict],
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const output = result.output as ObjectTypeComposer;
+    const fieldType = (output.getField('deleteThing').type as any).getUnwrappedTC();
+    expect(fieldType.getTypeName()).toBe('deleteThing_response');
+    const members = (fieldType as UnionTypeComposer).getTypes().map(t => t.getTypeName());
+    expect(members).toEqual(expect.arrayContaining(['Void_container', 'NotFound', 'Conflict']));
+    expect(members).toHaveLength(3);
+  });
+  it('should keep Void arm when status-code union is 204 plus one error (issue #9641)', async () => {
+    const notFound: JSONSchemaObject = {
+      type: 'object',
+      title: 'NotFound',
+      properties: { message: { type: 'string' } },
+    };
+    const inputSchema: JSONSchema = {
+      type: 'object',
+      title: 'Mutation',
+      properties: {
+        deleteThing: {
+          $comment: 'statusCodeOneOfIndexMap:{"204":0,"404":1}',
+          title: 'deleteThing_response',
+          oneOf: [{ type: 'null', title: 'deleteThing_204_response' }, notFound],
+        },
+      },
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const output = result.output as ObjectTypeComposer;
+    const fieldType = (output.getField('deleteThing').type as any).getUnwrappedTC();
+    expect(fieldType.getTypeName()).toBe('deleteThing_response');
+    const members = (fieldType as UnionTypeComposer).getTypes().map(t => t.getTypeName());
+    expect(members).toEqual(expect.arrayContaining(['Void_container', 'NotFound']));
+    expect(members).toHaveLength(2);
+  });
+  it('should deep-merge allOf nested NonNull object fields (issue #8607)', async () => {
+    const inputSchema: JSONSchema = {
+      title: 'Movie',
+      allOf: [
+        {
+          type: 'object',
+          title: 'MovieBase',
+          properties: {
+            info: {
+              type: 'object',
+              title: 'MovieInfo',
+              properties: {
+                id: { type: 'string' },
+                title: { type: 'string' },
+              },
+              required: ['id', 'title'],
+            },
+          },
+          required: ['info'],
+        },
+        {
+          type: 'object',
+          title: 'MovieExtra',
+          properties: {
+            info: {
+              type: 'object',
+              title: 'MovieInfo',
+              properties: {
+                rating: { type: 'number' },
+              },
+            },
+          },
+        },
+      ],
+    };
+    const result = await getComposerFromJSONSchema({
+      subgraphName: 'Test',
+      schema: inputSchema,
+      log,
+    });
+    const output = result.output as ObjectTypeComposer;
+    expect(isObjectType(output.getType())).toBe(true);
+    const infoField = output.getField('info');
+    expect(infoField).toBeDefined();
+    let infoType: any = infoField.type;
+    if (typeof infoType === 'function') {
+      infoType = infoType();
+    }
+    const infoGraphQLType = typeof infoType.getType === 'function' ? infoType.getType() : infoType;
+    expect(isNonNullType(infoGraphQLType)).toBe(true);
+    let infoTC =
+      typeof infoType.getUnwrappedTC === 'function' ? infoType.getUnwrappedTC() : infoType;
+    if (infoTC instanceof NonNullComposer) {
+      infoTC = infoTC.ofType;
+    }
+    expect(isObjectType(infoTC.getType())).toBe(true);
+    // All three fields should be present after deep merge
+    expect(infoTC.getFieldNames()).toContain('id');
+    expect(infoTC.getFieldNames()).toContain('title');
+    expect(infoTC.getFieldNames()).toContain('rating');
+  });
+});

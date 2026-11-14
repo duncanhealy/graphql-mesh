@@ -1,14 +1,12 @@
-import { getBuiltMesh } from '../.mesh';
-import { FetchRecentEmailsDocument } from './graphql-operations';
+import { execute, fetchRecentEmailsDocument } from '../.mesh';
 
 async function main() {
-  const client = await getBuiltMesh();
-  const result = await client.execute(
-    FetchRecentEmailsDocument,
+  const result = await execute(
+    fetchRecentEmailsDocument,
     {},
     {
       accessToken: 'someAccessToken',
-    }
+    },
   );
   console.log({
     result,

@@ -1,5 +1,5 @@
-import { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
-import { healJSONSchema } from '../src/healJSONSchema';
+import type { JSONSchema, JSONSchemaObject } from '@json-schema-tools/meta-schema';
+import { healJSONSchema } from '../src/healJSONSchema.js';
 
 describe('healJSONSchema', () => {
   it('should add titles for non-primitive definitions if missing', async () => {
@@ -23,8 +23,8 @@ describe('healJSONSchema', () => {
       },
     };
     const healedSchema = (await healJSONSchema(schema)) as JSONSchemaObject;
-    expect(healedSchema.properties.bar.title).toBe('_bar');
-    expect(healedSchema.properties.foo.title).toBe('_foo');
+    expect(healedSchema.properties.bar.title).toBe('bar');
+    expect(healedSchema.properties.foo.title).toBe('foo');
   });
   it('should add missing type: object if properties are in the definitions', async () => {
     const schema = {
@@ -51,5 +51,12 @@ describe('healJSONSchema', () => {
     };
     const healedSchema = (await healJSONSchema(schema)) as JSONSchemaObject;
     expect(healedSchema.properties.foo.type).toBe('array');
+  });
+  it('should add missing properties if required is provided but no properties', async () => {
+    const schema = {
+      required: ['foo'],
+    };
+    const healedSchema = (await healJSONSchema(schema)) as JSONSchemaObject;
+    expect(healedSchema.properties.foo).toBeDefined();
   });
 });

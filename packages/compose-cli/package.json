@@ -1,0 +1,77 @@
+{
+  "name": "@graphql-mesh/compose-cli",
+  "version": "1.8.4",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-mesh",
+    "directory": "packages/compose-cli"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "bin": {
+    "mesh-compose": "dist/esm/bin.js"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "graphql": "^16.0.0 || ^17.0.0"
+  },
+  "dependencies": {
+    "@commander-js/extra-typings": "^15.0.0",
+    "@graphql-hive/importer": "^2.0.0",
+    "@graphql-hive/logger": "^1.1.1",
+    "@graphql-mesh/fusion-composition": "^0.11.4",
+    "@graphql-mesh/string-interpolation": "^0.5.18",
+    "@graphql-mesh/types": "^0.107.3",
+    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-tools/code-file-loader": "^9.1.1",
+    "@graphql-tools/graphql-file-loader": "^9.1.1",
+    "@graphql-tools/load": "^9.1.2",
+    "@graphql-tools/schema": "^11.0.8",
+    "@graphql-tools/utils": "^13.2.2",
+    "@whatwg-node/fetch": "^0.12.1",
+    "@whatwg-node/promise-helpers": "^2.0.1",
+    "commander": "^15.0.0",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "graphql": "16.14.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "buildOptions": {
+    "bin": {
+      "mesh-compose": {
+        "input": "src/bin.ts"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
+}
